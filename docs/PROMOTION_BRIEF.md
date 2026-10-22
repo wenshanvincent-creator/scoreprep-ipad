@@ -15,6 +15,23 @@ Current build order: finish V1 import/recognition/clean display/manual swipe,
 then the v0.1 tempo-guided practice preview, voice and finally Follow Me. Do not film a planned
 feature as if it were already implemented.
 
+## Practice preview demonstration
+
+**Your score. Your practice tempo. Hands-free line changes.**
+
+Chinese direction: **保留你的谱子和标记，跟着练习速度自动换行。**
+
+The practice candidate keeps current and upcoming source systems visible while
+one transport drives the beat and line changes. A short take can show a pickup,
+the change from 4/4 to 6/8, silent beats, a slower speed, A–B repetition and
+immediate touch pause. Use PRACTICE_DEMO.md and the included owned exercise.
+Native acceptance is still in progress; use inspected captures and the actual
+verification receipt before presenting this as a working preview.
+
+Keep tempo-guided practice distinct from the planned microphone follower.
+Changing speed means changing the app's selected practice speed. A fixed-tempo
+take does not show the app adapting to a musician who slows down.
+
 ## Strongest short demonstration
 
 1. A musician reaches to turn a page and interrupts the phrase.

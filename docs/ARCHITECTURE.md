@@ -25,8 +25,11 @@ PDF coordinate conventions at their boundary.
 ScoreRendering owns PDF/image drawing and, later, annotation projection and
 export. It must render from original content rather than UI thumbnails.
 
-ScoreAudio owns audio scheduling and the continuous playback transport.
-TempoPreview is a short one-bar spike, not the finished synchronized transport.
+ScoreCore owns the continuous PracticeTransport clock mapping and pulse planner.
+ScoreAudio's native PracticeController samples that transport and schedules
+clicks through AVAudioPlayerNode using the same monotonic host clock. Its short
+lookahead wakeups do not accumulate musical time. TempoPreview remains the
+independent one-bar timing-editor preview.
 
 ScoreApp owns navigation, local storage and integration. Original imported PDFs
 are copied into app-owned storage before their security-scoped access ends.
@@ -55,9 +58,19 @@ The project stores only the relative source filename.
   so polling can resume. Worker credentials stay in Keychain, outside project
   JSON. Results must match the pending job and original bytes before saving.
 
-The first app edits timing for one source system at a time. The continuous
-transport will derive visual focus and audio events from one clock, preserving
-logical musical position through pauses, seeks, speed changes and loops.
+TimingEditor edits the complete ordered timing array for one source system at
+a time. Its starting beat is one-based using the written denominator; storage
+retains quarter-note phase and untouched values exactly. ScorePreparation is a
+sheet draft that validates against the actual source page count and applies to
+the latest project, preserving recognition metadata and unchanged timing.
+
+PracticeView owns one controller for an immutable compiled route. Current and
+upcoming music use occurrence IDs; repeated source systems remain distinct.
+Preparation changes invalidate that presentation. Display refresh samples the
+transport, and audible and silent beats consume the same pulse state. Pause,
+seek, speed, sound and loop commands cancel old scheduled audio generations.
+Backgrounding or an audio interruption pauses without automatic resume.
+See PRACTICE_CONTROLLER_API.md for the native interface and timing semantics.
 
 ## Validation boundaries
 

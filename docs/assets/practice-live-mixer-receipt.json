@@ -1,0 +1,134 @@
+{
+  "boundary" : "App mixer PCM and host scheduling; no microphone, speaker, Bluetooth or musician proof.",
+  "countInBars" : 1,
+  "mode" : "simulator-live-mixer-output",
+  "observedOnsetHostSeconds" : [
+    753.00646541666663,
+    753.50646541666663,
+    754.00646541666663,
+    754.50646541666663,
+    755.00646541666663,
+    756.30594458333337,
+    756.80594458333337,
+    757.30594458333337,
+    757.80594458333337,
+    758.30594458333337,
+    758.80594458333337,
+    759.30594458333337,
+    759.80594458333337,
+    760.30594458333337,
+    760.80594458333337,
+    761.30594458333337
+  ],
+  "pausedAtHostSeconds" : 755.2893357083334,
+  "pendingCanceledHostSeconds" : [
+    755.50644666666665
+  ],
+  "resumedAtHostSeconds" : 756.00216487500006,
+  "scheduled" : [
+    {
+      "countIn" : true,
+      "elapsed" : 0,
+      "generation" : 3,
+      "hostSeconds" : 753.00644666666665
+    },
+    {
+      "countIn" : true,
+      "elapsed" : 1,
+      "generation" : 3,
+      "hostSeconds" : 753.50644666666665
+    },
+    {
+      "countIn" : true,
+      "elapsed" : 2,
+      "generation" : 3,
+      "hostSeconds" : 754.00644666666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 3,
+      "generation" : 3,
+      "hostSeconds" : 754.50644666666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 4,
+      "generation" : 3,
+      "hostSeconds" : 755.00644666666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 5,
+      "generation" : 3,
+      "hostSeconds" : 755.50644666666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 5,
+      "generation" : 6,
+      "hostSeconds" : 756.30592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 6,
+      "generation" : 6,
+      "hostSeconds" : 756.80592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 7,
+      "generation" : 6,
+      "hostSeconds" : 757.30592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 8,
+      "generation" : 6,
+      "hostSeconds" : 757.80592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 9,
+      "generation" : 6,
+      "hostSeconds" : 758.30592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 10,
+      "generation" : 6,
+      "hostSeconds" : 758.80592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 11,
+      "generation" : 6,
+      "hostSeconds" : 759.30592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 12,
+      "generation" : 6,
+      "hostSeconds" : 759.80592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 13,
+      "generation" : 6,
+      "hostSeconds" : 760.30592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 14,
+      "generation" : 6,
+      "hostSeconds" : 760.80592091666665
+    },
+    {
+      "countIn" : false,
+      "elapsed" : 15,
+      "generation" : 6,
+      "hostSeconds" : 761.30592091666665
+    }
+  ],
+  "sourceFixtureSHA256" : "a67697668a131e07accebea323d0ab54f9f895111f19d63efe6d0c7884b7822a",
+  "speed" : 2
+}
