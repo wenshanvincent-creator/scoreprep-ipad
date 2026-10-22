@@ -2,6 +2,33 @@
 
 22 October 2026. V1 remains gated; the full practice goal remains active.
 
+## Corrected runtime checkpoint
+
+At b1c0e0b, app run
+[39777128239](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39777128239)
+passed 13 Core, three native persistence and seven native UI checks, including
+the real Keychain save/reopen/remove flow. Recognition run
+[39777128245](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39777128245)
+passed actual homr recognition, five native unit and three native UI checks.
+The actual-score portrait/landscape, largest-size page one/page two, and narrow
+large-text harness captures were independently inspected and show complete
+staves and working page navigation. Artifact 12425553520 retains those images.
+
+The full-app landscape capture in artifact 12426461142 shows clear notation and
+no entitlement alert. Its first portrait capture is blank: the accessibility
+web view existed before SVG paint. The test capture now uses the same two-second
+paint settle as the successful harness. That final integrated capture still
+needs fresh verification before V1 acceptance. This is a capture timing change,
+not a new engraver or a replacement recognition result.
+
+Xcode's build log shows the simulator application-identifier in the generated
+ScorePrep.app-Simulated.xcent. The earlier codesign entitlement dump is empty
+because simulator entitlements use that separate generated representation;
+it is not the Keychain entitlement receipt. CI now saves the generated xcent
+and ad-hoc signature separately. Runtime Keychain behavior passed independently.
+
+## Earlier failed checks
+
 At integration 0b417bf, recognition workflow
 [39773048865](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39773048865)
 completed real homr recognition successfully. The native harness's four client

@@ -3,18 +3,27 @@
 Current phase: **V1 — import, recognize, clean display, manual swipe**.
 Read MVP_PLAN.md, ARCHITECTURE.md and UI_SKILLS.md before implementing.
 
+V1's functional checks pass at b1c0e0b. Its final integrated portrait capture
+needs a WebKit paint settle before acceptance; integration retains that gate.
+Independent V2 practice work may proceed in the two isolated worktrees below
+while that evidence is completed, and remains outside the V1 pull request.
+Voice and score following stay deferred.
+
 | Chat | Owns | Current task |
 | --- | --- | --- |
 | Integration | Shared ScoreCore contracts, app entry point, project.yml and workflows | Contracts, composition and end-to-end V1 verification. |
-| Reader and preparation | ScoreApp except ScorePrepApp.swift; existing PDF rendering and preparation views | PDF/image import, local originals, manual navigation and review integration. |
-| Recognition and rendering | ScoreRecognition, ScoreRendering/Recognition, backend and owned tests/fixtures | Remote homr wrapper, typed client and Verovio rendering component. |
-| Metronome and practice | ScoreAudio and practice controls | Deferred until V1 passes. |
+| Reader and preparation | Preparation/timing views, ScoreReader and focused LibraryView callback wiring; owned reader UI tests | Multi-area editing, explicit reading order and pickup/full timing arrays; then current/upcoming practice view. |
+| Recognition and rendering chat, continuing as Metronome/Practice | ScoreAudio, new pulse-planning code/tests and documented controller API | Shared-clock audible/silent metronome, count-in, speed/loops and immediate interruption. Recognition code is stable. |
 
 Each active chat uses its own branch/worktree. Inspect local and remote state,
 keep to owned paths, and return a commit/draft PR. Do not push or merge main.
 Integration owns shared contracts and composition. Recognition/Rendering may
 make narrowly scoped project.yml additions for its sources, Verovio dependency
 and dedicated tests, preserving the existing targets/toolchain.
+For the V2 handoff, integration authorizes the audio chat to add the new pure
+pulse planner and narrowly extend PracticeTransport if its documented API needs
+it. Coordinate before changing existing ScoreCore persistence or reader files.
+The reader chat does not edit ScoreAudio or recognition integration tests.
 
 Before UI code, read the installed mobile-ios-design and swiftui-expert-skill
 instructions and the existing frontend-design process. Write READER_UI_PLAN.md
