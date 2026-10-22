@@ -3,6 +3,18 @@ import VerovioToolkit
 @testable import RecognitionHarness
 
 final class RecognitionContractTests: XCTestCase {
+    func testActualHomrPaginatesAtLargestLandscapeSize() async throws {
+        let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "homr-observed", withExtension: "musicxml"))
+        let page = RecognitionPage(sourcePageIndex: 0, state: .succeeded, musicXML: try String(contentsOf: url))
+        let renderer = VerovioRenderer()
+        // iPad landscape reading area: the eight-bar actual output fits at the
+        // default size, but must reflow across pages at the largest size.
+        let normal = try await renderer.render(pages: [page], width: 1210, height: 665, scale: 45)
+        let large = try await renderer.render(pages: [page], width: 1210, height: 665, scale: 80)
+        XCTAssertEqual(normal.count, 1)
+        XCTAssertGreaterThan(large.count, 1)
+    }
+
     func testActualHomrPianoVoicesKeepFourNotesPerStaffPerMeasure() throws {
         let url = try XCTUnwrap(Bundle(for: Self.self).url(forResource: "homr-observed", withExtension: "musicxml"))
         let resources = try XCTUnwrap(VerovioResources.bundle.url(forResource: "data", withExtension: nil))
