@@ -1,5 +1,6 @@
 import AVFoundation
 import Combine
+import Darwin
 import ScoreCore
 import UIKit
 
@@ -23,9 +24,10 @@ public enum PracticePauseReason: Equatable, Sendable {
 public final class PracticeController: ObservableObject {
     public let timeline: CompiledTimeline
     @Published public private(set) var snapshot: PracticeSnapshot
+    @Published public private(set) var currentPulse: PracticePulseDisplay? = nil
     @Published public private(set) var isAudible = true
-    @Published public private(set) var errorMessage: String?
-    @Published public private(set) var pauseReason: PracticePauseReason?
+    @Published public private(set) var errorMessage: String? = nil
+    @Published public private(set) var pauseReason: PracticePauseReason? = nil
 
     public var currentSpan: TimelineSpan { timeline.spans[snapshot.currentSpanIndex] }
     public var upcomingSpan: TimelineSpan? { snapshot.upcomingSpanIndex.map { timeline.spans[$0] } }
@@ -149,6 +151,7 @@ public final class PracticeController: ObservableObject {
     public func refresh() {
         let now = hostNow()
         snapshot = transport.snapshot(at: now)
+        updatePulse(at: now)
         if snapshot.phase == .finished {
             transport.pause(at: now)
             cancelQueuedPlayback()
@@ -190,7 +193,21 @@ public final class PracticeController: ObservableObject {
         output.stop()
     }
 
-    private func publish() { snapshot = transport.snapshot(at: hostNow()) }
+    private func publish() {
+        let now = hostNow()
+        snapshot = transport.snapshot(at: now)
+        updatePulse(at: now)
+    }
+
+    private func updatePulse(at now: Double) {
+        guard snapshot.isRunning else { currentPulse = nil; return }
+        // Before an audio startup anchor, no pulse has sounded yet.
+        if let time = transport.hostTime(forElapsed: snapshot.elapsed, after: now), time > now + 1e-9 {
+            currentPulse = nil
+        } else {
+            currentPulse = planner.display(for: transport, elapsed: snapshot.elapsed)
+        }
+    }
 
     private func failAudio(_ error: Error) {
         transport.pause(at: hostNow())
@@ -217,7 +234,8 @@ public final class PracticeController: ObservableObject {
         }
         observe(AVAudioSession.routeChangeNotification) { controller, notification in
             if let raw = notification.userInfo?[AVAudioSessionRouteChangeReasonKey] as? UInt,
-               AVAudioSession.RouteChangeReason(rawValue: raw) == .oldDeviceUnavailable {
+               AVAudioSession.RouteChangeReason(rawValue: raw) == .oldDeviceUnavailable
+                || (controller.isAudible && AVAudioSession.sharedInstance().currentRoute.outputs.isEmpty) {
                 controller.suspend(for: .outputChanged)
             }
         }
