@@ -1,7 +1,7 @@
 # Reader / Practice UI plan
 
 Plan only, 22 October 2026. Baseline: Reader a5c2aa8 and the integration
-MVP_PLAN.md V3 read at 5b26b7b. Implementation awaits integration's explicit
+MVP_PLAN.md practice requirements read at 5b26b7b. Implementation awaits integration's explicit
 confirmation that the combined V1 gate passed; phase ordering stays unchanged.
 
 ## Ownership and direction

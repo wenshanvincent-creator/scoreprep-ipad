@@ -12,7 +12,7 @@ the passage. This is the planned flagship; microphone following has not been
 validated yet.
 
 Current build order: finish V1 import/recognition/clean display/manual swipe,
-then voice, tempo-guided practice and finally Follow Me. Do not film a planned
+then the v0.1 tempo-guided practice preview, voice and finally Follow Me. Do not film a planned
 feature as if it were already implemented.
 
 ## Strongest short demonstration

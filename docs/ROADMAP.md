@@ -14,14 +14,17 @@ PDF/photo import → remote existing OMR → MusicXML → Verovio display → ma
 swipe. Include progress/errors, original comparison, local reopen and actual
 native portrait/landscape evidence. Finish this phase before voice/following.
 
-## V2 — voice
+## V2 — tempo-guided practice
+
+Complete the active v0.1 engineering goal: multiple complete-system reading
+areas, current/upcoming music, confirmed performed beats including pickups,
+continuous metronome, beat-driven line changes, count-in, speed, A-B loops
+and immediate manual interruption. V1 alone does not complete that goal.
+
+## V3 — voice, next bounded experiment
 
 Opt-in Apple Speech with forced on-device recognition, capability checks,
 explicit permissions, touch operation and instrument-noise testing.
-
-## V3 — tempo-guided practice
-
-Continuous metronome, beat-driven line changes, count-in, speed and loops.
 
 ## V4 — Follow Me
 

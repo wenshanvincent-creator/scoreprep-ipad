@@ -34,6 +34,11 @@ Continuous metronome/line advancement, voice commands, live audio following,
 Pencil and export are later phases. Physical-device and audio validation remain
 separate.
 
+The v0.1 engineering goal continues after V1 with current/upcoming-system
+reading, confirmed beats including pickups, continuous metronome timing,
+count-in, practice speed and A-B loops. Voice is the next bounded experiment
+after that preview.
+
 ## Build on macOS
 
 Requirements: a recent Xcode with the iOS 18 SDK or newer, its command-line

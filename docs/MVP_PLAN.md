@@ -49,14 +49,7 @@ publish an unauthenticated production endpoint.
 - Record the actual worker/endpoint and any remaining deployment, device,
   signing or account dependency. Do not mark an incomplete flow complete.
 
-## V2 — voice, after V1
-
-Use Apple's Speech framework with forced on-device recognition and capability
-checks. Explicit permissions, touch fallback, visible activation, a small
-distinct command vocabulary and rehearsal-noise checks are required.
-See VOICE_REQUIREMENTS.md. No voice implementation or microphone permission now.
-
-## V3 — tempo-guided practice
+## V2 — tempo-guided practice, completing the v0.1 engineering goal
 
 The automatic engineering goal remains open after V1. Its practice requirements
 are part of the native v0.1 preview, not optional roadmap replacements. The
@@ -89,6 +82,14 @@ current and upcoming music. Confirm pickup behavior, explicit compound-meter
 pulse units, speed changes, looping and manual interruption. State separately
 which audio behavior was checked in a simulator and which still needs a real
 iPad and musician. Keep these requirements when updating later milestones.
+
+## V3 — voice, the next bounded experiment
+
+After the v0.1 practice preview, use Apple's Speech framework with forced
+on-device recognition and capability checks. Explicit permissions, touch
+operation, visible activation, a small distinct command vocabulary and
+rehearsal-noise checks are required. See VOICE_REQUIREMENTS.md. No voice
+implementation or microphone permission is part of the current V1 gate.
 
 ## V4 — Follow Me
 
