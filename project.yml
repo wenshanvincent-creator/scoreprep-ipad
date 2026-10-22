@@ -12,6 +12,9 @@ settings:
 packages:
   ScoreCore:
     path: Packages/ScoreCore
+  Verovio:
+    url: https://github.com/rism-digital/verovio.git
+    revision: 425dd7b6ba26edcecbe345c10b15586d095743d9
 targets:
   ScorePrep:
     type: application
@@ -20,8 +23,11 @@ targets:
       - ScoreApp
       - ScoreRendering
       - ScoreAudio
+      - ScoreRecognition
     dependencies:
       - package: ScoreCore
+      - package: Verovio
+        product: VerovioToolkit
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.ScorePrep
@@ -48,7 +54,62 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.ScorePrep.UITests
         GENERATE_INFOPLIST_FILE: YES
+  RecognitionHarness:
+    type: application
+    platform: iOS
+    sources:
+      - backend/native-harness
+      - ScoreRecognition
+      - ScoreRendering/Recognition
+    dependencies:
+      - package: Verovio
+        product: VerovioToolkit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.RecognitionHarness
+        GENERATE_INFOPLIST_FILE: YES
+    info:
+      path: build/RecognitionHarness-Info.plist
+      properties:
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+  RecognitionRenderingUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [backend/native-tests]
+    dependencies:
+      - target: RecognitionHarness
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.RecognitionRenderingUITests
+  RecognitionContractTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - backend/native-unit
+      - path: backend/fixtures/recognition-study.musicxml
+        buildPhase: resources
+    dependencies:
+      - target: RecognitionHarness
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.RecognitionContractTests
 schemes:
+  RecognitionHarness:
+    build:
+      targets:
+        RecognitionHarness: all
+        RecognitionRenderingUITests: [test]
+        RecognitionContractTests: [test]
+    test:
+      targets:
+        - RecognitionContractTests
+        - RecognitionRenderingUITests
   ScorePrep:
     build:
       targets:

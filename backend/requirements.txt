@@ -1,0 +1,11 @@
+fastapi==0.115.12
+uvicorn==0.34.2
+pillow==10.4.0
+pypdfium2==4.30.1
+numpy==1.26.4
+onnxruntime==1.18.1
+opencv-python-headless==4.10.0.84
+scipy==1.13.1
+scikit-learn==1.2.2
+matplotlib==3.9.2
+httpx==0.28.1
