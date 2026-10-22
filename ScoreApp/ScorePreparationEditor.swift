@@ -14,6 +14,7 @@ struct ScorePreparationEditor: View {
     @State private var removingArea: SourceSystem?
     @State private var removingSection: ScoreSection?
     @State private var errorMessage: String?
+    @FocusState private var areaNameFocused: Bool
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -194,7 +195,10 @@ struct ScorePreparationEditor: View {
                         if let index = draft.systems.firstIndex(where: { $0.id == area.id }) {
                             draft.systems[index].label = value
                         }
-                    })).accessibilityIdentifier("preparation-area-name")
+                    }))
+                    .focused($areaNameFocused).submitLabel(.done)
+                    .onSubmit { areaNameFocused = false }
+                    .accessibilityIdentifier("preparation-area-name")
                     ReadingAreaBoundsControls(crop: Binding(get: { area.bounds }, set: {
                         PreparationEditing.setBounds($0, areaID: area.id, in: &draft)
                     }))

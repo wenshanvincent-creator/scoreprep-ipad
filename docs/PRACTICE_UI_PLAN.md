@@ -266,6 +266,35 @@ Attach each dialog to its trigger for native iPad anchoring. Existing section
 choice, repeat, save/cancel and timed-loop assertions remain unchanged. No
 coordinate fallback or new suite is introduced; root owns native verification.
 
+Candidate 6f69f50 (run 39809306373) passed the Add choices and all subsequent
+draft/persistence/removal assertions; its remaining failures are now distinct.
+The loop's speed Menu is present once, unobscured in the hierarchy, yet native
+hit testing rejects it. Replace that control with a 44-point Button and one
+Bool-driven native speed-choice confirmation dialog; retain every speed and
+the same controller command, identifier, label and timed-loop checks.
+
+The two reveal failures have targets fully inside the Form viewport; the trace
+then shows ordinary `.tap()` using XCTest's documented-in-log rdar://59288308
+workaround and successfully invoking Move earlier / Remove area. Reveal should
+establish geometric visibility, not reject this SDK's Menu hit-test result.
+Keep strict whole-target viewport bounds and short drags; callers must still
+perform normal `.tap()` and pass all real action/removal/save/cancel assertions.
+No coordinate action fallback is added.
+
+After portrait rotation/cancel, the actual failure hierarchy has the sidebar's
+native PopoverDismissRegion over the reader. The test should tap that observed
+dismissal surface and wait for the reader toolbar's actual hittability, matching
+normal sidebar navigation. Library visibility behavior stays native.
+
+The inspected loop PNG also shows Resume split across two lines despite unused
+footer width. Use one AnyLayout control hierarchy (regular row; compact/larger
+text stacked groups) instead of duplicate ViewThatFits candidates. Keep the
+existing accessibility-size grid. Put 44-point hit regions inside the actual
+Button labels and keep the normal playback label at its intrinsic width.
+The first preparation failure includes a keyboard/dictation accessory over its
+bottom edge; give area-name editing a Done submit action that clears FocusState,
+and complete that ordinary input action before revealing area operations.
+
 A full-screen practice presentation pauses on disappearance. Preparation/timing
 changes invalidate it; reopening compiles a fresh controller. Invalid timing
 keeps the original reader available with the actual preparation error. Original

@@ -43,7 +43,10 @@ enum PracticeUITestActions {
             if element.exists {
                 let target = element.frame
                 sawTarget = viewport.intersects(target)
-                if viewport.contains(target) && element.isHittable { return }
+                // SwiftUI Menu.isHittable is false for visible rows on this
+                // SDK (rdar://59288308). Callers still tap normally and assert
+                // the resulting action; this helper only establishes visibility.
+                if viewport.contains(target) { return }
                 if target.maxY > viewport.maxY {
                     searchDirection = .later
                     distance = min(maxDrag, max(32, target.maxY - viewport.maxY + 12))
