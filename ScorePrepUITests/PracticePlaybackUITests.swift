@@ -6,6 +6,59 @@ final class PracticePlaybackUITests: XCTestCase {
         super.tearDown()
     }
 
+    func testSilentPracticeAutomaticallyAdvancesThroughEveryOwnedArea() throws {
+        let app = launchExercise("practice-automatic-advance")
+        app.buttons["open-practice"].tap()
+        let current = app.staticTexts["practice-current"]
+        wait(current, contains: "Pickup and bar 1")
+        app.buttons["practice-options"].tap()
+        app.buttons["practice-count-in-bars"].tap()
+        app.buttons["None"].tap()
+        app.buttons["Done"].tap()
+        XCTAssertTrue(app.buttons["practice-speed"].label.contains("100%"))
+        app.buttons["practice-sound"].tap()
+        XCTAssertEqual(app.buttons["practice-sound"].label, "Silent")
+
+        // The actual Play event lies between these runner-clock samples. No
+        // navigation, pause, speed or loop commands occur during this take.
+        let playBegan = ProcessInfo.processInfo.systemUptime
+        app.buttons["practice-play-pause"].tap()
+        let playReturned = ProcessInfo.processInfo.systemUptime
+        wait(app.staticTexts["practice-phase"], contains: "Playing")
+        wait(current, contains: "Pickup and bar 1")
+        wait(app.staticTexts["practice-upcoming"], contains: "Bar 2")
+        capture("practice-automatic-area-1")
+
+        wait(current, contains: "Current: Bar 2", timeout: 8)
+        let area2 = ProcessInfo.processInfo.systemUptime
+        assertBoundary(area2, expected: 5, playBegan: playBegan, playReturned: playReturned)
+        wait(app.staticTexts["practice-upcoming"], contains: "Bars 3–4")
+        capture("practice-automatic-area-2")
+
+        wait(current, contains: "Bars 3–4", timeout: 7)
+        let area3 = ProcessInfo.processInfo.systemUptime
+        assertBoundary(area3, expected: 9, playBegan: playBegan, playReturned: playReturned)
+        XCTAssertFalse(app.buttons["practice-next"].isEnabled)
+        capture("practice-automatic-area-3")
+        wait(app.staticTexts["practice-phase"], contains: "Finished", timeout: 7)
+        let end = ProcessInfo.processInfo.systemUptime
+        assertBoundary(end, expected: 13, playBegan: playBegan, playReturned: playReturned)
+
+        let receipt: [String: Any] = [
+            "mode": "native-ui-silent-automatic-advance", "countInBars": 0, "speed": 1,
+            "expectedBoundariesSeconds": [5, 9, 13],
+            "playCommandDurationSeconds": playReturned - playBegan,
+            "observedSecondsSincePlayBegan": [area2 - playBegan, area3 - playBegan, end - playBegan],
+            "observedSecondsSincePlayReturned": [area2 - playReturned, area3 - playReturned, end - playReturned],
+            "uiPollingAllowanceSeconds": 1.25
+        ]
+        let attachment = XCTAttachment(data: try JSONSerialization.data(withJSONObject: receipt, options: [.prettyPrinted, .sortedKeys]),
+            uniformTypeIdentifier: "public.json")
+        attachment.name = "practice-automatic-advance-timing"
+        attachment.lifetime = .keepAlways
+        add(attachment)
+    }
+
     func testManualNavigationInterruptsCountInAndPlaybackAndReachesEnd() {
         XCUIDevice.shared.orientation = .landscapeLeft
         let app = launchExercise("practice-navigation")
@@ -21,11 +74,14 @@ final class PracticePlaybackUITests: XCTestCase {
         app.buttons["practice-sound"].tap()
         app.buttons["practice-play-pause"].tap()
         wait(app.staticTexts["practice-phase"], contains: "Count-in")
+        waitValue(app.otherElements["practice-pulse"], contains: "Count-in")
         app.buttons["practice-next"].tap()
         wait(current, contains: "Bar 2")
         wait(app.staticTexts["practice-phase"], contains: "Paused")
+        waitValue(app.otherElements["practice-pulse"], contains: "Inactive")
         app.buttons["practice-play-pause"].tap()
         wait(app.staticTexts["practice-phase"], contains: "Playing")
+        waitValue(app.otherElements["practice-pulse"], contains: "Beat")
         app.buttons["practice-next"].tap()
         wait(current, contains: "Bars 3–4")
         wait(app.staticTexts["practice-phase"], contains: "Paused")
@@ -118,6 +174,18 @@ final class PracticePlaybackUITests: XCTestCase {
     private func waitForPortrait(_ app: XCUIApplication) {
         let expectation = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in app.frame.height > app.frame.width }, object: app)
         XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 10), .completed)
+    }
+
+    private func waitValue(_ element: XCUIElement, contains text: String) {
+        let expectation = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value CONTAINS %@", text), object: element)
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 5), .completed)
+    }
+
+    private func assertBoundary(_ observed: Double, expected: Double, playBegan: Double, playReturned: Double) {
+        // UI polling is not sample-accurate audio evidence. Bracket the Play
+        // action and allow observation latency, while rejecting early changes.
+        XCTAssertGreaterThanOrEqual(observed - playBegan, expected - 0.15)
+        XCTAssertLessThanOrEqual(observed - playReturned, expected + 1.25)
     }
 
     private func capture(_ name: String) {

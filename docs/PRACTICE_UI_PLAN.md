@@ -103,8 +103,8 @@ nor automatic navigation. Voice/following code remains outside this UI work.
 
 - Combined V1 approval remains integration's gate. Preparation, reading order,
   fractional multi-segment timing and the first current/upcoming controller
-  wiring are implemented on the independent practice branch. Authoritative
-  pulse display awaits Audio's shared property; native UI acceptance is pending.
+  wiring and authoritative pulse display are implemented on the independent
+  practice branch. Native UI acceptance is pending.
 - Clean-system/source/beat mapping and Verovio layout invalidation need a shared
   contract; page-level MusicXML alone does not provide them. Extreme compact
   layouts and spoken accessibility behavior remain unverified.
@@ -168,7 +168,17 @@ one StateObject per confirmed compiled route and observing its exact current /
 upcoming spans. Play/pause/resume/stop, manual seek, speed, audible/silent mode,
 count-in seconds and occurrence-qualified A-B selection call the controller.
 No view timer, counter, audio scheduler or duplicate pulse/meter arithmetic is
-added. The authoritative pulse display property is pending from Audio.
+added. The authoritative pulse display uses Audio's subsequently supplied state
+as described below.
+
+Pulse-display slice: consume Audio 8b293d9's `currentPulse` directly in a small
+status child. Display its one-based denominator beat, downbeat accent and
+sampled progress in both sound modes and count-in. A static neutral marker
+replaces it while ready/paused/finished; Reduce Motion omits the progress ring.
+Do not infer pulse counts from meter, schedule animation with a second clock,
+or announce every pulse through VoiceOver. The notation subtree stays isolated
+from these frequent updates. Native tests must observe a visible pulse in
+silent count-in and playback, and its disappearance on manual pause.
 
 Focused UI checks now cover count-in and running manual interruption, explicit
 resume, end/stop, repeat-occurrence loop endpoints and wrapping, original-page
@@ -176,6 +186,14 @@ access, fresh-controller reopening, large-text transport reachability, and
 unconfirmed-source rejection with manual reading retained. They export native
 portrait/landscape/large-text and repeat-loop captures when root runs the suite.
 These checks have been authored, not yet executed on this practice UI head.
+
+A separate automatic-advance UI take starts at area 1, silent at 100% with no
+count-in, and makes no transport or navigation commands after Play. It observes
+area 2 at 5 seconds, area 3 at 9 seconds and Finished at 13 seconds, with a
+runner-clock bracket around Play and 1.25 seconds of UI observation allowance.
+It captures all three current/upcoming compositions and attaches measured
+timing JSON. This verifies automatic visible focus independently of the manual
+Next/end test; exact transport/audio timing remains covered by their own tests.
 
 A full-screen practice presentation pauses on disappearance. Preparation/timing
 changes invalidate it; reopening compiles a fresh controller. Invalid timing
