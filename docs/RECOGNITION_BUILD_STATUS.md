@@ -20,6 +20,18 @@ backend/fixtures/observed-homr. This is a narrow prototype result, not a claim
 about arbitrary photos or scores.
 The client contract remains the same and includes optional engineName metadata.
 
+The latest source head 8e50294 reproduced the same pitch/rhythm/key/meter
+result in [run 39765175832](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39765175832),
+job 4594811f-ada2-4fa8-a936-11d871355bf1. The corrected engraving below uses
+Verovio's built-in musicxml-hum route. A remaining notation discrepancy is
+explicit: the source terminal barline is light-heavy, raw homr output says
+heavy-heavy, and this Verovio importer displays a regular terminal barline.
+The title was intentionally excluded from recognition with --no-title. The
+fixture event gate covers pitch/onset/duration/key/meter, not exact barline
+appearance or all score text. Every page still requires human review.
+
+![Actual homr result through the corrected Verovio importer](recognition-assets/homr-recognized-study.png)
+
 ## First actual recognition trial
 
 [Workflow 39759659441](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39759659441)
@@ -59,7 +71,8 @@ multi-page scores. PDF page-order rasterization has a separate boundary test.
 
 ## Native engraving and interactions
 
-The first Xcode 16.4 full-app build and existing app smoke passed at 6b3a2c0.
+The Xcode 16.4 full-app build and existing app smoke passed at source head
+8e50294 in workflow 39765175821 (as well as at the first 6b3a2c0 checkpoint).
 Native Verovio engraving and missing-page rejection passed as a dedicated unit
 test. Initial UI screenshots were retrieved and inspected; they showed native
 notation, but the UI automation used incorrect control-type assumptions and
@@ -74,8 +87,22 @@ The independent workflow builds the
 native Verovio Swift package at revision 425dd7b6ba26edcecbe345c10b15586d095743d9
 (version-6.3.0) with Xcode 16.4, iPadOS 18 deployment target. The harness consumes
 the actual job's MusicXML, separate from explicitly labeled fixture-only renders.
+Patched runtime verification now belongs to the integration run at
+`520095eda803d0198a869030ea22c33242376023`. Its prepared dependency and two-line
+fix were reviewed as recorded in RECOGNITION_NATIVE_CRASH.md. **This branch
+still points directly at unpatched upstream and has not passed the dedicated
+native runtime gate.** Consume it together with the integration-owned prepared
+dependency commit; do not treat a successful unpatched app compilation as a
+successful recognition-reader runtime.
+
+The patched [recognition/native workflow 39768871148](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39768871148)
+and [composed-app workflow 39768871134](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39768871134)
+were still running when this workstream handed off its final evidence/cleanup.
+Integration owns recording their results and inspecting the new screenshots.
+
 Updated portrait/landscape screenshots and manual-page/size checks must be inspected
-before this section can be marked complete. A constrained 480-point component
+from that patched root run before the native reading gate can be marked complete.
+A constrained 480-point component
 and accessibility text configuration exercise narrow layouts; this does not
 establish system Stage Manager behavior.
 
@@ -97,7 +124,11 @@ Minimal integration steps:
    and keep original comparison and accept/reject controls aligned with its
    visible source index. Reconstruct successful page values from saved XML
    for offline reopen.
-5. Verify the full import → recognize → original comparison → review → reopen
+5. Apply/retain integration dependency preparation from 520095e and verify the
+   actual-output native regression plus portrait/landscape screenshots there.
+   The temporary branch-specific runner cancellation job/script have been
+   removed; normal workflow concurrency remains.
+6. Verify the full import → recognize → original comparison → review → reopen
    flow in integration. Physical iPad validation and signed distribution have
    not been performed by this workstream.
 

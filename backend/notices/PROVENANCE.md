@@ -18,6 +18,14 @@ the actual preserved receipts; it is not the active engine installation.
 
 ## Original oemer trial and shared engraving dependencies
 
+The native Verovio dependency requires the narrow negative-voice bounds patch
+documented in docs/RECOGNITION_NATIVE_CRASH.md. Integration prepares the exact
+upstream commit plus the public two-line patch in an ignored local Swift package.
+Both getStaffIndex and getCrossStaffOffset reject negative vector indexes;
+hardening remains enabled. This is a library safety fix, not a change to the
+recognized musical content. Preserve the source pin, patch and LGPL notices
+when distributing a prepared native build.
+
 | Component | Exact source | Notice / status |
 | --- | --- | --- |
 | oemer Python CLI, version 0.1.8 metadata | [BreezeWhite/oemer dbe2a933d630d0f74805d717960eb259473f5978](https://github.com/BreezeWhite/oemer/tree/dbe2a933d630d0f74805d717960eb259473f5978) | Upstream MIT text retained as oemer-MIT.txt, including its original placeholder copyright line. Source is installed unmodified with --no-deps; our dependency versions are explicit. |
