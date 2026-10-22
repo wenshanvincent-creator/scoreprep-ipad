@@ -12,7 +12,7 @@ final class PracticePreparationUITests: XCTestCase {
         let exercise = app.buttons["open-practice-exercise"]
         XCTAssertTrue(exercise.waitForExistence(timeout: 15))
         exercise.tap()
-        XCTAssertTrue(app.buttons["next-area"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.navigationBars["Pickup and pulse"].waitForExistence(timeout: 15))
         openPreparation(app)
         capture("practice-preparation-landscape")
         app.buttons["add-preparation-area"].tap()

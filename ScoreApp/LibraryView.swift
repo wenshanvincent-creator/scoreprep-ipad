@@ -43,6 +43,20 @@ struct LibraryView: View {
                         description: Text("Import a PDF, JPEG or PNG to start reading."))
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                Button("Open practice exercise", systemImage: "music.note") {
+                    Task {
+                        isImporting = true
+                        defer { isImporting = false }
+                        do {
+                            selection.wrappedValue = try await PracticeExercise.install(into: library)
+                            compactColumn = .detail
+                        } catch { library.errorMessage = error.localizedDescription }
+                    }
+                }
+                .disabled(isImporting).padding()
+                .accessibilityIdentifier("open-practice-exercise")
+            }
             .navigationTitle("ScorePrep")
             .navigationSplitViewColumnWidth(min: 240, ideal: 280, max: 340)
             .toolbar {
