@@ -1,0 +1,47 @@
+import Foundation
+import XCTest
+@testable import ScoreCore
+
+final class RecognitionStorageTests: XCTestCase {
+    func testLibraryWrittenBeforeRecognitionStillOpens() throws {
+        let data = Data("""
+        [{
+          "id": "C433A711-E182-4645-B838-16EE01277860",
+          "title": "Original study",
+          "sourceFilename": "study.pdf",
+          "systems": [], "sections": [], "readingOrder": []
+        }]
+        """.utf8)
+        let projects = try JSONDecoder().decode([ScoreProject].self, from: data)
+        XCTAssertEqual(projects.count, 1)
+        XCTAssertEqual(projects[0].title, "Original study")
+        XCTAssertEqual(projects[0].sourceFilename, "study.pdf")
+        XCTAssertNil(projects[0].recognizedEdition)
+    }
+
+    func testSavedEditionPreservesPageOrderAndIndividualReviewDecisions() throws {
+        let edition = RecognizedEdition(
+            engine: "oemer-fixture-version", createdAt: Date(timeIntervalSince1970: 100),
+            pages: [
+                RecognizedSourcePage(sourcePageIndex: 0, musicXMLFilename: "first.musicxml"),
+                RecognizedSourcePage(
+                    sourcePageIndex: 1, musicXMLFilename: "second.musicxml",
+                    reviewState: .accepted
+                ),
+                RecognizedSourcePage(
+                    sourcePageIndex: 2, musicXMLFilename: "third.musicxml",
+                    reviewState: .rejected
+                )
+            ]
+        )
+        let project = ScoreProject(
+            title: "Review study", sourceFilename: "original.pdf", systems: [],
+            sections: [], readingOrder: [], recognizedEdition: edition
+        )
+        let restored = try JSONDecoder().decode(
+            ScoreProject.self, from: JSONEncoder().encode(project)
+        )
+        XCTAssertEqual(restored.recognizedEdition, edition)
+        XCTAssertEqual(restored.sourceFilename, "original.pdf")
+    }
+}

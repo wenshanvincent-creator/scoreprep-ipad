@@ -46,6 +46,11 @@ The project stores only the relative source filename.
   source system is still the same source; its playback occurrence is distinct.
 - CompiledTimeline uses half-open time spans. A boundary belongs to the next
   system; the final endpoint means playback has finished.
+- ScoreProject.recognizedEdition is optional so existing library JSON still
+  decodes. RecognizedEdition stores the engine identity, date and ordered
+  RecognizedSourcePage records. Each record keeps its zero-based source page,
+  app-generated local MusicXML filename and unreviewed/accepted/rejected state.
+  These records never replace the original source filename, crops or timing.
 
 The first app edits timing for one source system at a time. The continuous
 transport will derive visual focus and audio events from one clock, preserving
