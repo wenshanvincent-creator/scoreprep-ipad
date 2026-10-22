@@ -1,30 +1,40 @@
-"""Fetch upstream ONNX assets on the worker; record hashes for the run receipt."""
+"""Prepare pinned homr CPU ONNX assets on the remote worker, without inference."""
 import hashlib
 import importlib.util
 import json
 from pathlib import Path
 import urllib.request
+import zipfile
+
+ASSETS = [
+    ("segmentation", "segnet_308-3296ccd40960f90ca6ab9c035cca945675d30a0f", "1d4277354a8397a6830ef1279232e6d989c2d254b7451525e53ff3d3754b1f70"),
+    ("transformer", "encoder_pytorch_model_465-597144cab54c8f6d0f6c9619df5c5312694eadd6", "48cd28aef03d230e30e4983d7444e882225e3710a07880c4c15523c55ae7b7b1"),
+    ("transformer", "decoder_pytorch_model_465-597144cab54c8f6d0f6c9619df5c5312694eadd6", "8012b73b05cc18fcf38596185cf2c27b35deb121f376c0037d8601917884fbac"),
+]
 
 
 def prepare():
-    root = Path(importlib.util.find_spec("oemer").origin).parent
-    assets = []
-    for name, folder, length, expected_hash in [
-        ("1st_model.onnx", "unet_big", 70767752, "37512e858731096439746f60b377c049f07055b4a23ec6eb9a178ce92cfba174"),
-        ("2nd_model.onnx", "seg_net", 38448467, "ed2e1a86ea75712ee6cdc740e96f7a36753543cf9bb980227c071c9256d9d82e"),
-    ]:
-        target = root / "checkpoints" / folder / "model.onnx"
-        target.parent.mkdir(parents=True, exist_ok=True)
-        url = f"https://github.com/BreezeWhite/oemer/releases/download/checkpoints/{name}"
-        if not target.exists():
-            urllib.request.urlretrieve(url, target)
-        data = target.read_bytes()
-        digest = hashlib.sha256(data).hexdigest()
-        if len(data) != length or digest != expected_hash:
-            raise ValueError(f"Upstream asset does not match the verified trial: {name}")
-        assets.append(dict(name=name, url=url, bytes=length,
-                           sha256=digest))
-    Path("backend-model-receipt.json").write_text(json.dumps(assets, indent=2))
+    root = Path(importlib.util.find_spec("homr").origin).parent
+    receipts = []
+    for folder, stem, digest in ASSETS:
+        target = root / folder
+        archive = target / f"{stem}.zip"
+        url = f"https://github.com/liebharc/homr/releases/download/onnx_checkpoints/{stem}.zip"
+        urllib.request.urlretrieve(url, archive)
+        actual_hash = hashlib.sha256(archive.read_bytes()).hexdigest()
+        if actual_hash != digest:
+            raise ValueError(f"Upstream asset hash mismatch: {stem}")
+        with zipfile.ZipFile(archive) as bundle:
+            for member in bundle.infolist():
+                destination = (target / member.filename).resolve()
+                if not destination.is_relative_to(target.resolve()):
+                    raise ValueError("Model archive member escapes its target")
+            bundle.extractall(target)
+        receipts.append(dict(name=stem, url=url, archiveSHA256=digest,
+                             files=[dict(name=p.name, sha256=hashlib.sha256(p.read_bytes()).hexdigest())
+                                    for p in target.glob(stem + "*") if p.is_file() and p != archive]))
+        archive.unlink()
+    Path("backend-model-receipt.json").write_text(json.dumps(receipts, indent=2))
 
 
 if __name__ == "__main__":

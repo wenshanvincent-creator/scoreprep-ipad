@@ -58,7 +58,7 @@ class WorkerContractTests(unittest.TestCase):
             commands.append(command)
             class Result: returncode = 0 if len(commands) == 1 else 1
             if len(commands) == 1:
-                Path(command[-1]).write_text(XML)
+                Path(command[-1]).with_suffix(".musicxml").write_text(XML)
             return Result()
         with patch.object(worker.subprocess, "run", side_effect=run):
             worker.recognize(folder, job)

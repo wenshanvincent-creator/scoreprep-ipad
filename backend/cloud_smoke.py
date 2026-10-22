@@ -41,11 +41,11 @@ render(original, "original-study")
 headers = {"Authorization": f"Bearer {os.environ['SCOREPREP_WORKER_TOKEN']}"}
 with TestClient(app) as client:
     response = client.post("/v1/jobs", headers=headers, json=dict(
-        mediaType="image/png", deskew=False,  # Generated staff lines are exactly horizontal.
+        mediaType="image/png",
         contentBase64=base64.b64encode((OUT / "original-study.png").read_bytes()).decode()))
     response.raise_for_status()
     job = response.json()
-    print(f"Actual oemer job: {job['id']}", flush=True)
+    print(f"Actual {job['engineName']} job: {job['id']}", flush=True)
     deadline = time.monotonic() + 1200
     while time.monotonic() < deadline:
         job = client.get(f"/v1/jobs/{job['id']}", headers=headers).json()

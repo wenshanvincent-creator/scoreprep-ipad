@@ -39,6 +39,21 @@ final class RecognitionRenderingUITests: XCTestCase {
     }
 
     @MainActor
+    func testInitialSourceAndVisibleSourceCallback() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["--fixture", "--source-link"]
+        app.launch()
+        let source = app.staticTexts["linkedSource"]
+        XCTAssertTrue(source.waitForExistence(timeout: 90))
+        XCTAssertEqual(source.label, "Linked source 8")
+        app.steppers["notationSize"].buttons["Increment"].tap()
+        XCUIDevice.shared.orientation = .portrait
+        XCTAssertEqual(source.label, "Linked source 8")
+        app.buttons["Previous notation page"].tap()
+        XCTAssertEqual(source.label, "Linked source 3")
+    }
+
+    @MainActor
     private func capture(_ name: String) {
         // Allow WebKit's SVG presentation after native engraving has completed.
         Thread.sleep(forTimeInterval: 2)
@@ -47,9 +62,5 @@ final class RecognitionRenderingUITests: XCTestCase {
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
-        let output = ProcessInfo.processInfo.environment["RECOGNITION_SCREENSHOT_DIR"]
-        if let output {
-            try? screenshot.pngRepresentation.write(to: URL(fileURLWithPath: output).appendingPathComponent(name + ".png"))
-        }
     }
 }
