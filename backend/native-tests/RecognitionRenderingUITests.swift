@@ -5,14 +5,14 @@ final class RecognitionRenderingUITests: XCTestCase {
     func testActualOMRNotationAndManualNavigation() throws {
         let app = XCUIApplication()
         app.launch()
-        XCTAssertTrue(app.otherElements["recognizedNotation"].waitForExistence(timeout: 90))
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 90))
         XCUIDevice.shared.orientation = .portrait
         capture("recognition-portrait")
         XCUIDevice.shared.orientation = .landscapeLeft
         capture("recognition-landscape")
-        let size = app.steppers["notationSize"]
+        let size = app.buttons["increaseNotationSize"]
         XCTAssertTrue(size.waitForExistence(timeout: 10))
-        for _ in 0..<7 { size.buttons["Increment"].tap() }
+        for _ in 0..<7 { size.tap() }
         let next = app.buttons["Next notation page"]
         let enabled = NSPredicate(format: "enabled == true")
         expectation(for: enabled, evaluatedWith: next)
@@ -21,7 +21,7 @@ final class RecognitionRenderingUITests: XCTestCase {
         let previous = app.buttons["Previous notation page"]
         XCTAssertTrue(previous.isEnabled)
         previous.tap()
-        app.otherElements["recognizedNotation"].swipeLeft()
+        app.webViews.firstMatch.swipeLeft()
         XCTAssertTrue(previous.isEnabled)
         capture("recognition-large-notation")
     }
@@ -31,10 +31,10 @@ final class RecognitionRenderingUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["--fixture", "--narrow", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         app.launch()
-        XCTAssertTrue(app.otherElements["recognizedNotation"].waitForExistence(timeout: 90))
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 90))
         XCUIDevice.shared.orientation = .portrait
         capture("fixture-narrow-accessibility-text")
-        XCTAssertTrue(app.steppers["notationSize"].exists)
+        XCTAssertTrue(app.buttons["increaseNotationSize"].exists)
         XCTAssertTrue(app.buttons["Next notation page"].exists)
     }
 
@@ -46,7 +46,7 @@ final class RecognitionRenderingUITests: XCTestCase {
         let source = app.staticTexts["linkedSource"]
         XCTAssertTrue(source.waitForExistence(timeout: 90))
         XCTAssertEqual(source.label, "Linked source 8")
-        app.steppers["notationSize"].buttons["Increment"].tap()
+        app.buttons["increaseNotationSize"].tap()
         XCUIDevice.shared.orientation = .portrait
         XCTAssertEqual(source.label, "Linked source 8")
         app.buttons["Previous notation page"].tap()

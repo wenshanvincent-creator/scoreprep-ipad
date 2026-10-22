@@ -23,7 +23,7 @@ use an authenticated HTTPS gateway or private tunnel for iPad access. Do not
 publish port 8000 unauthenticated. Keep one uvicorn process and one inference
 thread; each page uses a fresh CLI subprocess with a 15-minute timeout. CPU
 execution is supported on the remote host; a CUDA server is not required for
-the bounded trial. No TensorFlow fallback or training is used.
+the bounded trial. No training is performed.
 
 Use a 120-second request timeout at the gateway, a 28-MiB body limit, and an
 1800-second client polling window. Source inputs are up to 20 MiB and eight

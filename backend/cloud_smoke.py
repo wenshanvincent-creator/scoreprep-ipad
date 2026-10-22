@@ -24,9 +24,9 @@ os.environ["SCOREPREP_WORKER_TOKEN"] = secrets.token_urlsafe(32)
 from worker import app
 
 
-def render(xml, stem):
+def render(xml, stem, input_format="musicxml-hum"):
     toolkit = verovio.toolkit()
-    toolkit.setOptions(dict(inputFrom="musicxml", pageWidth=2100, pageHeight=2200,
+    toolkit.setOptions(dict(inputFrom=input_format, pageWidth=2100, pageHeight=2200,
                             scale=70, adjustPageHeight=True, breaks="auto", footer="none"))
     if not toolkit.loadData(xml):
         raise RuntimeError(toolkit.getLog())
@@ -37,7 +37,7 @@ def render(xml, stem):
 
 
 original = Path("backend/fixtures/recognition-study.musicxml").read_text()
-render(original, "original-study")
+render(original, "original-study", input_format="musicxml")
 headers = {"Authorization": f"Bearer {os.environ['SCOREPREP_WORKER_TOKEN']}"}
 with TestClient(app) as client:
     response = client.post("/v1/jobs", headers=headers, json=dict(

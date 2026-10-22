@@ -20,6 +20,9 @@ public enum NotationRenderError: LocalizedError {
 
 /// Serializes the native toolkit off the UI thread. This is engraving, not ML inference.
 public actor VerovioRenderer {
+    // The direct MusicXML importer caches a layer across adjacent voice changes.
+    // Verovio's built-in Humdrum route preserves homr's interleaved piano voices.
+    static let musicXMLInputFormat = "musicxml-hum"
     public init() {}
 
     public func render(pages: [RecognitionPage], width: Double, height: Double,
@@ -41,7 +44,7 @@ public actor VerovioRenderer {
             }
             let toolkit = VerovioToolkit(resources.path)
             let options: [String: Any] = [
-                "inputFrom": "musicxml", "scale": scale,
+                "inputFrom": Self.musicXMLInputFormat, "scale": scale,
                 "pageWidth": Int(width * 100 / Double(scale)),
                 "pageHeight": Int(height * 100 / Double(scale)),
                 "pageMarginTop": 40, "pageMarginBottom": 40,

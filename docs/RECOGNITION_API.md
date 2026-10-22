@@ -61,6 +61,11 @@ The component shows a review-needed caption; caller owns review actions and
 original comparison. To reopen, read saved XML and construct RecognitionPage
 with `.succeeded`, the sourcePageIndex and reviewRequired from saved metadata.
 
+Engraving explicitly uses Verovio's built-in musicxml-hum importer. The direct
+importer in the pinned library misassigns homr's interleaved piano voices; the
+built-in alternate importer retains their musical timing without changing the
+stored raw XML. This choice is checked against the actual homr result fixture.
+
 ## HTTP
 
 Authenticated `POST /v1/jobs` with JSON:

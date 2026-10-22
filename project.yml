@@ -95,7 +95,11 @@ targets:
       - backend/native-unit
       - path: backend/fixtures/recognition-study.musicxml
         buildPhase: resources
+      - path: backend/fixtures/observed-homr/homr-observed.musicxml
+        buildPhase: resources
     dependencies:
+      - package: Verovio
+        product: VerovioToolkit
       - target: RecognitionHarness
     settings:
       base:
