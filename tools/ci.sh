@@ -4,6 +4,7 @@ set -euo pipefail
 mkdir -p build
 xcodebuild -version | tee build/xcode-version.txt
 test "$(head -1 build/xcode-version.txt)" = 'Xcode 16.4'
+bash tools/typecheck_native_swift.sh 2>&1 | tee build/native-typecheck.log
 python3 tools/prepare_verovio.py
 swift package --package-path build/dependencies/verovio describe > build/verovio-package.txt
 xcodegen generate --spec project.yml

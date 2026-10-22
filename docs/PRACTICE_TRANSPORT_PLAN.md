@@ -61,3 +61,12 @@ saves the full timing array, including pickups and meter/tempo changes. The
 existing single-segment caller delegates to it until the native editor is
 updated. That editor must retain all saved segments and their fractional
 performed beats and starting bar phases rather than rounding to whole bars.
+
+## Native build feedback
+
+The app CI first emits ScoreCore for the iPad simulator SDK and type-checks
+the native reader/practice Swift sources. This catches interface and SDK errors
+before compiling the larger notation dependency. It excludes the app root,
+library composition and Verovio review/rendering views; the normal Xcode build
+and runtime checks still cover those. This early check proves compilation only,
+not audio output, persistence or visual acceptance.
