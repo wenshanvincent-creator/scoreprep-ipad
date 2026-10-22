@@ -49,9 +49,9 @@ final class ReaderPreparationTests: XCTestCase {
         app.buttons["score-options"].tap()
         app.buttons["Adjust reading area"].tap()
         let top = app.sliders["crop-top"]
-        // Full-page preview may place controls below the fold in portrait.
-        app.swipeUp()
         XCTAssertTrue(top.waitForExistence(timeout: 5))
+        XCTAssertTrue(top.isHittable)
+        capture(app, "reader-crop-preview")
         top.adjust(toNormalizedSliderPosition: 0.2)
         let savedValue = top.value as? String
         app.buttons["save-reading-area"].tap()
@@ -61,7 +61,6 @@ final class ReaderPreparationTests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Evening practice"].waitForExistence(timeout: 15))
         app.buttons["score-options"].tap()
         app.buttons["Adjust reading area"].tap()
-        app.swipeUp()
         XCTAssertEqual(app.sliders["crop-top"].value as? String, savedValue)
         capture(app, "reader-crop-persistence")
         app.buttons["Cancel"].tap()
