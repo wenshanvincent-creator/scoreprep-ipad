@@ -26,6 +26,9 @@ targets:
       - path: Fixtures/RecognitionReplay
         type: folder
         buildPhase: resources
+      - path: Fixtures/Practice
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: ScoreCore
       - package: Verovio

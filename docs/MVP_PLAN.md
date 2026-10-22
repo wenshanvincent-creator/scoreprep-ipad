@@ -1,7 +1,9 @@
 # ScorePrep phased build plan
 
-Updated 22 October 2026. Automatic engineering goal: active.
-Current phase: **V2 — tempo-guided practice, completing v0.1**.
+Updated 22 October 2026. The **v0.1 practice engineering gate passed** at
+a60b347; accepted checks and device boundaries are in PRACTICE_VERIFICATION.md.
+Recognition and engraving also passed their final check at 06cdab1.
+The v0.1 source-build preview is the completed engineering milestone.
 V1 passed its engineering gate at 276418b; see V1_NATIVE_VERIFICATION.md.
 
 ## Product direction
@@ -16,6 +18,19 @@ Wrap existing tools: **homr** is the current OMR integration after the first
 oemer trials failed musical review; **Verovio** renders MusicXML.
 The later following trial uses classical chroma/online DTW. No custom
 model training, replacement notation engraver or comparison of follower options.
+
+## Changes adopted from the ScoreVoice proposal
+
+Keep its native Swift/SwiftUI platform, existing-engine OMR, MusicXML interchange,
+Verovio engraving and the first rendering/manual-navigation gate. Preserve the
+original alongside recognition so a musician can review or reject an imperfect
+edition and reopen saved work offline.
+
+Tempo-guided practice stays before voice because it is part of the existing
+v0.1 goal. Voice is the next bounded experiment; microphone following follows
+that. Full note correction, annotation transfer across re-engraving and ensemble
+sync remain later work. An uncertain follower must hold position visibly;
+silently substituting a fixed timer would misrepresent following behavior.
 
 ## V1 — verified engineering checkpoint
 
@@ -52,14 +67,14 @@ publish an unauthenticated production endpoint.
 
 ## V2 — tempo-guided practice, completing the v0.1 engineering goal
 
-The automatic engineering goal remains open after V1. Its practice requirements
-are part of the native v0.1 preview, not optional roadmap replacements. The
-existing one-bar audible preview is only a foundation for this work.
+The v0.1 preview implements the following practice requirements after V1.
+The integrated native gate passed; the one-bar timing-editor preview remains
+available alongside continuous practice.
 
 1. Let the musician define multiple complete-system reading areas on one source
    page, arrange them in reading order, and preserve original notation and bytes.
-   The current crop editor adjusts an existing area; it does not yet create
-   several areas per imported page.
+   The preparation editor provides these operations; its complete native
+   add/move/save/cold-reopen/remove/cancel walkthrough passed.
 2. Show the current system with upcoming-system context in portrait and
    landscape. A single cropped system with an otherwise empty screen does not
    meet this requirement.
@@ -90,7 +105,7 @@ After the v0.1 practice preview, use Apple's Speech framework with forced
 on-device recognition and capability checks. Explicit permissions, touch
 operation, visible activation, a small distinct command vocabulary and
 rehearsal-noise checks are required. See VOICE_REQUIREMENTS.md. No voice
-implementation or microphone permission is part of the current V1 gate.
+implementation or microphone permission is part of the v0.1 preview.
 
 ## V4 — Follow Me
 

@@ -1,0 +1,10 @@
+{
+  "boundary" : "Native PCM and stop cancellation; offline sample time is not live host-clock evidence.",
+  "canceledClickSeconds" : 0.5,
+  "mode" : "native-offline-rendering",
+  "onsetSeconds" : [
+    2.2675736961451248e-05,
+    0.25002267573696146
+  ],
+  "stopSeconds" : 0.34999999999999998
+}

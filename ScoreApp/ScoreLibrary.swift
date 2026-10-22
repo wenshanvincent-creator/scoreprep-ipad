@@ -300,6 +300,17 @@ final class ScoreLibrary: ObservableObject {
         }
     }
 
+    func savePreparation(projectID: UUID, draft: ScorePreparation) throws {
+        guard let store else { throw LibraryError.unavailableStorage }
+        guard let project = projects.first(where: { $0.id == projectID }) else {
+            throw LibraryError.missingProject
+        }
+        let pageCount = try OriginalDocument.open(store.sourceURL(for: project)).pageCount
+        try update(projectID: projectID) {
+            $0 = try draft.applying(to: $0, sourcePageCount: pageCount)
+        }
+    }
+
     private func update(projectID: UUID, edit: (inout ScoreProject) throws -> Void) throws {
         guard let store else { throw LibraryError.unavailableStorage }
         guard let index = projects.firstIndex(where: { $0.id == projectID }) else {
@@ -314,17 +325,19 @@ final class ScoreLibrary: ObservableObject {
     func updateTiming(
         projectID: UUID, systemID: UUID, segment: TimingSegment
     ) throws {
-        try segment.validate()
-        guard let store else { throw LibraryError.unavailableStorage }
-        guard let projectIndex = projects.firstIndex(where: { $0.id == projectID }) else {
-            throw LibraryError.missingProject
+        try updateTiming(projectID: projectID, systemID: systemID, segments: [segment])
+    }
+
+    func updateTiming(
+        projectID: UUID, systemID: UUID, segments: [TimingSegment]
+    ) throws {
+        guard !segments.isEmpty else { throw TimingError.unconfirmedTiming(systemID) }
+        for segment in segments { try segment.validate() }
+        try update(projectID: projectID) { project in
+            guard let index = project.systems.firstIndex(where: { $0.id == systemID }) else {
+                throw LibraryError.missingSystem
+            }
+            project.systems[index].timing = segments
         }
-        guard let systemIndex = projects[projectIndex].systems.firstIndex(
-            where: { $0.id == systemID }
-        ) else { throw LibraryError.missingSystem }
-        var updated = projects
-        updated[projectIndex].systems[systemIndex].timing = [segment]
-        try store.save(updated)
-        projects = updated
     }
 }

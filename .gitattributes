@@ -4,3 +4,4 @@
 *.sh text eol=lf
 *.py text eol=lf
 *.md text eol=lf
+Fixtures/Practice/*.musicxml text eol=lf

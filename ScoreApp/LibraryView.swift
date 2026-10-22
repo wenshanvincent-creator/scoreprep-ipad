@@ -12,6 +12,7 @@ struct LibraryView: View {
     @State private var deleting: ScoreProject?
     @State private var title = ""
     @State private var compactColumn: NavigationSplitViewColumn = .detail
+    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
     @State private var reviewRequest: SourceReviewRequest?
 
     private var selection: Binding<UUID?> {
@@ -21,7 +22,7 @@ struct LibraryView: View {
     }
 
     var body: some View {
-        NavigationSplitView(preferredCompactColumn: $compactColumn) {
+        NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $compactColumn) {
             List(library.projects, selection: selection) { project in
                 NavigationLink(value: project.id) {
                     Label {
@@ -36,12 +37,27 @@ struct LibraryView: View {
                     Button("Rename", systemImage: "pencil") { beginRename(project) }
                     Button("Delete", systemImage: "trash", role: .destructive) { deleting = project }
                 }
-            }
+            }.accessibilityIdentifier("score-library")
             .overlay {
                 if library.projects.isEmpty {
                     ContentUnavailableView("Your scores", systemImage: "music.note.list",
                         description: Text("Import a PDF, JPEG or PNG to start reading."))
                 }
+            }
+            .safeAreaInset(edge: .bottom) {
+                Button("Open practice exercise", systemImage: "music.note") {
+                    Task {
+                        isImporting = true
+                        defer { isImporting = false }
+                        do {
+                            selection.wrappedValue = try await PracticeExercise.install(into: library)
+                            compactColumn = .detail
+                            columnVisibility = .detailOnly
+                        } catch { library.errorMessage = error.localizedDescription }
+                    }
+                }
+                .disabled(isImporting).padding()
+                .accessibilityIdentifier("open-practice-exercise")
             }
             .navigationTitle("ScorePrep")
             .navigationSplitViewColumnWidth(min: 240, ideal: 280, max: 340)
@@ -53,8 +69,10 @@ struct LibraryView: View {
             if let project = library.projects.first(where: { $0.id == selection.wrappedValue }),
                let sourceURL = library.sourceURL(for: project) {
                 ScoreReader(project: project, sourceURL: sourceURL,
-                    onTimingSaved: { systemID, segment in
-                        try library.updateTiming(projectID: project.id, systemID: systemID, segment: segment)
+                    onTimingSaved: { systemID, segments in
+                        try library.updateTiming(projectID: project.id, systemID: systemID, segments: segments)
+                    }, onPreparationSaved: { draft in
+                        try library.savePreparation(projectID: project.id, draft: draft)
                     }, onCropSaved: { systemID, bounds in
                         try library.updateCrop(projectID: project.id, systemID: systemID, bounds: bounds)
                     }, onRename: { beginRename(project) }, onDelete: { deleting = project },
@@ -103,6 +121,7 @@ struct LibraryView: View {
                         defer { isImporting = false }
                         selection.wrappedValue = try await library.importOriginal(from: url)
                         compactColumn = .detail
+                        columnVisibility = .detailOnly
                     }
                 } catch { library.errorMessage = error.localizedDescription }
             }
@@ -120,9 +139,9 @@ struct LibraryView: View {
         }
         .confirmationDialog("Delete this score and its local original?",
             isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
-            titleVisibility: .visible) {
+            titleVisibility: .visible, presenting: deleting) { project in
             Button("Delete score", role: .destructive) {
-                if let project = deleting { perform { try library.delete(projectID: project.id) } }
+                perform { try library.delete(projectID: project.id) }
             }
         }
         .alert("Could not update the library", isPresented: Binding(

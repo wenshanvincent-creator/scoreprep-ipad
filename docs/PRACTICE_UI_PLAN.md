@@ -1,8 +1,10 @@
 # Reader / Practice UI plan
 
-Plan only, 22 October 2026. Baseline: Reader a5c2aa8 and the integration
-MVP_PLAN.md practice requirements read at 5b26b7b. Implementation awaits integration's explicit
-confirmation that the combined V1 gate passed; phase ordering stays unchanged.
+Updated 22 October 2026. The original plan used Reader a5c2aa8 and integration
+MVP_PLAN.md at 5b26b7b. Independent practice implementation is now authorized on
+the shared practice foundation; integration retains the final V1 capture/merge
+gate. Preparation and controller wiring below are implemented checkpoints,
+with native interaction and layout acceptance still pending.
 
 ## Ownership and direction
 
@@ -34,8 +36,8 @@ normalized top-left bounds and optional confirmed timing for additional areas.
   area when appropriate; do not retain a duplicate full-page practice entry.
   Full-original reading remains independently available and bytes stay intact.
 - Add a Reading order list using existing sections/system IDs, labeled by page
-  and area. Root must reconcile page-area order and section membership in the
-  same mutation; sorting rectangles by y must not silently rearrange custom
+  and area. Save page catalog and explicit section membership in the
+  same mutation; catalog moves preserve every existing section sequence; sorting rectangles by y must not silently rearrange custom
   sections/repeats. Removing an area shows route impact and removes references
   atomically rather than leaving dangling IDs.
 - Preparation edits pause practice before committing and invalidate the compiled
@@ -99,10 +101,10 @@ nor automatic navigation. Voice/following code remains outside this UI work.
 
 ## Remaining gaps and later acceptance
 
-- Combined V1 approval is pending for this workstream. Multi-area mutation/UI,
-  reading-order editing, pickup/beat editing, current/upcoming composition and
-  continuous transport/count-in/loop controls are absent. TempoPreview remains
-  the existing one-bar spike.
+- Combined V1 approval remains integration's gate. Preparation, reading order,
+  fractional multi-segment timing and the first current/upcoming controller
+  wiring and authoritative pulse display are implemented on the independent
+  practice branch. Native UI acceptance is pending.
 - Clean-system/source/beat mapping and Verovio layout invalidation need a shared
   contract; page-level MusicXML alone does not provide them. Extreme compact
   layouts and spoken accessibility behavior remain unverified.
@@ -113,5 +115,214 @@ nor automatic navigation. Voice/following code remains outside this UI work.
   pause/resume, A-B wrapping and the final boundary against root's transport.
 - Inspect composed native portrait/landscape, narrow and large-text captures
   with current/upcoming notation and crop controls. Distinguish simulator audio
-  evidence from a real iPad/musician demonstration. This prose-only plan needs
-  no new cloud test run.
+  evidence from a real iPad/musician demonstration. Root coordinates the next
+  native run; do not trigger duplicate builds for intermediate checkpoints.
+
+## Preparation / timing implementation slice
+
+Authorized independent practice work now starts at shared commit 2242efb,
+while integration retains the final V1 capture/merge gate. This first slice
+implemented preparation and timing first. Current/upcoming practice composition
+now uses the subsequently supplied audio controller contract below.
+
+Concrete interfaces: seed a local ScorePreparation(project:) draft, mutate its
+systems/sections/readingOrder explicitly, then call the existing
+ScoreLibrary.savePreparation(projectID:draft:) once. Keep source-area and repeat
+occurrence UUIDs. Catalog moves affect manual browsing only; section membership
+and musical order change explicitly in Reading order and save in the same draft. Root's
+applying(to:) preserves latest recognition/source data and unchanged-area timing.
+Save timing through updateTiming(projectID:systemID:segments:) with the entire
+array, never a rounded bar count or only its first segment.
+
+UI: a native page-sized preparation sheet has Areas / Reading order modes.
+Keep an outlined full-page preview beside controls in wide layouts and pinned
+above a scrolling list in narrow/large-text layouts. Explicit Add, move up/down,
+remove and section membership controls work without spatial order inference.
+Source review and original-page access remain in the reader. A separate timing
+sheet edits a stable-identity list of segments: duration in fractional quarter-note beats, a one-based starting beat using the
+written denominator, numerator/denominator, BPM and explicit pulse unit. Convert
+that beat to Core quarter-beat phase internally; retain untouched phase exactly.
+Numeric input is validated on save; invalid text never silently keeps an old
+number. Preserve all untouched segment values and show actual validation errors.
+
+Evidence: focused draft-operation/persistence tests plus native interaction
+checks for add/reorder/remove, repeat identities, atomic save/cancel, fractional
+pickup and multi-segment cold reopen. Use the owned pickup-and-pulse fixture
+when resource wiring is available; existing generated source remains usable.
+Do not launch duplicate builds while root verification is active. This work
+adds no transport clock, playing flag, voice, following or model inference.
+
+PracticeView lifecycle requirement for its later controller-wiring slice:
+keep UIApplication.shared.isIdleTimerDisabled true while the music stand is
+visible and foreground-active, including paused rehearsal. Restore normal idle
+behavior on exit or backgrounding; restore the visible-view policy on foreground
+return. This belongs to view/composition lifecycle, independent of audio or
+playing state, with no new settings screen. API checked against
+[Apple UIApplication.isIdleTimerDisabled](https://developer.apple.com/documentation/uikit/uiapplication/isidletimerdisabled).
+
+## Concrete practice controller wiring
+
+The preparation/timing slice is committed separately (7c60689; exercise wiring
+at aad5851). PracticeView now targets controller interface 98c6c55, constructing
+one StateObject per confirmed compiled route and observing its exact current /
+upcoming spans. Play/pause/resume/stop, manual seek, speed, audible/silent mode,
+count-in seconds and occurrence-qualified A-B selection call the controller.
+No view timer, counter, audio scheduler or duplicate pulse/meter arithmetic is
+added. The authoritative pulse display uses Audio's subsequently supplied state
+as described below.
+
+Pulse-display slice: consume Audio 8b293d9's `currentPulse` directly in a small
+status child. Display its one-based denominator beat, downbeat accent and
+sampled progress in both sound modes and count-in. A static neutral marker
+replaces it while ready/paused/finished; Reduce Motion omits the progress ring.
+Do not infer pulse counts from meter, schedule animation with a second clock,
+or announce every pulse through VoiceOver. The notation subtree stays isolated
+from these frequent updates. Native tests must observe a visible pulse in
+silent count-in and playback, and its disappearance on manual pause.
+
+Focused UI checks now cover count-in and running manual interruption, explicit
+resume, end/stop, repeat-occurrence loop endpoints and wrapping, original-page
+access, fresh-controller reopening, large-text transport reachability, and
+unconfirmed-source rejection with manual reading retained. They export native
+portrait/landscape/large-text and repeat-loop captures when root runs the suite.
+These checks have been authored, not yet executed on this practice UI head.
+
+A separate automatic-advance UI take starts at area 1, silent at 100% with no
+count-in, and makes no transport or navigation commands after Play. It observes
+area 2 at 5 seconds, area 3 at 9 seconds and Finished at 13 seconds, with a
+runner-clock bracket around Play and 1.25 seconds of UI observation allowance.
+It captures all three current/upcoming compositions and attaches measured
+timing JSON. This verifies automatic visible focus independently of the manual
+Next/end test; exact transport/audio timing remains covered by their own tests.
+
+The existing repeat-loop test additionally selects 200% through the actual
+speed menu, chooses Silent, and resumes the manually paused A occurrence.
+Without intermediate controls it observes Pass 2 areas 4 → 5 → 6 → 4 while
+Playing, checks the wrapped upcoming area 5, captures the automatic loop wrap,
+then explicitly pauses. The owned 5/4/4-second areas make this a 6.5-second
+cycle at 200%; the focused test extension awaits composed native execution.
+
+First composed native candidate bc3c8b1 (run 39788035850) compiled and passed
+34 Core, 13 native and the existing 7 UI tests. The six new practice UI tests
+failed before their intended assertions: collapsed portrait sidebar, ambiguous
+global Done selectors, a partly clipped Add menu row, and offscreen segment
+fields. Focused corrections open the actual sidebar, uniquely identify sheet
+completion/menu choices, and reveal complete targets inside their own Form
+viewport before each action. Landscape tests now apply rotation after launch
+and assert app-frame orientation. Original action, persistence and automatic
+5/9/13-second boundary assertions remain. The corrected UI tests await root's
+next composed native run.
+
+Candidate 4a4a39e (run 39793418248) passed 35 Core, 13 native, the manual practice
+flow, fractional multi-segment cold reopen and the existing 7 UI tests. The
+remaining portrait failures have a sidebar `PopoverDismissRegion` over the
+reader and a BackButton instead of ToggleSidebar; no post-import hide tap ran.
+Plan: let LibraryView bind native columnVisibility (initially automatic), then
+set detailOnly after successful explicit exercise opening or file import,
+alongside the existing compact-column selection at those two success callbacks.
+Normal sidebar navigation stays native. The test must wait for the actual
+Practice button to become hittable, with no guessed sidebar dismissal action.
+Apple documents the combined visibility/compact-column initializer from iOS 17:
+[NavigationSplitView initializer](https://developer.apple.com/documentation/swiftui/navigationsplitview/init(columnvisibility:preferredcompactcolumn:sidebar:detail:)).
+
+The Add-row failure is a test gesture overshoot: its initially clipped frame
+disappears after the first full swipe, and repeated same-direction swipes end
+at crop controls. Keep the existing scrollable Add action. Replace full swipes
+with short coordinate drags in the Form gutter, sized from the target's distance
+outside the viewport, reverse when the target is passed, and hold before lifting
+to avoid inertial overshoot. Gutter drags avoid editing crop sliders. The native
+coordinate press/drag/velocity/hold API is available in the verified Xcode 16.4:
+[XCUICoordinate drag](https://developer.apple.com/documentation/xcuiautomation/xcuicoordinate/press(forduration:thendragto:withvelocity:thenholdforduration:)).
+
+Candidate 50991f4 (run 39799149132) passed large-text practice, automatic
+5/9/13-second focus, manual interruption and fractional timing cold reopen.
+The remaining Add-menu failures show no expanded menu in the hierarchy: the
+accessible Form row is 672 points wide, but its inner menu button is only
+about 174 points wide. Make each Add menu's actual Label fill its row with a
+44-point touch height, then select the native action by its visible title.
+The trace does not establish identifier loss: no expanded menu was captured.
+
+The deletion test found the renamed navigation title after cold reopen, with
+no failure-associated UI snapshot to establish whether the record persisted.
+Library deletion currently reads an optional payload also cleared by the
+dialog's dismissal binding, allowing a nil payload to skip the action. Capture
+the intended project through the iOS 15+
+presenting-data API, retaining the same synchronous library mutation; apply the
+same correction to area/section removal dialogs. Verify successful deletion
+before terminating, then retain cold-reopen verification and check that the
+deleted library row is absent. No shared persistence mutation changes are needed.
+These focused corrections await the next root native candidate.
+[Apple presenting-data confirmation dialog](https://developer.apple.com/documentation/swiftui/view/confirmationdialog(_:ispresented:titlevisibility:presenting:actions:)-9ibgk).
+
+Candidate bb36d24 (run 39804100969) passed 35 Core, 13 native and the other
+11 UI checks, including confirmed deletion/cold reopen and automatic practice.
+Both Add-menu section choices still failed with the full-row Label. Replace
+only those two Form Menu triggers with explicit Buttons presenting native
+confirmation dialogs. Each owns an independent Bool, keeps the existing
+44-point full-row Label and shows every existing section choice with the same
+title and empty-section policy. Choice closures capture sectionID directly;
+they neither read a nullable action payload nor change membership semantics.
+Attach each dialog to its trigger for native iPad anchoring. Existing section
+choice, repeat, save/cancel and timed-loop assertions remain unchanged. No
+coordinate fallback or new suite is introduced; root owns native verification.
+
+Candidate 6f69f50 (run 39809306373) passed the Add choices and all subsequent
+draft/persistence/removal assertions; its remaining failures are now distinct.
+The loop's speed Menu is present once, unobscured in the hierarchy, yet native
+hit testing rejects it. Replace that control with a 44-point Button and one
+Bool-driven native speed-choice confirmation dialog; retain every speed and
+the same controller command, identifier, label and timed-loop checks.
+
+The two reveal failures have targets fully inside the Form viewport; the trace
+then shows ordinary `.tap()` using XCTest's documented-in-log rdar://59288308
+workaround and successfully invoking Move earlier / Remove area. Reveal should
+establish geometric visibility, not reject this SDK's Menu hit-test result.
+Keep strict whole-target viewport bounds and short drags; callers must still
+perform normal `.tap()` and pass all real action/removal/save/cancel assertions.
+No coordinate action fallback is added.
+
+After portrait rotation/cancel, the actual failure hierarchy has the sidebar's
+native PopoverDismissRegion over the reader. The test should tap that observed
+dismissal surface and wait for the reader toolbar's actual hittability, matching
+normal sidebar navigation. Library visibility behavior stays native.
+
+The inspected loop PNG also shows Resume split across two lines despite unused
+footer width. Use one AnyLayout control hierarchy (regular row; compact/larger
+text stacked groups) instead of duplicate ViewThatFits candidates. Keep the
+existing accessibility-size grid. Put 44-point hit regions inside the actual
+Button labels and keep the normal playback label at its intrinsic width.
+The first preparation failure includes a keyboard/dictation accessory over its
+bottom edge; give area-name editing a Done submit action that clears FocusState,
+and complete that ordinary input action before revealing area operations.
+
+Candidate 90fcc7b (run 39815509990) passed 35 Core, 13 native and 12/13 UI,
+including actual 200% automatic wrapping and full preparation/save/cancel.
+Only the first automatic-advance observation exceeded the unchanged 1.25-second
+UI allowance. Trace: Play returned near test time 25.40; the first Bar 2 poll
+at 30.16 was false, causing a debug description and three extra AX snapshots
+through 30.81. The next poll did not occur until 32.11, with observation 6.81984
+seconds after Play returned. The area 3 and final boundary checks passed.
+
+Minimal harness correction: use a block predicate that closes over the real
+element/label, with XCTNSPredicateExpectation.object nil, rather than providing
+the AX element for diagnostic formatting. Retain all existing 5/9/13-second
+boundary bounds, phase/order/upcoming assertions, three captures and the timing
+receipt; record the observation method. No production clock/telemetry or added
+tolerance. The next root native run must verify the negative-poll trace and
+the same acceptance bounds.
+[Apple's initializer accepts an optional object](https://developer.apple.com/documentation/xctest/xctnspredicateexpectation/init(predicate:object:));
+the block captures the actual UI element and evaluates its unchanged label match.
+
+A full-screen practice presentation pauses on disappearance. Preparation/timing
+changes invalidate it; reopening compiles a fresh controller. Invalid timing
+keeps the original reader available with the actual preparation error. Original
+pages remain reachable from both reader and practice. Foreground-visible practice
+keeps the idle timer disabled even while paused; exit/background restores normal
+idle behavior. This lifecycle policy is separate from controller scheduling.
+
+Catalog-order correction: moveArea changes systems on that source page only.
+A custom C,A,B section or repeated A,B,A membership sequence is preserved along
+with occurrence UUIDs; the section editor is the authority for musical order.
+Starting beat in bar is one-based: 4/4 beat 4 maps to Core phase 3, and 6/8 beat 4
+to phase 1.5. Untouched values retain the original Core phase exactly even when
+one-based floating-point display conversion would otherwise introduce rounding.

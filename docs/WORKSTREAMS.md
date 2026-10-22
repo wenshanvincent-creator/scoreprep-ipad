@@ -1,17 +1,20 @@
 # Parallel work
 
-Current phase: **V2 — tempo-guided practice completing v0.1**.
+Current milestone: **v0.1 practice engineering gate passed**.
 Read MVP_PLAN.md, ARCHITECTURE.md and UI_SKILLS.md before implementing.
 
 V1's native engineering gate passed at 276418b, including inspected integrated
-portrait/landscape and offline-reopen captures. V2 remains separate work until
-its UI, audio and demonstration checks pass. Voice and following stay deferred.
+portrait/landscape and offline-reopen captures. V2's integrated native gate
+passed at a60b347, including its UI, live mixer and automatic repeat checks.
+Recognition's final native gate also passed at 06cdab1. Integration owns the
+accepted sources and evidence in PRACTICE_VERIFICATION.md. Voice and following
+stay outside this preview.
 
 | Chat | Owns | Current task |
 | --- | --- | --- |
-| Integration | Shared ScoreCore contracts, app entry point, project.yml and workflows | Review/composition, V2 native verification and the reproducible practice demonstration. |
-| Reader and preparation | Preparation/timing views, ScoreReader and focused LibraryView callback wiring; owned reader UI tests | Multi-area editing, explicit reading order and pickup/full timing arrays; then current/upcoming practice view. |
-| Recognition and rendering chat, continuing as Metronome/Practice | ScoreAudio, new pulse-planning code/tests and documented controller API | Shared-clock audible/silent metronome, count-in, speed/loops and immediate interruption. Recognition code is stable. |
+| Integration | Shared ScoreCore contracts, app entry point, project.yml and workflows | v0.1 integrated and verified; owns evidence and follow-up scope. |
+| Reader and preparation | Preparation/timing views, ScoreReader and focused LibraryView wiring; owned reader UI tests | Implemented and integrated; idle pending a new scoped task. |
+| Recognition and rendering chat, continuing as Metronome/Practice | ScoreAudio, pulse-planning code/tests, controller API and recognition harness | Implemented, integrated and verified; idle pending a new scoped task. |
 
 Each active chat uses its own branch/worktree. Inspect local and remote state,
 keep to owned paths, and return a commit/draft PR. Workstream chats do not push

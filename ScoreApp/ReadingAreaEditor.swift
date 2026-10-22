@@ -23,13 +23,13 @@ struct ReadingAreaEditor: View {
         NavigationStack {
             GeometryReader { geometry in
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Keep both piano staves, clefs and markings inside the blue outline.")
+                    Text("Keep all staves, clefs and markings inside the blue outline.")
                         .font(.footnote).foregroundStyle(.secondary)
                     cropPreview
                         .frame(maxWidth: .infinity, maxHeight: geometry.size.height * 0.42)
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
-                            cropControls
+                            ReadingAreaBoundsControls(crop: $crop)
                             Button("Use full page") { crop = .fullPage }
                                 .frame(minHeight: 44)
                                 .accessibilityIdentifier("reset-reading-area")
@@ -71,7 +71,11 @@ struct ReadingAreaEditor: View {
             }
     }
 
-    private var cropControls: some View {
+}
+
+struct ReadingAreaBoundsControls: View {
+    @Binding var crop: NormalizedRect
+    var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             edge("Top", value: Binding(get: { crop.y }, set: {
                 let bottom = crop.y + crop.height

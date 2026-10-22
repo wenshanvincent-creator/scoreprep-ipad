@@ -1,8 +1,17 @@
-# First native build
+# Native build evidence
 
-The later accepted V1 checkpoint is recorded in
-[V1_NATIVE_VERIFICATION.md](V1_NATIVE_VERIFICATION.md). The evidence below is
-the original foundation checkpoint, not the final practice-preview result.
+The v0.1 tempo-guided practice preview passed its integrated native gate at
+a60b347c834572c2d82ea34a91630517509b9f7d: 35 Core, 13 native and all 13 UI
+tests passed, including live mixer capture, automatic line changes, the 200%
+repeat and complete preparation/save/cancel. Accepted captures, receipts and
+device boundaries are in [PRACTICE_VERIFICATION.md](PRACTICE_VERIFICATION.md).
+
+The earlier V1 recognition/rendering gate is recorded in
+[V1_NATIVE_VERIFICATION.md](V1_NATIVE_VERIFICATION.md).
+
+## First foundation checkpoint
+
+The evidence below records the original foundation build.
 
 Verified on 22 October 2026 at commit
 792a59e5e90a1a26805a8d484401c85cf1f15a42.
@@ -22,7 +31,7 @@ design mockup.
 
 ![First iPad simulator build](assets/first-ipad-simulator.png)
 
-Sound output, imported real-world score variety, Pencil input, Bluetooth
-pedals, continuous metronome/line synchronization and TestFlight installation
-have not been validated by this run. The continuous metronome and annotation
-features remain roadmap work.
+That foundation run did not validate continuous practice audio or line
+advancement; those checks belong to the v0.1 evidence above. Physical output,
+broader score variety, Pencil, pedals and TestFlight installation require
+their own later validation.

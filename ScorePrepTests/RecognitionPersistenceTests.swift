@@ -1,4 +1,5 @@
 import Foundation
+import ScoreCore
 import XCTest
 @testable import ScorePrep
 
@@ -15,6 +16,26 @@ final class RecognitionPersistenceTests: XCTestCase {
         let systemID = try XCTUnwrap(library.projects.first(where: { $0.id == projectID })?.systems.first?.id)
         try library.updateCrop(projectID: projectID, systemID: systemID,
                                bounds: .init(x: 0, y: 0, width: 1, height: 0.5))
+        var preparation = ScorePreparation(project: try XCTUnwrap(
+            library.projects.first(where: { $0.id == projectID })
+        ))
+        let second = SourceSystem(pageIndex: 0, bounds: .init(x: 0, y: 0.5, width: 1, height: 0.5),
+                                  label: "Second system")
+        preparation.systems.append(second)
+        preparation.sections[0].systemIDs.append(second.id)
+        try library.savePreparation(projectID: projectID, draft: preparation)
+        let timing = [
+            TimingSegment(quarterBeats: 1, meter: .init(numerator: 4, denominator: 4),
+                          tempo: .init(bpm: 60), startingBarPhase: 3),
+            TimingSegment(quarterBeats: 3, meter: .init(numerator: 3, denominator: 4),
+                          tempo: .init(bpm: 90))
+        ]
+        try library.updateTiming(projectID: projectID, systemID: second.id, segments: timing)
+        var invalid = timing
+        invalid[1].quarterBeats = 0
+        XCTAssertThrowsError(try library.updateTiming(
+            projectID: projectID, systemID: second.id, segments: invalid
+        ))
 
         let reopened = ScoreLibrary(store: store)
         let project = try XCTUnwrap(reopened.projects.first(where: { $0.id == projectID }))
@@ -22,6 +43,9 @@ final class RecognitionPersistenceTests: XCTestCase {
         XCTAssertEqual(project.recognizedEdition?.engine, "homr@\(job.engineRevision)")
         XCTAssertEqual(project.title, "My rehearsal")
         XCTAssertEqual(project.systems.first?.bounds.height, 0.5)
+        XCTAssertEqual(project.systems.count, 2)
+        XCTAssertEqual(project.sections.first?.systemIDs.last, second.id)
+        XCTAssertEqual(project.systems.last?.timing, timing)
         XCTAssertNil(project.pendingRecognition)
         let url = try XCTUnwrap(reopened.sourceURL(for: project))
         XCTAssertEqual(ScoreLibrary.sourceHash(try Data(contentsOf: url)), job.originalSHA256)
