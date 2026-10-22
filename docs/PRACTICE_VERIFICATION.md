@@ -52,7 +52,8 @@ Native portrait/landscape practice and multi-segment timing/reopened captures
 were retrieved from artifact 12433483678 and inspected. Both complete grand
 staffs and transport fit. Timing fields, explicit dotted-quarter pulse and
 calculated duration remain readable. Large-text and automatic-advance captures
-await the corrected UI run. The failed portrait hierarchy explicitly contains
+were not available at that checkpoint; the later 50991f4 evidence follows below.
+The failed portrait hierarchy explicitly contains
 the native PopoverDismissRegion over the detail; the preparation hierarchy is
 scrolled to crop sliders with Add reading area virtualized above the viewport.
 
