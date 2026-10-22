@@ -55,6 +55,9 @@ public struct PracticeTransport: Sendable {
     private var anchorHostTime = 0.0
     private var loopIndices: ClosedRange<Int>?
 
+    /// The pulse planner uses this take origin; speed and pause do not change it.
+    var entryReferencePosition: Double { entryPosition }
+
     /// TimelineCompiler supplies a nonempty route with confirmed valid timing.
     public init(timeline: CompiledTimeline) { self.timeline = timeline }
 
