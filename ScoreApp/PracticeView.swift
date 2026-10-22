@@ -159,6 +159,7 @@ private struct PracticeStatusView: View {
             layout {
                 Text(phaseLabel).font(.subheadline).monospacedDigit()
                     .accessibilityIdentifier("practice-phase")
+                PracticePulseIndicator(display: controller.currentPulse)
                 if !dynamicTypeSize.isAccessibilitySize { Spacer() }
                 Text(controller.isAudible ? "Original · Sound on" : "Original · Silent")
                     .font(.caption).foregroundStyle(.secondary)

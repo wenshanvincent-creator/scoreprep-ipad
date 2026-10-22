@@ -21,11 +21,14 @@ final class PracticePlaybackUITests: XCTestCase {
         app.buttons["practice-sound"].tap()
         app.buttons["practice-play-pause"].tap()
         wait(app.staticTexts["practice-phase"], contains: "Count-in")
+        waitValue(app.otherElements["practice-pulse"], contains: "Count-in")
         app.buttons["practice-next"].tap()
         wait(current, contains: "Bar 2")
         wait(app.staticTexts["practice-phase"], contains: "Paused")
+        waitValue(app.otherElements["practice-pulse"], contains: "Inactive")
         app.buttons["practice-play-pause"].tap()
         wait(app.staticTexts["practice-phase"], contains: "Playing")
+        waitValue(app.otherElements["practice-pulse"], contains: "Beat")
         app.buttons["practice-next"].tap()
         wait(current, contains: "Bars 3–4")
         wait(app.staticTexts["practice-phase"], contains: "Paused")
@@ -118,6 +121,11 @@ final class PracticePlaybackUITests: XCTestCase {
     private func waitForPortrait(_ app: XCUIApplication) {
         let expectation = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in app.frame.height > app.frame.width }, object: app)
         XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 10), .completed)
+    }
+
+    private func waitValue(_ element: XCUIElement, contains text: String) {
+        let expectation = XCTNSPredicateExpectation(predicate: NSPredicate(format: "value CONTAINS %@", text), object: element)
+        XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: 5), .completed)
     }
 
     private func capture(_ name: String) {

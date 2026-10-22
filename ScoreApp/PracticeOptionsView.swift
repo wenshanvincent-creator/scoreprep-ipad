@@ -35,14 +35,14 @@ struct PracticeOptionsView: View {
                             Text(bars == 0 ? "None" : "\(bars)").tag(bars)
                         }
                     }.accessibilityIdentifier("practice-count-in-bars")
-                    Text("The count-in ends at the confirmed entrance phase. Resume continues without adding a new count-in.")
+                    Text("The count-in leads to the saved starting beat. Resume continues without a new count-in.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("System A–B loop") {
-                    Picker("A · First system", selection: $firstSpanID) {
+                Section("A–B loop") {
+                    Picker("A · First area", selection: $firstSpanID) {
                         ForEach(controller.timeline.spans) { span in Text(label(span)).tag(span.id) }
                     }.accessibilityIdentifier("practice-loop-a")
-                    Picker("B · Last system", selection: $lastSpanID) {
+                    Picker("B · Last area", selection: $lastSpanID) {
                         ForEach(controller.timeline.spans) { span in Text(label(span)).tag(span.id) }
                     }.accessibilityIdentifier("practice-loop-b")
                     Button("Use A–B loop") {
@@ -54,7 +54,7 @@ struct PracticeOptionsView: View {
                         Button("Turn loop off") { controller.setLoop(nil); dismiss() }
                             .accessibilityIdentifier("practice-clear-loop")
                     }
-                    Text("Both systems are included. Changing the loop pauses practice; Resume starts when you are ready.")
+                    Text("Both areas are included. Changing the loop pauses practice; Resume starts when you are ready.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
                 if let error = controller.errorMessage {
