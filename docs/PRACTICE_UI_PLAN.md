@@ -213,6 +213,26 @@ and assert app-frame orientation. Original action, persistence and automatic
 5/9/13-second boundary assertions remain. The corrected UI tests await root's
 next composed native run.
 
+Candidate 4a4a39e (run 39793418248) passed 35 Core, 13 native, the manual practice
+flow, fractional multi-segment cold reopen and the existing 7 UI tests. The
+remaining portrait failures have a sidebar `PopoverDismissRegion` over the
+reader and a BackButton instead of ToggleSidebar; no post-import hide tap ran.
+Plan: let LibraryView bind native columnVisibility (initially automatic), then
+set detailOnly only after the owned exercise imports successfully, alongside
+the existing compact-column selection. The test must wait for the actual
+Practice button to become hittable, with no guessed sidebar dismissal action.
+Apple documents the combined visibility/compact-column initializer from iOS 17:
+[NavigationSplitView initializer](https://developer.apple.com/documentation/swiftui/navigationsplitview/init(columnvisibility:preferredcompactcolumn:sidebar:detail:)).
+
+The Add-row failure is a test gesture overshoot: its initially clipped frame
+disappears after the first full swipe, and repeated same-direction swipes end
+at crop controls. Keep the existing scrollable Add action. Replace full swipes
+with short coordinate drags in the Form gutter, sized from the target's distance
+outside the viewport, reverse when the target is passed, and hold before lifting
+to avoid inertial overshoot. Gutter drags avoid editing crop sliders. The native
+coordinate press/drag/velocity/hold API is available in the verified Xcode 16.4:
+[XCUICoordinate drag](https://developer.apple.com/documentation/xcuiautomation/xcuicoordinate/press(forduration:thendragto:withvelocity:thenholdforduration:)).
+
 A full-screen practice presentation pauses on disappearance. Preparation/timing
 changes invalidate it; reopening compiles a fresh controller. Invalid timing
 keeps the original reader available with the actual preparation error. Original
