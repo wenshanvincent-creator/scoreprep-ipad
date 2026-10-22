@@ -1,11 +1,10 @@
 # Shared practice transport
 
-Prepared separately from the V1 integration checkout. V1 must pass before this
-transport is composed into the native reader. This is the v0.1 practice
-foundation, not voice or audio following.
+The v0.1 native reader composes this transport after the verified V1 gate.
+It implements tempo-guided practice over confirmed musical timing.
 
 ScoreCore owns a pure PracticeTransport over TimelineCompiler's confirmed route.
-It contains no timer, device API or audio engine. One native controller will own
+It contains no timer, device API or audio engine. One native controller owns
 it and pass seconds from a single monotonic host clock to both visual snapshots
 and audio-event scheduling. hostTime(forElapsed:after:) is the matching audio mapping.
 Reference seconds preserve logical musical position when speed changes.
@@ -33,11 +32,11 @@ between observations without drift. Upcoming context points to A at B's end.
 Manual navigation pauses immediately; choosing a system outside A-B disarms the
 loop. Editing loop boundaries pauses until the musician resumes explicitly.
 
-The remaining native work is required: schedule pulse buffers from this host
-mapping, add the pulse planner and current/upcoming reader, confirm pickups in
-the timing editor, wire count-in/speed/loops and manual interruption, handle
-actual audio interruptions, and inspect simulator evidence. A pure transport
-test does not establish audible synchronization or complete the preview.
+PracticeController schedules pulse buffers from this host mapping and supplies
+the current/upcoming reader. The native timing editor confirms pickups and full
+segment arrays; the practice controls expose count-in, speed, loops and manual
+interruption. System notifications pause playback. Native audio and interface
+evidence are recorded in [PRACTICE_VERIFICATION.md](PRACTICE_VERIFICATION.md).
 
 ## Preparation save contract
 
@@ -53,14 +52,13 @@ when included in the practice route.
 ScoreLibrary.savePreparation(projectID:draft:) applies that draft to the latest
 project and saves it atomically. The draft excludes source filenames, pending
 jobs and recognized editions, so a preparation sheet cannot overwrite later
-recognition work. The native reader still needs to expose the multi-area editor;
-the data-layer implementation is not a completed preparation interface.
+recognition work. The reader exposes this draft through its multi-area and
+reading-order preparation sheet, with explicit Save and Cancel actions.
 
 ScoreLibrary.updateTiming(projectID:systemID:segments:) validates and atomically
 saves the full timing array, including pickups and meter/tempo changes. The
-existing single-segment caller delegates to it until the native editor is
-updated. That editor must retain all saved segments and their fractional
-performed beats and starting bar phases rather than rounding to whole bars.
+single-segment overload delegates to it. The native editor retains every saved
+segment, including fractional performed beats and starting bar phases.
 
 ## Native build feedback
 

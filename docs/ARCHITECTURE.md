@@ -1,6 +1,6 @@
 # Architecture
 
-## Current V1 pipeline
+## Recognition pipeline
 
 Keep the existing source reader and musical-timing foundation. V1 adds a remote
 homr worker, a thin native recognition client and a Verovio rendering view.
@@ -8,12 +8,11 @@ MusicXML is the interchange artifact for recognized notation. Original-page
 coordinates remain the authority for source images and existing markings.
 Do not replace those two representations with one lossy model.
 
-Recognition/Rendering owns the new ScoreRecognition and
-ScoreRendering/Recognition directories plus backend. It should provide a small
-documented result contract and a self-contained rendering view for integration.
-Integration owns changes to shared ScoreCore persistence and app composition.
-V1 needs the actual OMR output and native Verovio evidence; a fixture response
-alone does not establish an end-to-end recognition service.
+ScoreRecognition owns the native client and result contract;
+ScoreRendering/Recognition owns the engraving view; backend wraps the existing
+OMR engine. Shared ScoreCore persistence and app composition are integrated
+separately. V1's actual cloud OMR output and native Verovio evidence are recorded
+in V1_NATIVE_VERIFICATION.md.
 
 ## Boundaries
 
@@ -40,7 +39,7 @@ The project stores only the relative source filename.
 - TimeSignature expresses a numerator and denominator.
 - BeatUnit explicitly defines quarter-note beats per tempo pulse.
 - TimingSegment expresses performed quarter-note beats and a reference tempo.
-  Its starting bar phase is available for pickups and future accent scheduling.
+  Its starting bar phase drives pickup entrances and pulse accent scheduling.
 - SourceSystem references one source page, one normalized crop and optional
   confirmed timing. Untimed systems cannot compile into automatic playback.
 - ScoreSection lists source-system IDs.
@@ -85,8 +84,8 @@ project.yml is the source of the native Xcode project. XcodeGen generates
 ScorePrep.xcodeproj so parallel sessions do not edit a generated project file.
 The app links the local ScoreCore package and the pinned native Verovio toolkit.
 tools/prepare_verovio.py prepares its local Swift package in build/dependencies
-from an exact upstream revision and applies the documented negative-voice bounds
-fix. Both native CI entry points run this preparation before XcodeGen.
+from an exact upstream revision and applies the documented narrow humlib bounds
+guards. Both native CI entry points run this preparation before XcodeGen.
 Its built-in musicxml-hum import path preserves the interleaved piano voices
 returned by homr. The remote worker runs the existing OMR models; the iPad
 retains the original and saves per-source-page MusicXML for offline engraving.

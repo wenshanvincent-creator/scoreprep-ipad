@@ -102,7 +102,9 @@ adds native controller cancellation/system notifications, live mixer PCM with
 host-time comparisons and a pause gap, and a separate offline rendering check.
 Live capture exports a WAV and JSON receipt; unavailable simulator output is
 reported as a skipped live test with a limitation receipt. Offline success is
-never labeled live output. These new checks await the macOS run.
+never labeled live output. The checks have passed on the macOS-hosted iPad
+simulator; exact sources and captured receipts are recorded in
+[PRACTICE_VERIFICATION.md](PRACTICE_VERIFICATION.md).
 
 The iPadOS 18-compatible API choices follow Apple's
 [host-clock representation](https://developer.apple.com/documentation/avfaudio/avaudiotime),

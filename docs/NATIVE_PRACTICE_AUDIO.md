@@ -1,8 +1,10 @@
-# Native practice audio handoff
+# Native practice audio
 
-Implementation waits for the integrated V1 gate. These are the native audio
-constraints for the existing v0.1 practice goal, checked against Apple's
-documentation on 22 October 2026. Keep Xcode 16.4 and iPadOS 18.
+PracticeController and PracticeClickOutput implement these constraints for
+the v0.1 preview. The API choices were checked against Apple's documentation
+on 22 October 2026. Keep Xcode 16.4 and iPadOS 18. Native results, captured
+audio and device boundaries are recorded in
+[PRACTICE_VERIFICATION.md](PRACTICE_VERIFICATION.md).
 
 ## One clock
 
