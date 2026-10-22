@@ -55,3 +55,9 @@ project and saves it atomically. The draft excludes source filenames, pending
 jobs and recognized editions, so a preparation sheet cannot overwrite later
 recognition work. The native reader still needs to expose the multi-area editor;
 the data-layer implementation is not a completed preparation interface.
+
+ScoreLibrary.updateTiming(projectID:systemID:segments:) validates and atomically
+saves the full timing array, including pickups and meter/tempo changes. The
+existing single-segment caller delegates to it until the native editor is
+updated. That editor must retain all saved segments and their fractional
+performed beats and starting bar phases rather than rounding to whole bars.
