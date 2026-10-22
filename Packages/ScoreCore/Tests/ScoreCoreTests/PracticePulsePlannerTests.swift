@@ -103,6 +103,28 @@ final class PracticePulsePlannerTests: XCTestCase {
         XCTAssertEqual(music.progress, 0.5, accuracy: 1e-9)
     }
 
+    func testFinalDisplayUsesTerminalTempoAndTheRemainingPulseFraction() throws {
+        let timeline = try route([[segment(1, bpm: 30), segment(2, bpm: 120)]])
+        var transport = PracticeTransport(timeline: timeline)
+        try transport.start(at: 0, countInBars: 0)
+        let planner = PracticePulsePlanner(timeline: timeline)
+        let final = try XCTUnwrap(planner.display(for: transport, elapsed: 2.75))
+        XCTAssertEqual(final.pulse.elapsed, 2.5)
+        XCTAssertEqual(final.progress, 0.5, accuracy: 1e-9)
+        XCTAssertEqual(planner.pulses(for: transport, in: 0..<4).map(\.elapsed), [0, 2, 2.5])
+
+        // The last onset can precede the final tempo change. Continue its
+        // remaining fraction at the terminal tempo, rather than restarting it.
+        let short = try route([[segment(0.5, bpm: 30), segment(0.25, bpm: 120)]])
+        var shortTransport = PracticeTransport(timeline: short)
+        try shortTransport.start(at: 0, countInBars: 0)
+        let shortPlanner = PracticePulsePlanner(timeline: short)
+        let crossing = try XCTUnwrap(shortPlanner.display(for: shortTransport, elapsed: 1.0625))
+        XCTAssertEqual(crossing.pulse.elapsed, 0)
+        XCTAssertEqual(crossing.progress, 0.85, accuracy: 1e-9)
+        XCTAssertEqual(shortPlanner.pulses(for: shortTransport, in: 0..<2).map(\.elapsed), [0])
+    }
+
     func testRepeatedLoopEventsHaveDistinctElapsedIdentitiesAndMissedPulsesAreNotReplayed() throws {
         let timeline = try route([[segment(1)]])
         var transport = PracticeTransport(timeline: timeline)
