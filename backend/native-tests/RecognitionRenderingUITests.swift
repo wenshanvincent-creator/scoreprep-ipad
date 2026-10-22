@@ -61,15 +61,27 @@ final class RecognitionRenderingUITests: XCTestCase {
     func testInitialSourceAndVisibleSourceCallback() throws {
         let app = XCUIApplication()
         app.launchArguments = ["--fixture", "--source-link"]
+        XCUIDevice.shared.orientation = .landscapeLeft
         app.launch()
         let source = app.staticTexts["linkedSource"]
         XCTAssertTrue(source.waitForExistence(timeout: 90))
         XCTAssertEqual(source.label, "Linked source 8")
-        app.buttons["increaseNotationSize"].tap()
-        XCUIDevice.shared.orientation = .portrait
+        let larger = app.buttons["increaseNotationSize"]
+        let previous = app.buttons["Previous notation page"]
+        wait(for: NSPredicate(format: "enabled == true"), on: larger)
+        larger.tap()
+        wait(for: NSPredicate(format: "value == %@", "111 percent"), on: app.staticTexts["notationSizeValue"])
+        wait(for: NSPredicate(format: "enabled == true"), on: previous)
         XCTAssertEqual(source.label, "Linked source 8")
-        app.buttons["Previous notation page"].tap()
+        XCUIDevice.shared.orientation = .portrait
+        // The source label stays visible during asynchronous reflow. App idle
+        // does not mean that the disabled navigation button can accept a tap.
+        wait(for: NSPredicate(format: "enabled == true"), on: previous)
+        XCTAssertEqual(source.label, "Linked source 8")
+        previous.tap()
+        wait(for: NSPredicate(format: "label == %@", "Linked source 3"), on: source)
         XCTAssertEqual(source.label, "Linked source 3")
+        capture("fixture-source-link-after-navigation")
     }
 
     @MainActor
