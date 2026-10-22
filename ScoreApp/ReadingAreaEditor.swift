@@ -21,25 +21,23 @@ struct ReadingAreaEditor: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+            GeometryReader { geometry in
+                VStack(alignment: .leading, spacing: 16) {
                     Text("Keep both piano staves, clefs and markings inside the blue outline.")
-                        .foregroundStyle(.secondary)
-                    SourcePageSurface(page: page)
-                        .overlay {
-                            GeometryReader { geometry in
-                                Rectangle().stroke(.tint, lineWidth: 3)
-                                    .frame(width: geometry.size.width * crop.width,
-                                           height: geometry.size.height * crop.height)
-                                    .offset(x: geometry.size.width * crop.x,
-                                            y: geometry.size.height * crop.y)
-                            }.accessibilityHidden(true)
-                        }
-                    cropControls
-                    Button("Use full page") { crop = .fullPage }
-                        .accessibilityIdentifier("reset-reading-area")
-                    Text("The original stays unchanged. Adjusting an area clears its confirmed timing.")
                         .font(.footnote).foregroundStyle(.secondary)
+                    cropPreview
+                        .frame(maxWidth: .infinity, maxHeight: geometry.size.height * 0.42)
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            cropControls
+                            Button("Use full page") { crop = .fullPage }
+                                .frame(minHeight: 44)
+                                .accessibilityIdentifier("reset-reading-area")
+                            Text("The original stays unchanged. Adjusting an area clears its confirmed timing.")
+                                .font(.footnote).foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityIdentifier("reading-area-controls")
                 }.padding(20)
             }
             .background(Color(uiColor: .systemGroupedBackground))
@@ -58,6 +56,19 @@ struct ReadingAreaEditor: View {
                 get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } }
             )) { Button("OK") {} } message: { Text(errorMessage ?? "") }
         }
+    }
+
+    private var cropPreview: some View {
+        SourcePageSurface(page: page)
+            .overlay {
+                GeometryReader { geometry in
+                    Rectangle().stroke(.tint, lineWidth: 3)
+                        .frame(width: geometry.size.width * crop.width,
+                               height: geometry.size.height * crop.height)
+                        .offset(x: geometry.size.width * crop.x,
+                                y: geometry.size.height * crop.y)
+                }.accessibilityHidden(true)
+            }
     }
 
     private var cropControls: some View {
