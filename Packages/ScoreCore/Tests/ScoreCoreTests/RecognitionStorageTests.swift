@@ -17,6 +17,23 @@ final class RecognitionStorageTests: XCTestCase {
         XCTAssertEqual(projects[0].title, "Original study")
         XCTAssertEqual(projects[0].sourceFilename, "study.pdf")
         XCTAssertNil(projects[0].recognizedEdition)
+        XCTAssertNil(projects[0].pendingRecognition)
+    }
+
+    func testPendingJobCanResumeFromSavedLibraryWithoutCredentials() throws {
+        let pending = PendingRecognition(
+            jobID: "6E3544F9-6046-44A5-B9A9-C50FE68EE96A",
+            workerURL: URL(string: "https://worker.example")!, originalSHA256: "fixture-hash"
+        )
+        let project = ScoreProject(
+            title: "Pending study", sourceFilename: "original.png", systems: [],
+            sections: [], readingOrder: [], pendingRecognition: pending
+        )
+        let restored = try JSONDecoder().decode(
+            [ScoreProject].self, from: JSONEncoder().encode([project])
+        )
+        XCTAssertEqual(restored[0].pendingRecognition, pending)
+        XCTAssertNil(restored[0].recognizedEdition)
     }
 
     func testSavedEditionPreservesPageOrderAndIndividualReviewDecisions() throws {

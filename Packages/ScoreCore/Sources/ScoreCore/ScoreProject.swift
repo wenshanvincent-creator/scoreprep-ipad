@@ -65,11 +65,13 @@ public struct ScoreProject: Codable, Equatable, Identifiable, Sendable {
     public var sections: [ScoreSection]
     public var readingOrder: [SectionOccurrence]
     public var recognizedEdition: RecognizedEdition?
+    public var pendingRecognition: PendingRecognition?
 
     public init(
         id: UUID = UUID(), title: String, sourceFilename: String,
         systems: [SourceSystem], sections: [ScoreSection],
-        readingOrder: [SectionOccurrence], recognizedEdition: RecognizedEdition? = nil
+        readingOrder: [SectionOccurrence], recognizedEdition: RecognizedEdition? = nil,
+        pendingRecognition: PendingRecognition? = nil
     ) {
         self.id = id
         self.title = title
@@ -78,5 +80,6 @@ public struct ScoreProject: Codable, Equatable, Identifiable, Sendable {
         self.sections = sections
         self.readingOrder = readingOrder
         self.recognizedEdition = recognizedEdition
+        self.pendingRecognition = pendingRecognition
     }
 }

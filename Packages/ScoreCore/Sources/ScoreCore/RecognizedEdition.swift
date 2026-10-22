@@ -6,6 +6,19 @@ public enum RecognitionReviewState: String, Codable, Equatable, Sendable {
     case rejected
 }
 
+/// A remote job can be resumed without placing its access token in score JSON.
+public struct PendingRecognition: Codable, Equatable, Sendable {
+    public var jobID: String
+    public var workerURL: URL
+    public var originalSHA256: String
+
+    public init(jobID: String, workerURL: URL, originalSHA256: String) {
+        self.jobID = jobID
+        self.workerURL = workerURL
+        self.originalSHA256 = originalSHA256
+    }
+}
+
 /// A saved MusicXML artifact, kept separate from its original source page.
 public struct RecognizedSourcePage: Codable, Equatable, Identifiable, Sendable {
     public var sourcePageIndex: Int

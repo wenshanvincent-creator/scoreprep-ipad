@@ -24,6 +24,9 @@ targets:
       - ScoreRendering
       - ScoreAudio
       - ScoreRecognition
+      - path: Fixtures/RecognitionReplay
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: ScoreCore
       - package: Verovio

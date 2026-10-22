@@ -12,6 +12,7 @@ struct LibraryView: View {
     @State private var deleting: ScoreProject?
     @State private var title = ""
     @State private var compactColumn: NavigationSplitViewColumn = .detail
+    @State private var reviewRequest: SourceReviewRequest?
 
     private var selection: Binding<UUID?> {
         Binding(get: { UUID(uuidString: selectedProject) }, set: {
@@ -57,7 +58,14 @@ struct LibraryView: View {
                     }, onCropSaved: { systemID, bounds in
                         try library.updateCrop(projectID: project.id, systemID: systemID, bounds: bounds)
                     }, onRename: { beginRename(project) }, onDelete: { deleting = project },
-                    onReviewRequested: onReviewRequested)
+                    onReviewRequested: { projectID, pageIndex in
+                        if let onReviewRequested { onReviewRequested(projectID, pageIndex) }
+                        else {
+                            reviewRequest = SourceReviewRequest(
+                                projectID: projectID, sourcePageIndex: pageIndex
+                            )
+                        }
+                    })
                     .id(project.id)
             } else {
                 ContentUnavailableView {
@@ -73,6 +81,12 @@ struct LibraryView: View {
             if selection.wrappedValue.map({ ids.contains($0) }) != true {
                 selection.wrappedValue = ids.first
             }
+        }
+        .fullScreenCover(item: $reviewRequest) { request in
+            RecognitionReviewView(
+                library: library, projectID: request.projectID,
+                sourcePageIndex: request.sourcePageIndex
+            )
         }
         .overlay {
             if isImporting {
@@ -117,7 +131,10 @@ struct LibraryView: View {
             Button("OK") { library.errorMessage = nil }
         } message: { Text(library.errorMessage ?? "") }
         #if DEBUG
-        .task { await ReaderFixtures.importRequestedFixture(into: library, selection: selection) }
+        .task {
+            await ReaderFixtures.importRequestedFixture(into: library, selection: selection)
+            await RecognitionReplayFixture.installIfRequested(into: library, selection: selection)
+        }
         #endif
     }
 

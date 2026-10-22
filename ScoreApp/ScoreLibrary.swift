@@ -1,4 +1,5 @@
 import Combine
+import CryptoKit
 import Foundation
 import PDFKit
 import ScoreCore
@@ -169,10 +170,113 @@ final class ScoreLibrary: ObservableObject {
         // Persist removal first so a failed metadata write cannot lose an original.
         try store.save(updated)
         projects = updated
+        let editions = store.directory.appendingPathComponent("recognized-\(project.id)", isDirectory: true)
+        if FileManager.default.fileExists(atPath: editions.path) {
+            try FileManager.default.removeItem(at: editions)
+        }
         let source = store.sourceURL(for: project)
         if FileManager.default.fileExists(atPath: source.path) {
             try FileManager.default.removeItem(at: source)
         }
+    }
+
+    func recordRecognition(
+        projectID: UUID, job: RecognitionJob, workerURL: URL, originalSHA256: String
+    ) throws {
+        guard job.originalSHA256 == originalSHA256 else {
+            throw RecognitionIntegrationError.wrongOriginal
+        }
+        try update(projectID: projectID) {
+            $0.pendingRecognition = PendingRecognition(
+                jobID: job.id, workerURL: workerURL, originalSHA256: originalSHA256
+            )
+        }
+    }
+
+    func saveRecognition(projectID: UUID, job: RecognitionJob) throws {
+        guard let store else { throw LibraryError.unavailableStorage }
+        guard let index = projects.firstIndex(where: { $0.id == projectID }) else {
+            throw LibraryError.missingProject
+        }
+        guard let pending = projects[index].pendingRecognition,
+              pending.jobID == job.id, pending.originalSHA256 == job.originalSHA256 else {
+            throw RecognitionIntegrationError.wrongOriginal
+        }
+        guard job.state == .succeeded, !job.pages.isEmpty,
+              job.pages.map(\.sourcePageIndex) == Array(0..<job.pages.count),
+              job.pages.allSatisfy({ $0.state == .succeeded && !($0.musicXML ?? "").isEmpty }) else {
+            throw RecognitionIntegrationError.incompleteResult
+        }
+        let source = try Data(contentsOf: store.sourceURL(for: projects[index]))
+        guard Self.sourceHash(source) == pending.originalSHA256 else {
+            throw RecognitionIntegrationError.wrongOriginal
+        }
+        let editionID = UUID()
+        let relativeDirectory = "recognized-\(projectID)/\(editionID)"
+        let directory = store.directory.appendingPathComponent(relativeDirectory, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        do {
+            let pages = try job.pages.map { page in
+                let name = "page-\(page.sourcePageIndex).musicxml"
+                // The successful-result guard above establishes a nonempty XML payload.
+                try Data(page.musicXML!.utf8).write(
+                    to: directory.appendingPathComponent(name), options: .atomic
+                )
+                return RecognizedSourcePage(
+                    sourcePageIndex: page.sourcePageIndex,
+                    musicXMLFilename: "\(relativeDirectory)/\(name)"
+                )
+            }
+            var updated = projects
+            updated[index].recognizedEdition = RecognizedEdition(
+                id: editionID, engine: "oemer@\(job.engineRevision)", pages: pages
+            )
+            updated[index].pendingRecognition = nil
+            try store.save(updated)
+            projects = updated
+        } catch let saveError {
+            do {
+                try FileManager.default.removeItem(at: directory)
+            } catch let cleanupError {
+                throw NSError(domain: "ScorePrep.Recognition", code: 1, userInfo: [
+                    NSLocalizedDescriptionKey: "\(saveError.localizedDescription) Unfinished notation files could not be removed: \(cleanupError.localizedDescription)"
+                ])
+            }
+            throw saveError
+        }
+    }
+
+    func recognitionPages(projectID: UUID) throws -> [RecognitionPage] {
+        guard let store else { throw LibraryError.unavailableStorage }
+        guard let project = projects.first(where: { $0.id == projectID }) else {
+            throw LibraryError.missingProject
+        }
+        guard let edition = project.recognizedEdition else { return [] }
+        return try edition.pages.map { page in
+            RecognitionPage(
+                sourcePageIndex: page.sourcePageIndex, state: .succeeded,
+                musicXML: try String(
+                    contentsOf: store.directory.appendingPathComponent(page.musicXMLFilename),
+                    encoding: .utf8
+                ),
+                reviewRequired: page.reviewState != .accepted
+            )
+        }
+    }
+
+    func setRecognitionReview(
+        projectID: UUID, sourcePageIndex: Int, state: RecognitionReviewState
+    ) throws {
+        try update(projectID: projectID) { project in
+            guard let index = project.recognizedEdition?.pages.firstIndex(
+                where: { $0.sourcePageIndex == sourcePageIndex }
+            ) else { throw RecognitionIntegrationError.missingPage }
+            project.recognizedEdition?.pages[index].reviewState = state
+        }
+    }
+
+    nonisolated static func sourceHash(_ data: Data) -> String {
+        SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
     }
 
     func updateCrop(projectID: UUID, systemID: UUID, bounds: NormalizedRect) throws {
