@@ -12,6 +12,7 @@ and merged; see [its evidence](V1_NATIVE_VERIFICATION.md).
 | bc3c8b1b298b2c187d61faca8b7f2af7a4f83d39 | [Integrated practice candidate](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39788035850) | 34 Core and 13 native tests passed, including live mixer capture. Existing 7 UI checks passed; 6 new practice UI tests failed around sidebar/menu navigation, ambiguous Done buttons and offscreen fields. Full practice acceptance remains open. |
 | 4a4a39e4ec2cd50210d7932bc517d8e65d39edcd | [Practice interaction run](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39793418248) | 35 Core and 13 native tests passed, including the final-pulse regression and live mixer capture. Nine of thirteen UI tests passed: the existing seven, manual playback/navigation, and fractional multi-segment timing cold reopen. Four tests remain blocked by an undismissed native sidebar popup and overscrolling past Add reading area. |
 | 4a4a39e4ec2cd50210d7932bc517d8e65d39edcd | [Recognition and engraving](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39793418242) | Passed: real cloud homr trial plus 5 native contract and 3 rendering UI tests. |
+| 50991f41002fdd98de7117c7e7543898fef5464d | [Automatic practice run](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39799149132) | 35 Core and 13 native tests passed. Ten of thirteen UI tests passed, including automatic 5/9/13-second advancement, largest-text practice controls, manual interruption and timing cold reopen. Two preparation-menu selections and the library deletion/cold-reopen check still fail. |
 
 The integrated checkout also includes 058b7d4's focused final-pulse display
 correction. Its targeted regression passed in the 35-test Core run above.
@@ -24,9 +25,9 @@ No acceptance claim depends on the existence of tests alone.
 | PDF/JPEG/PNG import and offline original library | Existing native import/copy, rename, crop, rotated-page and cold-reopen UI checks passed at the recorded V1 and bc3c8b1 checkpoints. |
 | Several complete-system areas, explicit sections/repeat order, original preservation | Core preparation validation and native atomic-store/draft tests passed. The full add/move/remove/save/cancel UI walkthrough still needs its corrected native run. |
 | Full meter, pulse, BPM and performed-quarter-beat arrays, including pickups | Core timeline/count-in checks, native fractional/one-based phase round trips and the actual multi-segment timing-editor cold-reopen UI check passed. |
-| Current/upcoming music in both orientations | Native portrait and landscape inspected at 4a4a39e. Both complete grand staffs and transport fit. Large-text interaction/capture remains pending. |
-| One clock, audible/silent beat, count-in and automatic line focus | Transport/pulse checks and actual native mixer capture passed. The uninterrupted visible 5/9/13-second advancement take remains pending. |
-| Speed, A–B looping and immediate manual pause/navigation | Pure transport and native controller cancellation checks passed. Full UI interaction, timed loop wrap at 200% and manual-interruption evidence remain pending. |
+| Current/upcoming music in both orientations | Native portrait and landscape inspected at 4a4a39e. Both complete grand staffs and transport fit. Largest-text control interaction and its capture passed and were inspected at 50991f4. |
+| One clock, audible/silent beat, count-in and automatic line focus | Transport/pulse checks, actual native mixer capture and the uninterrupted visible 5/9/13-second advancement take passed. See the captured UI receipt below for its polling boundary. |
+| Speed, A–B looping and immediate manual pause/navigation | Pure transport and native controller cancellation checks and actual manual-interruption UI passed. The actual 200% timed loop wrap remains pending behind preparation-menu selection. |
 | Native design process and repeatable demonstration | UI_SKILLS.md and the workstream plans record the selected skills and preflight. PRACTICE_DEMO.md supplies the owned exercise and import walkthrough; final inspected captures and native receipts complete acceptance. |
 
 ## Captured audio at bc3c8b1
@@ -54,6 +55,25 @@ calculated duration remain readable. Large-text and automatic-advance captures
 await the corrected UI run. The failed portrait hierarchy explicitly contains
 the native PopoverDismissRegion over the detail; the preparation hierarchy is
 scrolled to crop sliders with Add reading area virtualized above the viewport.
+
+## Automatic visible advancement at 50991f4
+
+The native UI take started the owned exercise at 100%, silent, with no count-in.
+After Play, it made no speed, pause, loop or navigation commands. It observed
+area 2, area 3 and Finished in sequence; its
+[timing receipt](assets/practice-automatic-advance-receipt.json) records the
+Play action bracket and the 1.25-second UI polling allowance. Observations were
+5.77, 9.09 and 13.37 seconds after the Play action returned, consistent with the
+5, 9 and 13-second boundaries within that observation allowance. This is visible
+UI progression evidence, not sample-accurate audio measurement.
+
+The area-2/area-3 and largest-text captures were inspected. Current/upcoming
+complete grand staffs fit; the final area correctly has no upcoming area.
+The largest-text capture retains both systems and reachable primary controls.
+
+![Native automatic practice, current and upcoming systems](assets/practice-automatic-area-2.png)
+
+![Native practice at the largest accessibility text size](assets/practice-large-text.png)
 
 ## Evidence to inspect
 
