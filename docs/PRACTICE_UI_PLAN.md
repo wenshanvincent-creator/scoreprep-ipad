@@ -115,3 +115,43 @@ nor automatic navigation. Voice/following code remains outside this UI work.
   with current/upcoming notation and crop controls. Distinguish simulator audio
   evidence from a real iPad/musician demonstration. This prose-only plan needs
   no new cloud test run.
+
+## Preparation / timing implementation slice
+
+Authorized independent practice work now starts at shared commit 2242efb,
+while integration retains the final V1 capture/merge gate. This first slice
+implements preparation and timing only; current/upcoming practice composition
+waits for the audio controller contract.
+
+Concrete interfaces: seed a local ScorePreparation(project:) draft, mutate its
+systems/sections/readingOrder explicitly, then call the existing
+ScoreLibrary.savePreparation(projectID:draft:) once. Keep source-area and repeat
+occurrence UUIDs; reorder area membership together with the area list. Root's
+applying(to:) preserves latest recognition/source data and unchanged-area timing.
+Save timing through updateTiming(projectID:systemID:segments:) with the entire
+array, never a rounded bar count or only its first segment.
+
+UI: a native page-sized preparation sheet has Areas / Reading order modes.
+Keep an outlined full-page preview beside controls in wide layouts and pinned
+above a scrolling list in narrow/large-text layouts. Explicit Add, move up/down,
+remove and section membership controls work without spatial order inference.
+Source review and original-page access remain in the reader. A separate timing
+sheet edits a stable-identity list of segments: performed fractional quarter
+beats, starting bar phase, numerator/denominator, BPM and explicit pulse unit.
+Numeric input is validated on save; invalid text never silently keeps an old
+number. Preserve all untouched segment values and show actual validation errors.
+
+Evidence: focused draft-operation/persistence tests plus native interaction
+checks for add/reorder/remove, repeat identities, atomic save/cancel, fractional
+pickup and multi-segment cold reopen. Use the owned pickup-and-pulse fixture
+when resource wiring is available; existing generated source remains usable.
+Do not launch duplicate builds while root verification is active. This work
+adds no transport clock, playing flag, voice, following or model inference.
+
+PracticeView lifecycle requirement for its later controller-wiring slice:
+keep UIApplication.shared.isIdleTimerDisabled true while the music stand is
+visible and foreground-active, including paused rehearsal. Restore normal idle
+behavior on exit or backgrounding; restore the visible-view policy on foreground
+return. This belongs to view/composition lifecycle, independent of audio or
+playing state, with no new settings screen. API checked against
+[Apple UIApplication.isIdleTimerDisabled](https://developer.apple.com/documentation/uikit/uiapplication/isidletimerdisabled).

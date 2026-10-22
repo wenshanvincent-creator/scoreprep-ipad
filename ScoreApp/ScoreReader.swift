@@ -5,7 +5,8 @@ import SwiftUI
 struct ScoreReader: View {
     let project: ScoreProject
     let sourceURL: URL
-    let onTimingSaved: (UUID, TimingSegment) throws -> Void
+    let onTimingSaved: (UUID, [TimingSegment]) throws -> Void
+    let onPreparationSaved: (ScorePreparation) throws -> Void
     let onCropSaved: (UUID, NormalizedRect) throws -> Void
     let onRename: () -> Void
     let onDelete: () -> Void
@@ -55,6 +56,14 @@ struct ScoreReader: View {
                     }
                 }.disabled(current == nil).accessibilityIdentifier("review-score")
                 Menu {
+                    if document != nil {
+                        Button("Reading areas and order", systemImage: "rectangle.split.3x1") {
+                            sheet = .preparation(current?.pageIndex ?? 0)
+                        }.accessibilityIdentifier("prepare-score")
+                        Button("View original pages", systemImage: "doc") {
+                            sheet = .original(current?.pageIndex ?? 0)
+                        }.accessibilityIdentifier("view-original-pages")
+                    }
                     if let current {
                         Button("Adjust reading area", systemImage: "crop") { sheet = .crop(current) }
                     }
@@ -71,8 +80,18 @@ struct ScoreReader: View {
                 if currentID == nil { currentID = project.systems.first?.id }
             } catch { loadingError = error.localizedDescription }
         }
+        .onChange(of: project.systems.map(\.id)) { _, ids in
+            if currentID.map({ ids.contains($0) }) != true { currentID = ids.first }
+        }
         .sheet(item: $sheet) { destination in
             switch destination {
+            case .preparation(let pageIndex):
+                if let document {
+                    ScorePreparationEditor(project: project, document: document,
+                        initialPageIndex: pageIndex, onSave: onPreparationSaved)
+                }
+            case .original(let pageIndex):
+                if let document { OriginalPagesView(document: document, initialPageIndex: pageIndex) }
             case .timing(let system):
                 TimingEditor(system: system) { try onTimingSaved(system.id, $0) }
             case .crop(let system):
@@ -127,8 +146,11 @@ struct ScoreReader: View {
 
 private enum ReaderSheet: Identifiable {
     case timing(SourceSystem), crop(SourceSystem), review(SourceSystem)
+    case preparation(Int), original(Int)
     var id: String {
         switch self {
+        case .preparation(let page): return "preparation-\(page)"
+        case .original(let page): return "original-\(page)"
         case .timing(let s): return "timing-\(s.id)"
         case .crop(let s): return "crop-\(s.id)"
         case .review(let s): return "review-\(s.id)"

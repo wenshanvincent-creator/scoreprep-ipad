@@ -53,8 +53,10 @@ struct LibraryView: View {
             if let project = library.projects.first(where: { $0.id == selection.wrappedValue }),
                let sourceURL = library.sourceURL(for: project) {
                 ScoreReader(project: project, sourceURL: sourceURL,
-                    onTimingSaved: { systemID, segment in
-                        try library.updateTiming(projectID: project.id, systemID: systemID, segment: segment)
+                    onTimingSaved: { systemID, segments in
+                        try library.updateTiming(projectID: project.id, systemID: systemID, segments: segments)
+                    }, onPreparationSaved: { draft in
+                        try library.savePreparation(projectID: project.id, draft: draft)
                     }, onCropSaved: { systemID, bounds in
                         try library.updateCrop(projectID: project.id, systemID: systemID, bounds: bounds)
                     }, onRename: { beginRename(project) }, onDelete: { deleting = project },
