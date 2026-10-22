@@ -234,6 +234,26 @@ to avoid inertial overshoot. Gutter drags avoid editing crop sliders. The native
 coordinate press/drag/velocity/hold API is available in the verified Xcode 16.4:
 [XCUICoordinate drag](https://developer.apple.com/documentation/xcuiautomation/xcuicoordinate/press(forduration:thendragto:withvelocity:thenholdforduration:)).
 
+Candidate 50991f4 (run 39799149132) passed large-text practice, automatic
+5/9/13-second focus, manual interruption and fractional timing cold reopen.
+The remaining Add-menu failures show no expanded menu in the hierarchy: the
+accessible Form row is 672 points wide, but its inner menu button is only
+about 174 points wide. Make each Add menu's actual Label fill its row with a
+44-point touch height, then select the native action by its visible title.
+The trace does not establish identifier loss: no expanded menu was captured.
+
+The deletion test found the renamed navigation title after cold reopen, with
+no failure-associated UI snapshot to establish whether the record persisted.
+Library deletion currently reads an optional payload also cleared by the
+dialog's dismissal binding, allowing a nil payload to skip the action. Capture
+the intended project through the iOS 15+
+presenting-data API, retaining the same synchronous library mutation; apply the
+same correction to area/section removal dialogs. Verify successful deletion
+before terminating, then retain cold-reopen verification and check that the
+deleted library row is absent. No shared persistence mutation changes are needed.
+These focused corrections await the next root native candidate.
+[Apple presenting-data confirmation dialog](https://developer.apple.com/documentation/swiftui/view/confirmationdialog(_:ispresented:titlevisibility:presenting:actions:)-9ibgk).
+
 A full-screen practice presentation pauses on disappearance. Preparation/timing
 changes invalidate it; reopening compiles a fresh controller. Invalid timing
 keeps the original reader available with the actual preparation error. Original

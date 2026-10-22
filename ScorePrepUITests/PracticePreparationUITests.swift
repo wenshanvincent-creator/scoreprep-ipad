@@ -16,7 +16,7 @@ final class PracticePreparationUITests: XCTestCase {
         let addArea = app.buttons["add-preparation-area"]
         PracticeUITestActions.reveal(addArea, in: areaControls)
         addArea.tap()
-        PracticeUITestActions.sectionChoice(in: app, prefix: "add-preparation-area-to-", label: "Add to Score").tap()
+        PracticeUITestActions.sectionChoice(in: app, label: "Add to Score").tap()
         let name = app.textFields["preparation-area-name"]
         PracticeUITestActions.reveal(name, in: areaControls)
         replace(name, with: "Ending", in: areaControls)
@@ -30,7 +30,7 @@ final class PracticePreparationUITests: XCTestCase {
         let addPass = app.buttons["add-preparation-pass"]
         PracticeUITestActions.reveal(addPass, in: app.collectionViews["preparation-order-controls"])
         addPass.tap()
-        PracticeUITestActions.sectionChoice(in: app, prefix: "add-preparation-pass-section-", label: "Score").tap()
+        PracticeUITestActions.sectionChoice(in: app, label: "Score").tap()
         PracticeUITestActions.reveal(app.staticTexts["preparation-pass-1"],
             in: app.collectionViews["preparation-order-controls"], toward: .earlier)
         XCTAssertTrue(app.staticTexts["preparation-pass-1"].waitForExistence(timeout: 5))
@@ -50,6 +50,10 @@ final class PracticePreparationUITests: XCTestCase {
         removeActions.tap()
         app.buttons["Remove area"].tap()
         app.buttons["Remove area"].tap()
+        let areaRemoved = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            app.buttons["select-preparation-area-2"].label.contains("Bars 3–4")
+        }, object: app)
+        XCTAssertEqual(XCTWaiter.wait(for: [areaRemoved], timeout: 5), .completed)
         app.buttons["cancel-preparation"].tap()
         openPreparation(app)
         PracticeUITestActions.reveal(app.buttons["select-preparation-area-3"], in: areaControls)

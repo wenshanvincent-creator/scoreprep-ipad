@@ -45,13 +45,16 @@ struct PreparationOrderView: View {
                         }.frame(minWidth: 44, minHeight: 44).accessibilityIdentifier("preparation-pass-actions-\(index)")
                     }.frame(minHeight: 44)
                 }
-                Menu("Add reading pass", systemImage: "plus") {
+                Menu {
                     ForEach(draft.sections) { section in
                         Button(section.name) {
                             draft.readingOrder.append(SectionOccurrence(sectionID: section.id))
                         }.disabled(section.systemIDs.isEmpty)
-                        .accessibilityIdentifier("add-preparation-pass-section-\(section.id)")
                     }
+                } label: {
+                    Label("Add reading pass", systemImage: "plus")
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
                 }.accessibilityIdentifier("add-preparation-pass")
                 Text("Add the same section again for a repeat. Each pass keeps its own identity when moved; area order is edited inside its section.")
                     .font(.footnote).foregroundStyle(.secondary)

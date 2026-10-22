@@ -66,8 +66,8 @@ enum PracticeUITestActions {
         XCTFail("Could not reveal \(element.debugDescription) inside the form", file: file, line: line)
     }
 
-    static func sectionChoice(in app: XCUIApplication, prefix: String, label: String) -> XCUIElement {
-        let choice = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", prefix)).firstMatch
+    static func sectionChoice(in app: XCUIApplication, label: String) -> XCUIElement {
+        let choice = app.buttons[label]
         XCTAssertTrue(choice.waitForExistence(timeout: 5))
         XCTAssertEqual(choice.label, label)
         XCTAssertTrue(choice.isHittable)

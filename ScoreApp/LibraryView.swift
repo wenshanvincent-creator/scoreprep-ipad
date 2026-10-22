@@ -37,7 +37,7 @@ struct LibraryView: View {
                     Button("Rename", systemImage: "pencil") { beginRename(project) }
                     Button("Delete", systemImage: "trash", role: .destructive) { deleting = project }
                 }
-            }
+            }.accessibilityIdentifier("score-library")
             .overlay {
                 if library.projects.isEmpty {
                     ContentUnavailableView("Your scores", systemImage: "music.note.list",
@@ -139,9 +139,9 @@ struct LibraryView: View {
         }
         .confirmationDialog("Delete this score and its local original?",
             isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
-            titleVisibility: .visible) {
+            titleVisibility: .visible, presenting: deleting) { project in
             Button("Delete score", role: .destructive) {
-                if let project = deleting { perform { try library.delete(projectID: project.id) } }
+                perform { try library.delete(projectID: project.id) }
             }
         }
         .alert("Could not update the library", isPresented: Binding(
