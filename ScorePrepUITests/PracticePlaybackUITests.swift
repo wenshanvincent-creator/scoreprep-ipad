@@ -131,6 +131,29 @@ final class PracticePlaybackUITests: XCTestCase {
         app.buttons["practice-next"].tap()
         wait(current, contains: "Pass 2, area 4 of 6")
         wait(app.staticTexts["practice-phase"], contains: "Paused")
+
+        app.buttons["practice-speed"].tap()
+        app.buttons["200%"].tap()
+        XCTAssertTrue(app.buttons["practice-speed"].label.contains("200%"))
+        app.buttons["practice-sound"].tap()
+        XCTAssertEqual(app.buttons["practice-sound"].label, "Silent")
+        app.buttons["practice-play-pause"].tap()
+        let phase = app.staticTexts["practice-phase"]
+        wait(phase, contains: "Playing")
+        wait(current, contains: "Pass 2, area 4 of 6")
+
+        // Resume the paused A occurrence: no count-in or navigation commands
+        // intervene while the 6.5-second loop advances and wraps at 200%.
+        wait(current, contains: "Current: Bar 2, Pass 2, area 5 of 6", timeout: 5)
+        XCTAssertEqual(phase.label, "Playing")
+        wait(current, contains: "Current: Bars 3–4 · 6/8, Pass 2, area 6 of 6", timeout: 4)
+        XCTAssertEqual(phase.label, "Playing")
+        wait(current, contains: "Pass 2, area 4 of 6", timeout: 4)
+        XCTAssertEqual(phase.label, "Playing")
+        wait(app.staticTexts["practice-upcoming"], contains: "Pass 2, area 5 of 6")
+        capture("practice-automatic-loop-wrap")
+        app.buttons["practice-play-pause"].tap()
+        wait(phase, contains: "Paused")
     }
 
     func testLargeTextControlsRemainReachableAndUntimedScoreStaysReadable() {
