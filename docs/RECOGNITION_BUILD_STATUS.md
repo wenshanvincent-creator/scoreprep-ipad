@@ -11,7 +11,13 @@ pitch/onset/duration events, 55 pitched notes plus 7 rests, one-sharp key and no
 meter. Raw result: backend/fixtures/observed-oemer-straight, job
 1483125d-fbf4-425b-87b3-b01f8ebe45b7, workflow 39761660770. This justified the
 authorized move to homr, now pinned at ab369ac54277afab582afa4725441f7cbba76593.
-The homr cloud trial is in progress; no musical-quality success is claimed yet.
+The actual [homr cloud trial 39763157075](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39763157075)
+completed successfully: job f6df126f-bac3-4297-b107-493a4645711b, approximately
+10 seconds of remote CPU recognition after setup. On this one owned exercise,
+all 64 pitch/onset/duration events match, key is C major, meter is 4/4, all eight
+measures remain and there are no inserted rests. Raw output and comparison:
+backend/fixtures/observed-homr. This is a narrow prototype result, not a claim
+about arbitrary photos or scores.
 The client contract remains the same and includes optional engineName metadata.
 
 ## First actual recognition trial
@@ -53,11 +59,22 @@ multi-page scores. PDF page-order rasterization has a separate boundary test.
 
 ## Native engraving and interactions
 
-Native verification is in progress on the independent workflow. It builds the
+The first Xcode 16.4 full-app build and existing app smoke passed at 6b3a2c0.
+Native Verovio engraving and missing-page rejection passed as a dedicated unit
+test. Initial UI screenshots were retrieved and inspected; they showed native
+notation, but the UI automation used incorrect control-type assumptions and
+failed to locate them. The fixture and actual OMR image captures are distinct.
+
+Visual review also caught a real import issue: Verovio's direct importer puts
+interleaved homr notes into the wrong voice. The component now selects the
+library's built-in musicxml-hum route; it does not modify MusicXML note content.
+A targeted native regression checks four notes per staff per measure on the
+actual homr output. Native UI verification after these fixes is in progress.
+The independent workflow builds the
 native Verovio Swift package at revision 425dd7b6ba26edcecbe345c10b15586d095743d9
 (version-6.3.0) with Xcode 16.4, iPadOS 18 deployment target. The harness consumes
 the actual job's MusicXML, separate from explicitly labeled fixture-only renders.
-Portrait/landscape screenshots and manual-page/size checks must be inspected
+Updated portrait/landscape screenshots and manual-page/size checks must be inspected
 before this section can be marked complete. A constrained 480-point component
 and accessibility text configuration exercise narrow layouts; this does not
 establish system Stage Manager behavior.

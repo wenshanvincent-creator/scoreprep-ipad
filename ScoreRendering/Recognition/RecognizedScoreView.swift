@@ -110,13 +110,25 @@ public struct RecognizedScoreView: View {
     }
 
     private var sizeControl: some View {
-        Stepper(value: $scale, in: 30...80, step: 5) {
-            Text("Size \(scale)").font(.body).monospacedDigit()
+        HStack(spacing: 4) {
+            Text("Size").font(.body)
+                .accessibilityValue("\(Int(Double(scale) / 45 * 100)) percent")
+                .accessibilityIdentifier("notationSizeValue")
+            Button { scale -= 5 } label: {
+                Image(systemName: "minus").frame(minWidth: 44, minHeight: 44)
+            }
+            .accessibilityLabel("Smaller notation")
+            .accessibilityIdentifier("decreaseNotationSize")
+            .disabled(scale <= 30 || isRendering)
+            Button { scale += 5 } label: {
+                Image(systemName: "plus").frame(minWidth: 44, minHeight: 44)
+            }
+            .accessibilityLabel("Larger notation")
+            .accessibilityIdentifier("increaseNotationSize")
+            .disabled(scale >= 80 || isRendering)
         }
         .fixedSize()
-        .accessibilityLabel("Notation size")
-        .accessibilityValue("\(scale)")
-        .accessibilityIdentifier("notationSize")
+        .buttonStyle(.bordered)
     }
 
     private var navigationControls: some View {

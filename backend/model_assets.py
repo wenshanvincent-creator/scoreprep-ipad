@@ -30,6 +30,8 @@ def prepare():
                 if not destination.is_relative_to(target.resolve()):
                     raise ValueError("Model archive member escapes its target")
             bundle.extractall(target)
+        if not (target / f"{stem}.onnx").exists():
+            raise ValueError(f"Model archive is missing its expected ONNX file: {stem}")
         receipts.append(dict(name=stem, url=url, archiveSHA256=digest,
                              files=[dict(name=p.name, sha256=hashlib.sha256(p.read_bytes()).hexdigest())
                                     for p in target.glob(stem + "*") if p.is_file() and p != archive]))
