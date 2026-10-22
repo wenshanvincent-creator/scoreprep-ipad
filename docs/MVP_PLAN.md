@@ -58,10 +58,37 @@ See VOICE_REQUIREMENTS.md. No voice implementation or microphone permission now.
 
 ## V3 — tempo-guided practice
 
-Keep the existing quarter-beat timeline and one-bar preview. After V1, add a
-continuous shared audio/display clock, count-in, speed, whole-system loops and
-automatic line advancement. Confirm performed beats; do not infer them from
-pixel spacing.
+The automatic engineering goal remains open after V1. Its practice requirements
+are part of the native v0.1 preview, not optional roadmap replacements. The
+existing one-bar audible preview is only a foundation for this work.
+
+1. Let the musician define multiple complete-system reading areas on one source
+   page, arrange them in reading order, and preserve original notation and bytes.
+   The current crop editor adjusts an existing area; it does not yet create
+   several areas per imported page.
+2. Show the current system with upcoming-system context in portrait and
+   landscape. A single cropped system with an otherwise empty screen does not
+   meet this requirement.
+3. Confirm meter, tempo pulse unit, BPM and performed quarter-note beats for
+   each system, including pickup/bar phase. Do not infer duration from pixel
+   spacing or start automatic movement with unconfirmed timing.
+4. Use one continuous musical clock for audible or silent metronome, count-in,
+   current-system focus and automatic line advancement. Derive visual position
+   and scheduled audio from the same timeline; separate repeating timers do not
+   establish synchronization.
+5. Preserve logical musical position when changing practice speed, pausing,
+   resuming or navigating manually. Manual pause/navigation must take effect
+   immediately. Count-in precedes the passage without consuming its beats.
+6. Provide system-level A-B loops and coherent boundaries at the end of a
+   passage. Reading occurrences remain distinct when the same source system
+   appears more than once.
+
+Completion needs targeted timing/transport and persistence checks, a composed
+native demonstration, and inspected portrait/landscape captures showing the
+current and upcoming music. Confirm pickup behavior, explicit compound-meter
+pulse units, speed changes, looping and manual interruption. State separately
+which audio behavior was checked in a simulator and which still needs a real
+iPad and musician. Keep these requirements when updating later milestones.
 
 ## V4 — Follow Me
 
