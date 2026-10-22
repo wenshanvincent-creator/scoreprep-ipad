@@ -18,15 +18,15 @@ source preparation before generating the Xcode project.
 These source-reading actions need no recognition worker. Cropping changes the
 displayed area, not the original bytes or the notes.
 
-## Tempo-guided practice candidate
+## Tempo-guided practice
 
-The practice branch adds **Open practice exercise** to the library. The owned
+Choose **Open practice exercise** in the library. The owned
 **Pickup and pulse** exercise has three prepared areas, a beat-four pickup,
 4/4 and 6/8. Choose **Practice** to see current/upcoming notation with sound
 or silent beats, automatic line changes, speed, count-in and A–B loops.
 Follow [the practice walkthrough](PRACTICE_DEMO.md) for expected timings and
-preparing your own import. Native acceptance of this integrated candidate is
-still in progress.
+preparing your own import. Its accepted native checks and captures are recorded
+in [PRACTICE_VERIFICATION.md](PRACTICE_VERIFICATION.md).
 
 ## Recorded cloud-result walkthrough
 

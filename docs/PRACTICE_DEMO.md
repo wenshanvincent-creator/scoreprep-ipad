@@ -1,8 +1,8 @@
 # Tempo-guided practice walkthrough
 
-Use the native ScorePrep scheme built with Xcode 16.4. The practice candidate
-is under native verification; acceptance evidence belongs in
-PRACTICE_VERIFICATION.md once the integrated checks and image review finish.
+Use the native ScorePrep scheme built with Xcode 16.4. The practice preview
+passed its native engineering gate; accepted sources, captures and timing/audio
+receipts are recorded in [PRACTICE_VERIFICATION.md](PRACTICE_VERIFICATION.md).
 
 ## The included exercise
 

@@ -1,107 +1,100 @@
 # Native practice verification
 
-Status: integrated practice acceptance is in progress. V1 is already verified
-and merged; see [its evidence](V1_NATIVE_VERIFICATION.md).
+The v0.1 practice engineering gate passed on 22 October 2026 at
+a60b347c834572c2d82ea34a91630517509b9f7d. The final recognition-harness check
+passed at 06cdab18d19802d586ac3141af4d94c2a03ec182; that change only waits
+for native layout and its source-page callback before asserting navigation.
+The app, Core, audio, rendering and main app tests are unchanged.
 
-## Recorded checkpoints
+## Accepted checks
 
 | Source | Check | Result |
 | --- | --- | --- |
-| 691006355ca1ee11d9b26985fbec0f89c17603c6 | [Native foundation run](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39784018833) | Passed: 27 Core, 4 native and 7 UI tests. Includes the owned practice exercise's actual import, source hash, cold reopen and compiled pickup/compound timing. This predates the complete practice UI and audio tests. |
-| bc3c8b1b298b2c187d61faca8b7f2af7a4f83d39 | [Recognition and engraving](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39788035897) | Passed: real cloud homr trial plus 5 native contract and 3 rendering UI tests. |
-| bc3c8b1b298b2c187d61faca8b7f2af7a4f83d39 | [Integrated practice candidate](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39788035850) | 34 Core and 13 native tests passed, including live mixer capture. Existing 7 UI checks passed; 6 new practice UI tests failed around sidebar/menu navigation, ambiguous Done buttons and offscreen fields. Full practice acceptance remains open. |
-| 4a4a39e4ec2cd50210d7932bc517d8e65d39edcd | [Practice interaction run](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39793418248) | 35 Core and 13 native tests passed, including the final-pulse regression and live mixer capture. Nine of thirteen UI tests passed: the existing seven, manual playback/navigation, and fractional multi-segment timing cold reopen. Four tests remain blocked by an undismissed native sidebar popup and overscrolling past Add reading area. |
-| 4a4a39e4ec2cd50210d7932bc517d8e65d39edcd | [Recognition and engraving](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39793418242) | Passed: real cloud homr trial plus 5 native contract and 3 rendering UI tests. |
-| 50991f41002fdd98de7117c7e7543898fef5464d | [Automatic practice run](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39799149132) | 35 Core and 13 native tests passed. Ten of thirteen UI tests passed, including automatic 5/9/13-second advancement, largest-text practice controls, manual interruption and timing cold reopen. Two preparation-menu selections and the library deletion/cold-reopen check still fail. |
-| bb36d2494d3a422abbed743aff155ee1f32c7c7e | [Native action and deletion run](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39804100969) | 35 Core, 13 native and eleven of thirteen UI tests passed. Confirmed deletion, cold reopen and library-row absence now pass, as do automatic advancement and large text. The two Add-section menu flows still fail; the next candidate uses explicit native choice dialogs with all options retained. |
+| a60b347c834572c2d82ea34a91630517509b9f7d | [Integrated native verification](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39820728301) | Passed: 35 Core, 13 native and all 13 UI tests. Includes actual live mixer PCM without a skip, uninterrupted automatic advancement, the 200% repeat and complete preparation/save/cancel. |
+| 06cdab18d19802d586ac3141af4d94c2a03ec182 | [Recognition and engraving](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39825251593) | Passed: actual cloud homr through the worker API, 5 native contract tests and all 3 rendering UI tests, including the exact source-page callback after layout and navigation. |
 
-The integrated checkout also includes 058b7d4's focused final-pulse display
-correction. Its targeted regression passed in the 35-test Core run above.
-No acceptance claim depends on the existence of tests alone.
+Toolchain: Xcode 16.4, build 16F6; iOS 18.5 simulator,
+iPad Pro 11-inch (M4). Accepted practice captures and receipts were retrieved
+from artifact 12446286838 and inspected. V1's earlier remote recognition,
+native rendering and offline review gate is recorded in
+[V1_NATIVE_VERIFICATION.md](V1_NATIVE_VERIFICATION.md).
+
+Recognition's final native artifact 12447591675 also supplied the inspected
+[source-page callback capture](assets/recognition-source-link.png). After
+resizing and portrait reflow, Previous displays source page 3 and reports
+Linked source 3, preserving the initial source-8 assertions before navigation.
+
+The delivery adds documentation and captured evidence after these sources.
+App/build and main test sources match a60b347; the recognition harness matches
+06cdab1. These boundaries were checked before merging.
 
 ## v0.1 requirement coverage
 
-| Requirement | Evidence boundary |
+| Requirement | Evidence |
 | --- | --- |
-| PDF/JPEG/PNG import and offline original library | Existing native import/copy, rename, crop, rotated-page and cold-reopen UI checks passed at the recorded V1 and bc3c8b1 checkpoints. |
-| Several complete-system areas, explicit sections/repeat order, original preservation | Core preparation validation and native atomic-store/draft tests passed. The full add/move/remove/save/cancel UI walkthrough still needs its corrected native run. |
-| Full meter, pulse, BPM and performed-quarter-beat arrays, including pickups | Core timeline/count-in checks, native fractional/one-based phase round trips and the actual multi-segment timing-editor cold-reopen UI check passed. |
-| Current/upcoming music in both orientations | Native portrait and landscape inspected at 4a4a39e. Both complete grand staffs and transport fit. Largest-text control interaction and its capture passed and were inspected at 50991f4. |
-| One clock, audible/silent beat, count-in and automatic line focus | Transport/pulse checks, actual native mixer capture and the uninterrupted visible 5/9/13-second advancement take passed. See the captured UI receipt below for its polling boundary. |
-| Speed, A–B looping and immediate manual pause/navigation | Pure transport and native controller cancellation checks and actual manual-interruption UI passed. The actual 200% timed loop wrap remains pending behind preparation-menu selection. |
-| Native design process and repeatable demonstration | UI_SKILLS.md and the workstream plans record the selected skills and preflight. PRACTICE_DEMO.md supplies the owned exercise and import walkthrough; final inspected captures and native receipts complete acceptance. |
+| PDF/JPEG/PNG import and offline original library | Native import/copy, rename, crop, rotated-page, cold-reopen and confirmed deletion walkthroughs passed. Original source bytes remain intact. |
+| Multiple complete-system areas and explicit repeat order | The UI added and named an area, moved it, added a reading pass, saved and cold reopened. Removal was verified before Cancel, then the saved area was restored. Original pages remained reachable after rotation. |
+| Complete meter, pulse, BPM and performed-quarter-beat arrays | Core timeline checks and native persistence cover pickups, fractional phases and meter/tempo changes. The actual timing editor saved and cold reopened multiple fractional segments. |
+| Current/upcoming music in both orientations | Portrait, landscape and largest-text captures were inspected. Complete grand staffs and the transport fit. The final area has no upcoming system. |
+| One clock, audible/silent beat and count-in | Core transport/pulse checks, native controller cancellation and system notifications passed. Actual live mixer PCM was captured without a skip; see the audio boundary below. |
+| Automatic line advancement | The uninterrupted silent take visited areas 1/2/3 and Finished in order, using the confirmed 5/9/13-second route. Its exported observation receipt passed the unchanged Play-bracket and polling limits. |
+| Speed, A–B loops and immediate manual navigation | The uninterrupted 200% take advanced through Pass 2 areas 4/5/6 and wrapped to area 4 while Playing. Manual next/previous pauses, count-in interruption, resume, end and stop also passed. |
+| Design process and repeatable demonstration | UI_SKILLS.md and the UI plans record the applied native design skills. [PRACTICE_DEMO.md](PRACTICE_DEMO.md) supplies the owned exercise, expected timings and an imported-score walkthrough. |
 
-## Captured audio at bc3c8b1
+## Captured audio
 
-The actual native live-mixer test passed without a skip on the iPad Pro
-11-inch (M4), iOS 18.5 simulator under Xcode 16.4. Its exported
-[receipt](assets/practice-live-mixer-receipt.json) and
-[mono WAV](assets/practice-live-mixer-with-pause.wav) were retrieved from
-artifact 12430113624 and inspected. The receipt uses the owned PNG's exact
-SHA-256, two-times speed and one count-in bar. Sixteen expected click onsets
-were captured; one already queued future click was canceled, with no onset
-during the pause. The test compares live mixer host timestamps with scheduled
-events using 40 milliseconds of tolerance. This is app-mixer evidence, not
-physical speaker latency.
+The [live mixer receipt](assets/practice-live-mixer-receipt.json) and
+[mono 48 kHz WAV](assets/practice-live-mixer-with-pause.wav) come from the
+accepted native run above. The owned source PNG's exact SHA-256 is recorded.
+The take used two-times speed and one count-in bar. Seventeen clicks were
+scheduled; one queued future click was canceled on pause. All sixteen remaining
+onsets were captured, with none during the paused interval.
+
+The test compares mixer host timestamps with scheduled events using 40 ms
+of tolerance. This establishes app-mixer scheduling and cancellation.
+Physical speaker latency, Bluetooth output and playing against an instrument
+require a real iPad.
 
 A separate [offline rendering receipt](assets/practice-offline-receipt.json)
 records clicks at approximately 0 and 0.25 seconds; the queued 0.5-second click
-did not render after stop at 0.35 seconds. It is not a substitute for the live
-host-clock capture above.
+did not render after stop at 0.35 seconds. Offline rendering is a separate check.
 
-Native portrait/landscape practice and multi-segment timing/reopened captures
-were retrieved from artifact 12433483678 and inspected. Both complete grand
-staffs and transport fit. Timing fields, explicit dotted-quarter pulse and
-calculated duration remain readable. Large-text and automatic-advance captures
-were not available at that checkpoint; the later 50991f4 evidence follows below.
-The failed portrait hierarchy explicitly contains
-the native PopoverDismissRegion over the detail; the preparation hierarchy is
-scrolled to crop sliders with Add reading area virtualized above the viewport.
+## Visible automatic advancement
 
-## Automatic visible advancement at 50991f4
+The [UI timing receipt](assets/practice-automatic-advance-receipt.json) comes
+from the accepted uninterrupted take at 100%, silent, without count-in.
+No navigation, pause, speed or loop commands intervened.
 
-The native UI take started the owned exercise at 100%, silent, with no count-in.
-After Play, it made no speed, pause, loop or navigation commands. It observed
-area 2, area 3 and Finished in sequence; its
-[timing receipt](assets/practice-automatic-advance-receipt.json) records the
-Play action bracket and the 1.25-second UI polling allowance. Observations were
-5.77, 9.09 and 13.37 seconds after the Play action returned, consistent with the
-5, 9 and 13-second boundaries within that observation allowance. This is visible
-UI progression evidence, not sample-accurate audio measurement.
+| Expected boundary | Observation since Play began |
+| --- | --- |
+| Area 2 at 5 seconds | 5.54 seconds |
+| Area 3 at 9 seconds | 10.07 seconds |
+| Finished at 13 seconds | 13.47 seconds |
 
-The area-2/area-3 and largest-text captures were inspected. Current/upcoming
-complete grand staffs fit; the final area correctly has no upcoming area.
-The largest-text capture retains both systems and reachable primary controls.
+The Play action lasted 0.526 seconds, bracketing the actual start. The unchanged
+UI polling allowance is 1.25 seconds after the action returns. The receipt
+retains both clocks and the label-query method. These are visible UI
+observations, not sample-accurate audio measurements.
 
 ![Native automatic practice, current and upcoming systems](assets/practice-automatic-area-2.png)
 
-![Native practice at the largest accessibility text size](assets/practice-large-text.png)
+![Native landscape practice](assets/practice-landscape.png)
 
-## Evidence to inspect
+The [largest-text capture](assets/practice-large-text.png) retains both complete
+systems and reachable primary controls. The
+[reading-order capture](assets/practice-reading-order.png) shows two saved
+passes. The loop capture below shows the automatic return to Pass 2 area 4,
+with area 5 upcoming and 200% speed still Playing.
 
-- Preparation save/cancel and cold reopen, explicit repeat order, fractional
-  pickup and complete multi-segment timing arrays.
-- Current/upcoming source systems in native portrait, landscape and large text.
-- A silent uninterrupted take advancing at 5 and 9 seconds, ending at 13;
-  exported UI timing is an observation with polling tolerance.
-- Count-in/manual interruption, visible silent beats, resume/end/stop,
-  occurrence-qualified A–B wrapping and original-page access.
-- Native controller cancellation, speed/position preservation and interruption
-  handling. The live mixer test exports WAV/JSON and compares observed onsets
-  with host-scheduled events, including a paused interval with a queued click.
-- A separate offline engine-rendering receipt checks generated click PCM and
-  canceled queued audio. Offline sample-time evidence is distinct from live
-  host-clock capture; a skipped live test must remain visible as a limitation.
+![Automatic occurrence-qualified A–B return](assets/practice-loop-wrap.png)
 
 ## Device and distribution follow-ups
 
-Cloud simulator checks do not establish physical speaker or Bluetooth latency,
-venue behavior, real-instrument usability or an App Store installation. The
-release still needs Mac/Xcode access for a signed device build, Apple signing
-and distribution setup, and a physical iPad/musician rehearsal. No account purchase,
-production recognition service, TestFlight upload or App Store submission has
-been performed by this milestone.
+Cloud simulator checks do not establish a physical-iPad rehearsal or App Store
+installation. Remaining steps are Mac/Xcode access for a signed device build,
+Apple signing and distribution setup, and a physical iPad/musician rehearsal.
+No account purchase, production recognition endpoint, TestFlight upload or
+App Store submission has been performed by this milestone.
 
-The preview's practice mode follows confirmed timing at the chosen speed. It
-does not listen to a performance. Voice and classical chroma/online-DTW score
-following remain subsequent phases.
+Practice follows confirmed timing at the selected speed. Voice and classical
+chroma/online-DTW performance following remain subsequent phases.

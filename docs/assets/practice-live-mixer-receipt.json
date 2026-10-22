@@ -3,130 +3,130 @@
   "countInBars" : 1,
   "mode" : "simulator-live-mixer-output",
   "observedOnsetHostSeconds" : [
-    753.00646541666663,
-    753.50646541666663,
-    754.00646541666663,
-    754.50646541666663,
-    755.00646541666663,
-    756.30594458333337,
-    756.80594458333337,
-    757.30594458333337,
-    757.80594458333337,
-    758.30594458333337,
-    758.80594458333337,
-    759.30594458333337,
-    759.80594458333337,
-    760.30594458333337,
-    760.80594458333337,
-    761.30594458333337
+    928.58517516666666,
+    929.08517516666666,
+    929.58517516666666,
+    930.08517516666666,
+    930.58517516666666,
+    931.89184183333339,
+    932.39184183333339,
+    932.89184183333339,
+    933.39184183333339,
+    933.89184183333339,
+    934.39184183333339,
+    934.89184183333339,
+    935.39184183333339,
+    935.89184183333339,
+    936.39184183333339,
+    936.89184183333339
   ],
-  "pausedAtHostSeconds" : 755.2893357083334,
+  "pausedAtHostSeconds" : 930.87159379166667,
   "pendingCanceledHostSeconds" : [
-    755.50644666666665
+    931.08514937500001
   ],
-  "resumedAtHostSeconds" : 756.00216487500006,
+  "resumedAtHostSeconds" : 931.59298387500007,
   "scheduled" : [
     {
       "countIn" : true,
       "elapsed" : 0,
       "generation" : 3,
-      "hostSeconds" : 753.00644666666665
+      "hostSeconds" : 928.58514937500001
     },
     {
       "countIn" : true,
       "elapsed" : 1,
       "generation" : 3,
-      "hostSeconds" : 753.50644666666665
+      "hostSeconds" : 929.08514937500001
     },
     {
       "countIn" : true,
       "elapsed" : 2,
       "generation" : 3,
-      "hostSeconds" : 754.00644666666665
+      "hostSeconds" : 929.58514937500001
     },
     {
       "countIn" : false,
       "elapsed" : 3,
       "generation" : 3,
-      "hostSeconds" : 754.50644666666665
+      "hostSeconds" : 930.08514937500001
     },
     {
       "countIn" : false,
       "elapsed" : 4,
       "generation" : 3,
-      "hostSeconds" : 755.00644666666665
+      "hostSeconds" : 930.58514937500001
     },
     {
       "countIn" : false,
       "elapsed" : 5,
       "generation" : 3,
-      "hostSeconds" : 755.50644666666665
+      "hostSeconds" : 931.08514937500001
     },
     {
       "countIn" : false,
       "elapsed" : 5,
       "generation" : 6,
-      "hostSeconds" : 756.30592091666665
+      "hostSeconds" : 931.89181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 6,
       "generation" : 6,
-      "hostSeconds" : 756.80592091666665
+      "hostSeconds" : 932.39181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 7,
       "generation" : 6,
-      "hostSeconds" : 757.30592091666665
+      "hostSeconds" : 932.89181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 8,
       "generation" : 6,
-      "hostSeconds" : 757.80592091666665
+      "hostSeconds" : 933.39181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 9,
       "generation" : 6,
-      "hostSeconds" : 758.30592091666665
+      "hostSeconds" : 933.89181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 10,
       "generation" : 6,
-      "hostSeconds" : 758.80592091666665
+      "hostSeconds" : 934.39181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 11,
       "generation" : 6,
-      "hostSeconds" : 759.30592091666665
+      "hostSeconds" : 934.89181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 12,
       "generation" : 6,
-      "hostSeconds" : 759.80592091666665
+      "hostSeconds" : 935.39181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 13,
       "generation" : 6,
-      "hostSeconds" : 760.30592091666665
+      "hostSeconds" : 935.89181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 14,
       "generation" : 6,
-      "hostSeconds" : 760.80592091666665
+      "hostSeconds" : 936.39181233333329
     },
     {
       "countIn" : false,
       "elapsed" : 15,
       "generation" : 6,
-      "hostSeconds" : 761.30592091666665
+      "hostSeconds" : 936.89181233333329
     }
   ],
   "sourceFixtureSHA256" : "a67697668a131e07accebea323d0ab54f9f895111f19d63efe6d0c7884b7822a",

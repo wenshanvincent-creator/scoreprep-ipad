@@ -11,11 +11,11 @@ comes forward at the chosen practice tempo. Current and upcoming music stay
 visible, using the original score. A single transport drives the beat and line
 changes, including pickups and explicit compound-meter pulses.
 
-Native simulator checks have verified the uninterrupted automatic take,
-largest-text controls, manual interruption and captured metronome output.
-Full preview acceptance, including the complete preparation and repeat flow,
-is still in progress. Use [the verification notes](PRACTICE_VERIFICATION.md) to
-choose the accepted source and captures before filming.
+Native simulator checks verified the uninterrupted automatic take, complete
+preparation/save/cancel workflow, 200% repeat, largest-text controls, manual
+interruption and captured metronome output. Use
+[the verification notes](PRACTICE_VERIFICATION.md) for accepted sources,
+captures and measurement boundaries before filming.
 
 ## Short native demonstration
 
@@ -26,8 +26,8 @@ choose the accepted source and captures before filming.
    at eight and twelve seconds, with Finished at sixteen.
 3. Let the change to 6/8 remain visible. Its dotted-quarter pulse is explicit;
    silent mode also has a visible beat.
-4. After the complete repeat flow passes its gate, show 200% speed and an A–B
-   return, followed by an immediate touch pause. Keep the actual controls and
+4. Show 200% speed and an A–B return, followed by an immediate touch pause.
+   Keep the actual controls and
    resulting music visible.
 5. End with **Your score. Your practice tempo. Hands-free line changes.** and
    [the public repository](https://github.com/wenshanvincent-creator/scoreprep-ipad).

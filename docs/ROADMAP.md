@@ -15,12 +15,13 @@ swipe. Include progress/errors, original comparison, local reopen and actual
 native portrait/landscape evidence. Verified at 276418b; see
 V1_NATIVE_VERIFICATION.md for the actual worker/replay and device boundaries.
 
-## V2 — tempo-guided practice, active
+## V2 — tempo-guided practice, engineering gate passed
 
-Complete the active v0.1 engineering goal: multiple complete-system reading
+The v0.1 preview provides multiple complete-system reading
 areas, current/upcoming music, confirmed performed beats including pickups,
 continuous metronome, beat-driven line changes, count-in, speed, A-B loops
-and immediate manual interruption. V1 alone does not complete that goal.
+and immediate manual interruption. Its integrated native gate passed at
+a60b347; see [PRACTICE_VERIFICATION.md](PRACTICE_VERIFICATION.md).
 
 ## V3 — voice, next bounded experiment
 

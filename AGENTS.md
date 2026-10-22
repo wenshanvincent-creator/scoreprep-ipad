@@ -2,9 +2,11 @@
 
 - Build a native iPad app. Keep musical content readable and preserve original
   notation, source coordinates and user markings.
-- Current phase is V2: tempo-guided practice completing the v0.1 preview.
-  V1 passed its native engineering gate; see docs/V1_NATIVE_VERIFICATION.md.
-  Read docs/MVP_PLAN.md. Keep voice and following deferred until this preview.
+- The v0.1 practice preview passed its native engineering gate; see
+  docs/PRACTICE_VERIFICATION.md. V1 recognition evidence is recorded in
+  docs/V1_NATIVE_VERIFICATION.md. Read docs/MVP_PLAN.md for the phased scope.
+  Voice is the next bounded experiment; keep voice and following outside
+  v0.1 maintenance work.
   Wrap the existing homr worker and Verovio; do not train a custom model.
 - Read docs/ARCHITECTURE.md and docs/WORKSTREAMS.md before changing shared
   models or working in parallel.

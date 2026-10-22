@@ -6,17 +6,18 @@
     13
   ],
   "mode" : "native-ui-silent-automatic-advance",
+  "observationMethod" : "captured-label-block-predicate-with-neutral-object",
   "observedSecondsSincePlayBegan" : [
-    6.2195932500000026,
-    9.535281583333358,
-    13.817347708333273
+    5.5399790416668111,
+    10.07237887500014,
+    13.470404375000044
   ],
   "observedSecondsSincePlayReturned" : [
-    5.7730856666667023,
-    9.0887740000000576,
-    13.370840124999972
+    5.0143922083334473,
+    9.5467920416667766,
+    12.94481754166668
   ],
-  "playCommandDurationSeconds" : 0.44650758333330032,
+  "playCommandDurationSeconds" : 0.52558683333336376,
   "speed" : 1,
   "uiPollingAllowanceSeconds" : 1.25
 }

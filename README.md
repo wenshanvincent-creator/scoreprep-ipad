@@ -11,16 +11,17 @@ original notation and existing markings stay intact.
 
 This is an actual simulator capture from the verified automatic-advancement
 take. See the [practice evidence](docs/PRACTICE_VERIFICATION.md) for its source,
-timing record, audio capture and the remaining acceptance checks.
+timing record and captured audio.
 
 ## Current milestone
 
-The v0.1 practice candidate is implemented; full native acceptance is still
-in progress. It includes multiple reading areas, explicit sections and repeat
+The v0.1 practice preview passed its native engineering gate on 22 October
+2026. It includes multiple reading areas, explicit sections and repeat
 order, confirmed timing arrays, pickup-aware count-in, audible or silent beats,
 practice speed, system-level A–B loops, and immediate manual pause/navigation.
-Native checks have verified automatic line changes, large-text controls,
-manual interruption, timing cold reopen and captured metronome output.
+Native checks verified the complete preparation/save/cancel workflow,
+automatic line changes, a 200% repeat, large-text controls, manual interruption,
+timing cold reopen and captured metronome output.
 
 Try **Open practice exercise** in the library, then **Practice**. The included
 owned exercise has a pickup, 4/4 and 6/8. Follow the
