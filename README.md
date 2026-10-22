@@ -26,6 +26,9 @@ records the input, raw result and limitations. Native integration checks and
 screenshot review remain release gates; this is not an App Store or TestFlight
 release.
 
+Use the [preview walkthrough](docs/TRY_PREVIEW.md) for original reading, the
+recorded cloud-result demo, or a new conversion through your own worker.
+
 The [first macOS/iPad simulator foundation build passed](docs/BUILD_STATUS.md).
 Continuous metronome/line advancement, voice commands, live audio following,
 Pencil and export are later phases. Physical-device and audio validation remain

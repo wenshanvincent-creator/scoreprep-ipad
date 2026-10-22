@@ -32,3 +32,13 @@ Use measured behavior and declare the tested instrument, device, passage and
 setup time. A successful synthetic trial will establish the prototype's
 behavior on its fixtures; a real-instrument video establishes a different gate.
 No universal-instrument or world-first claim is established.
+
+## V1 demonstration available for review
+
+Use "Make the score comfortable to read" for the current prototype: show an
+imported original, open its recognized edition, enlarge the notation, compare
+the source, then reopen the saved edition offline. Use actual native captures
+after the combined integration checks pass. TRY_PREVIEW.md describes the
+reproducible recorded-result walkthrough and distinguishes it from a new
+network conversion. The recorded homr trial matches this exercise's notes,
+key and meter; it still differs in final barline style.
