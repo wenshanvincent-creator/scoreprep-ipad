@@ -59,7 +59,7 @@ Competition: Staff Removal*, LNCS 8746 (2014).
 ## Native Verovio patch
 
 Verovio remains an upstream library rather than a replacement engraver.
-The native build applies tools/patches/verovio-negative-voice.patch to the pinned
+The native build applies tools/patches/verovio-import.patch to the pinned
 6.3.0 source. This adds a lower-bound check in MxmlEvent::getStaffIndex and
 getCrossStaffOffset. The iPad simulator crash at recognition source 8e50294 was
 SIGABRT from hardened vector indexing during musicxml-hum conversion; the
@@ -69,6 +69,12 @@ checks the upstream commit, the original/patched file SHA-256, and unrelated
 tracked modifications. Full upstream source and notices remain in that local
 checkout; only the small documented patches and preparation code are committed here.
 The patched native build still requires its own passing runtime evidence.
+The next hardened-runtime crash, run 39769984895 at 8fbf8ce, reached
+processPrintElement with an empty GridMeasure at the actual MusicXML's
+new-system print element. The patch also checks empty() before back(), retaining
+the existing null-token/addGlobalComment path so the layout marker remains.
+The final Humdrum source SHA-256 is
+dcdb9e08af2c01198a20b3180705230de560e4b8bbd890fb9a4144f3f297b4cc.
 Local Swift-package resolution also exposed a manifest declaration for
 VerovioToolkitTests without any test-source directory in the published commit.
 tools/patches/verovio-local-package.patch removes that empty declaration; it
