@@ -5,7 +5,7 @@ import UniformTypeIdentifiers
 struct LibraryView: View {
     var onReviewRequested: ((UUID, Int) -> Void)? = nil
     @StateObject private var library = ScoreLibrary()
-    @SceneStorage("reader.selectedProject") private var selectedProject = ""
+    @AppStorage("reader.selectedProject") private var selectedProject = ""
     @State private var importing = false
     @State private var isImporting = false
     @State private var renaming: ScoreProject?
