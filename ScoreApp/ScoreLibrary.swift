@@ -300,6 +300,17 @@ final class ScoreLibrary: ObservableObject {
         }
     }
 
+    func savePreparation(projectID: UUID, draft: ScorePreparation) throws {
+        guard let store else { throw LibraryError.unavailableStorage }
+        guard let project = projects.first(where: { $0.id == projectID }) else {
+            throw LibraryError.missingProject
+        }
+        let pageCount = try OriginalDocument.open(store.sourceURL(for: project)).pageCount
+        try update(projectID: projectID) {
+            $0 = try draft.applying(to: $0, sourcePageCount: pageCount)
+        }
+    }
+
     private func update(projectID: UUID, edit: (inout ScoreProject) throws -> Void) throws {
         guard let store else { throw LibraryError.unavailableStorage }
         guard let index = projects.firstIndex(where: { $0.id == projectID }) else {

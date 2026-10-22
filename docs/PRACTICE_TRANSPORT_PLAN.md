@@ -38,3 +38,20 @@ mapping, add the pulse planner and current/upcoming reader, confirm pickups in
 the timing editor, wire count-in/speed/loops and manual interruption, handle
 actual audio interruptions, and inspect simulator evidence. A pure transport
 test does not establish audible synchronization or complete the preview.
+
+## Preparation save contract
+
+ScorePreparation is the editable systems/sections/reading-order value for the
+native preparation sheet. The editor explicitly changes area order and route
+membership together; no rectangle-based musical order is inferred. Applying
+the draft validates page indexes against the verified original page count,
+normalized bounds and stable identities/references. It preserves the latest
+timing for an unchanged source area and clears timing for new or changed areas.
+Unconfirmed areas remain readable and cannot compile into automatic playback
+when included in the practice route.
+
+ScoreLibrary.savePreparation(projectID:draft:) applies that draft to the latest
+project and saves it atomically. The draft excludes source filenames, pending
+jobs and recognized editions, so a preparation sheet cannot overwrite later
+recognition work. The native reader still needs to expose the multi-area editor;
+the data-layer implementation is not a completed preparation interface.
