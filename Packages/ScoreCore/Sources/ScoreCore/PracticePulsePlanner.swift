@@ -59,12 +59,7 @@ public struct PracticePulsePlanner: Sendable {
         let entry = transport.entryReferencePosition
         let lead = transport.countInDuration
         let entryRegion = region(at: entry)
-        let entryOffset = (entry - entryRegion.start) / entryRegion.secondsPerPulse
-        let entryPhase = (entryRegion.segment.startingBarPhase
-            + entryOffset * entryRegion.segment.tempo.pulse.quarterBeats)
-            .truncatingRemainder(dividingBy: entryRegion.segment.meter.quarterBeatsPerBar)
-        let origin = lead > 0 ? lead / entryRegion.secondsPerPulse
-            : entryPhase / entryRegion.segment.tempo.pulse.quarterBeats
+        let origin = pulseOrigin(for: transport)
         let entryPulse = coordinate(at: entry)
         var result: [PracticePulse] = []
 
@@ -116,8 +111,28 @@ public struct PracticePulsePlanner: Sendable {
         let nearby = pulses(for: transport, in: lower..<upper)
         guard let index = nearby.lastIndex(where: { $0.elapsed <= elapsed }) else { return nil }
         let current = nearby[index]
-        let next = index + 1 < nearby.count ? nearby[index + 1].elapsed : current.elapsed + longestPulse
+        let next = index + 1 < nearby.count ? nearby[index + 1].elapsed : terminalPulseEnd(for: transport)
         return PracticePulseDisplay(pulse: current, progress: min(1, (elapsed - current.elapsed) / (next - current.elapsed)))
+    }
+
+    private func pulseOrigin(for transport: PracticeTransport) -> Double {
+        let entry = transport.entryReferencePosition
+        let region = region(at: entry)
+        if transport.countInDuration > 0 { return transport.countInDuration / region.secondsPerPulse }
+        let offset = (entry - region.start) / region.secondsPerPulse
+        let phase = (region.segment.startingBarPhase + offset * region.segment.tempo.pulse.quarterBeats)
+            .truncatingRemainder(dividingBy: region.segment.meter.quarterBeatsPerBar)
+        return phase / region.segment.tempo.pulse.quarterBeats
+    }
+
+    private func terminalPulseEnd(for transport: PracticeTransport) -> Double {
+        let entry = transport.entryReferencePosition
+        let end = transport.countInDuration + timeline.duration - entry
+        let pulseAtEnd = pulseOrigin(for: transport) + coordinate(at: timeline.duration) - coordinate(at: entry)
+        let remaining = max(0, ceil(pulseAtEnd - Self.tolerance) - pulseAtEnd)
+        // Continue the final tempo only for display progress. No endpoint or
+        // post-passage click is added, even when the route ends between pulses.
+        return end + remaining * regions.last!.secondsPerPulse
     }
 
     private func region(at position: Double) -> Region {
