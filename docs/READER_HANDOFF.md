@@ -29,7 +29,7 @@ Recognition, project.yml or workflow changes are required for this slice.
 A new install receives the owned sample; an intentionally emptied library stays
 empty after reopening. Missing/malformed originals and JSON errors are visible.
 Rename/delete are available from the source reader menu and library context menu.
-The selected project is restored with SceneStorage; reading-area position starts
+The selected project is restored with AppStorage across cold launches; reading-area position starts
 at the first area on reopening. Crops save on existing SourceSystem IDs and clear
 confirmed timing if changed. They do not alter sections or original bytes.
 
