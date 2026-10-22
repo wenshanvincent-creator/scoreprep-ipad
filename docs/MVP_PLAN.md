@@ -1,7 +1,8 @@
 # ScorePrep phased build plan
 
 Updated 22 October 2026. Automatic engineering goal: active.
-Current phase: **V1 — import, recognize, clean display, manual swipe**.
+Current phase: **V2 — tempo-guided practice, completing v0.1**.
+V1 passed its engineering gate at 276418b; see V1_NATIVE_VERIFICATION.md.
 
 ## Product direction
 
@@ -16,7 +17,7 @@ oemer trials failed musical review; **Verovio** renders MusicXML.
 The later following trial uses classical chroma/online DTW. No custom
 model training, replacement notation engraver or comparison of follower options.
 
-## V1 — current work
+## V1 — verified engineering checkpoint
 
 1. Import PDF, JPEG or PNG into an app-owned library.
 2. Use the existing OMR engine on a remote worker to produce MusicXML per source
