@@ -51,3 +51,24 @@ Xcode's `xcresulttool export attachments --path build/Smoke.xcresult --output-pa
 build/reader-attachments` when reviewing CI artifacts. Actual evidence is recorded
 in READER_BUILD_STATUS.md after CI; the foundation's older smoke evidence alone
 does not validate this change.
+
+## Commits after the first integration pickup
+
+If integration already contains 910ca1c, take these reader fixes in order:
+
+- 6a4ddad: persist last-opened project across cold launches. Native run
+  [39761259309](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39761259309)
+  passed all 12 core and 5 UI tests, including PDF/JPEG/PNG reopen and crop/delete.
+- c6895cc: keep the missing-clean-edition state above the long original page;
+  wait for landscape geometry and export full-screen native captures.
+- 17a471b: pin the original crop preview above independently scrolling edge
+  controls, so the selected musical area remains visible during adjustment.
+
+The last two changes address issues found by inspecting native screenshots.
+See READER_BUILD_STATUS.md for the final checked commit and captures.
+
+Recognition persistence must update the same ScoreLibrary project snapshot used
+by reader actions. Saving an edition through an independent ProjectStore while
+leaving the reader's in-memory project stale would let the next rename/crop save
+overwrite that edition. Integration owns injecting the shared library instance
+or adding the corresponding library mutation when composing the review flow.

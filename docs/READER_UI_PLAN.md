@@ -45,3 +45,14 @@ The existing source and PDFKit bridge match this task. Reuse them instead of
 adding a dashboard, decorative card system, custom engraver, or new state
 architecture. Photos-library import is deferred: Files already accepts photos
 without introducing a second acquisition/persistence path during this slice.
+
+## API references checked for this implementation
+
+- [Apple fileImporter](https://developer.apple.com/documentation/swiftui/view/fileimporter(ispresented:allowedcontenttypes:oncompletion:)):
+  start and balance security-scoped access; copy while access is held.
+- [Apple NavigationSplitView](https://developer.apple.com/documentation/swiftui/navigationsplitview):
+  native compact-column behavior rather than orientation-specific navigation.
+- [Apple PDF drawing transforms](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/drawingwithquartz2d/dq_pdf/dq_pdf.html):
+  map media-box origins and PDF rotation before applying displayed-page crops.
+
+Use only the repository's verified iPadOS 18/Xcode 16.4 API surface.
