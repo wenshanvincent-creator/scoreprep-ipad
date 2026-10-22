@@ -58,7 +58,7 @@ final class PracticePreparationUITests: XCTestCase {
         XCTAssertTrue(app.buttons["edit-timing-0"].waitForExistence(timeout: 15))
         app.buttons["edit-timing-0"].tap()
         replace(app.textFields["timing-beats-0"], with: "1.25")
-        replace(app.textFields["timing-phase-0"], with: "3.5")
+        replace(app.textFields["timing-start-beat-0"], with: "4.5")
         replace(app.textFields["timing-bpm-0"], with: "60")
         let add = app.buttons["add-timing-segment"]
         reveal(add, in: app)
@@ -66,7 +66,7 @@ final class PracticePreparationUITests: XCTestCase {
         let secondBeats = app.textFields["timing-beats-1"]
         reveal(secondBeats, in: app)
         replace(secondBeats, with: "4.5")
-        replace(app.textFields["timing-phase-1"], with: "0.25")
+        replace(app.textFields["timing-start-beat-1"], with: "1.5")
         replace(app.textFields["timing-numerator-1"], with: "6")
         replace(app.textFields["timing-denominator-1"], with: "8")
         replace(app.textFields["timing-bpm-1"], with: "96")
@@ -79,12 +79,13 @@ final class PracticePreparationUITests: XCTestCase {
         app.terminate()
         app.launchArguments = ["--smoke-test", "--reader-test-id", "practice-timing"]
         app.launch()
+        XCTAssertTrue(app.buttons["edit-timing-0"].waitForExistence(timeout: 15))
         app.buttons["edit-timing-0"].tap()
         XCTAssertEqual(app.textFields["timing-beats-0"].value as? String, "1.25")
-        XCTAssertEqual(app.textFields["timing-phase-0"].value as? String, "3.5")
+        XCTAssertEqual(app.textFields["timing-start-beat-0"].value as? String, "4.5")
         reveal(app.textFields["timing-beats-1"], in: app)
         XCTAssertEqual(app.textFields["timing-beats-1"].value as? String, "4.5")
-        XCTAssertEqual(app.textFields["timing-phase-1"].value as? String, "0.25")
+        XCTAssertEqual(app.textFields["timing-start-beat-1"].value as? String, "1.5")
         capture("practice-timing-reopened")
     }
 

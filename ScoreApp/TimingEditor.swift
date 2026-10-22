@@ -23,7 +23,7 @@ struct TimingEditor: View {
         NavigationStack {
             Form {
                 Section {
-                    Text("Confirm the performed music in this area, including rests and held notes. Beats and phase use quarter-note units.")
+                    Text("Confirm the played duration of each part, including rests and held notes. Add a segment at each change of tempo or time signature.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
                 ForEach($inputs) { $input in
@@ -101,18 +101,18 @@ private struct TimingSegmentFields: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
-        TimingNumberField(title: "Performed quarter beats", text: $input.quarterBeats,
+        TimingNumberField(title: "Duration (quarter-note beats)", text: $input.quarterBeats,
             identifier: "timing-beats-\(index)")
-        TimingNumberField(title: "Starting bar phase", text: $input.startingBarPhase,
-            identifier: "timing-phase-\(index)")
-        Text("Phase is the elapsed part of a bar at this segment's entrance. For a 4/4 pickup entering on beat four, enter 3.")
+        TimingNumberField(title: "Starting beat in bar", text: $input.startingBeatInBar,
+            identifier: "timing-start-beat-\(index)")
+        Text("Count from 1 using the written beat value: quarter notes in 4/4, eighth notes in 6/8. For an entrance on beat four, enter 4. Fractional beats are allowed.")
             .font(.footnote).foregroundStyle(.secondary)
         let layout = dynamicTypeSize.isAccessibilitySize
             ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout())
         layout {
-            TimingNumberField(title: "Meter numerator", text: $input.numerator,
+            TimingNumberField(title: "Time signature top", text: $input.numerator,
                 identifier: "timing-numerator-\(index)")
-            TimingNumberField(title: "Meter denominator", text: $input.denominator,
+            TimingNumberField(title: "Time signature bottom", text: $input.denominator,
                 identifier: "timing-denominator-\(index)")
         }
         TimingNumberField(title: "BPM", text: $input.bpm, identifier: "timing-bpm-\(index)")

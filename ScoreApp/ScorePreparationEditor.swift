@@ -180,7 +180,7 @@ struct ScorePreparationEditor: View {
                         }
                     }
                 }.disabled(draft.sections.isEmpty).accessibilityIdentifier("add-preparation-area")
-                Text("Choose the section when adding an area. Moving it earlier or later also updates this page's area order in every section. Shape the existing full-page area to its first system before adding the next.")
+                Text("Choose a section when adding an area. Move earlier/later changes only the page list and manual browsing. Edit musical order inside Reading order. Shape the existing full-page area to its first system before adding the next.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             if let area = selectedArea {

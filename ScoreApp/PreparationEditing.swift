@@ -30,8 +30,8 @@ enum PreparationEditing {
         }
     }
 
-    /// User-requested page order also reorders those references in every section;
-    /// other pages, section membership and repeat occurrence identities are kept.
+    /// Page catalog/manual browsing order only. Musical section order and
+    /// repeated memberships are changed explicitly in the reading-order editor.
     static func moveArea(_ id: UUID, by delta: Int, in draft: inout ScorePreparation) {
         guard let area = draft.systems.first(where: { $0.id == id }) else { return }
         let slots = draft.systems.indices.filter { draft.systems[$0].pageIndex == area.pageIndex }
@@ -40,17 +40,7 @@ enum PreparationEditing {
               areas.indices.contains(index + delta) else { return }
         areas.swapAt(index, index + delta)
         for (slot, value) in zip(slots, areas) { draft.systems[slot] = value }
-        let ranks = Dictionary(uniqueKeysWithValues: areas.enumerated().map { ($0.element.id, $0.offset) })
-        for sectionIndex in draft.sections.indices {
-            let memberSlots = draft.sections[sectionIndex].systemIDs.indices.filter {
-                ranks[draft.sections[sectionIndex].systemIDs[$0]] != nil
-            }
-            let members = memberSlots.map { draft.sections[sectionIndex].systemIDs[$0] }
-                .sorted { ranks[$0]! < ranks[$1]! }
-            for (slot, value) in zip(memberSlots, members) {
-                draft.sections[sectionIndex].systemIDs[slot] = value
-            }
-        }
+
     }
 
     static func removeSection(_ id: UUID, from draft: inout ScorePreparation) {
@@ -69,7 +59,9 @@ struct PreparationMember: Identifiable {
 struct TimingSegmentInput: Identifiable, Equatable {
     let id = UUID()
     var quarterBeats: String
-    var startingBarPhase: String
+    var startingBeatInBar: String
+    private let original: TimingSegment
+    private let originalStartingBeat: String
     var numerator: String
     var denominator: String
     var bpm: String
@@ -77,7 +69,10 @@ struct TimingSegmentInput: Identifiable, Equatable {
 
     init(_ segment: TimingSegment) {
         quarterBeats = String(segment.quarterBeats)
-        startingBarPhase = String(segment.startingBarPhase)
+        original = segment
+        let beat = String(1 + segment.startingBarPhase * Double(segment.meter.denominator) / 4)
+        originalStartingBeat = beat
+        startingBeatInBar = beat
         numerator = String(segment.meter.numerator)
         denominator = String(segment.meter.denominator)
         bpm = String(segment.tempo.bpm)
@@ -89,11 +84,19 @@ struct TimingSegmentInput: Identifiable, Equatable {
               let denominator = Int(denominator.trimmingCharacters(in: .whitespacesAndNewlines)) else {
             throw TimingError.invalidMeter
         }
+        // Preserve untouched Core phase exactly, including values whose one-based
+        // display conversion cannot round-trip through binary floating point.
+        let phase: Double
+        if startingBeatInBar == originalStartingBeat, denominator == original.meter.denominator {
+            phase = original.startingBarPhase
+        } else {
+            phase = try (number(startingBeatInBar, field: "starting beat") - 1) * 4 / Double(denominator)
+        }
         let value = try TimingSegment(
-            quarterBeats: number(quarterBeats, field: "performed quarter beats"),
+            quarterBeats: number(quarterBeats, field: "duration"),
             meter: TimeSignature(numerator: numerator, denominator: denominator),
             tempo: ReferenceTempo(bpm: number(bpm, field: "BPM"), pulse: pulse),
-            startingBarPhase: number(startingBarPhase, field: "starting bar phase")
+            startingBarPhase: phase
         )
         try value.validate()
         return value

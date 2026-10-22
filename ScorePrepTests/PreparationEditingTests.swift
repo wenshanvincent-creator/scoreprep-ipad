@@ -4,20 +4,27 @@ import XCTest
 @testable import ScorePrep
 
 final class PreparationEditingTests: XCTestCase {
-    func testExplicitPageMoveUpdatesSectionReferencesAndRetainsRepeatIdentities() throws {
+    func testPageCatalogMovePreservesCustomRepeatedMusicalOrderAndPassIdentities() throws {
         var project = makeProject()
         let first = project.systems[0], second = project.systems[1]
-        project.readingOrder.append(SectionOccurrence(sectionID: project.sections[0].id))
+        let third = SourceSystem(pageIndex: 0, bounds: .fullPage, label: "C", timing: first.timing)
+        project.systems.append(third)
+        let custom = ScoreSection(name: "Custom", systemIDs: [third.id, first.id, second.id])
+        let repeated = ScoreSection(name: "Repeated area", systemIDs: [first.id, second.id, first.id])
+        project.sections = [custom, repeated]
+        project.readingOrder = [SectionOccurrence(sectionID: custom.id),
+            SectionOccurrence(sectionID: repeated.id), SectionOccurrence(sectionID: custom.id)]
         let occurrences = project.readingOrder.map(\.id)
         var draft = ScorePreparation(project: project)
         PreparationEditing.moveArea(second.id, by: -1, in: &draft)
         let saved = try draft.applying(to: project, sourcePageCount: 1)
-        XCTAssertEqual(saved.systems.map(\.id), [second.id, first.id])
-        XCTAssertEqual(saved.sections[0].systemIDs, [second.id, first.id])
+        XCTAssertEqual(saved.systems.map(\.id), [second.id, first.id, third.id])
+        XCTAssertEqual(saved.sections, project.sections)
         XCTAssertEqual(saved.readingOrder.map(\.id), occurrences)
         let timeline = try TimelineCompiler.compile(saved)
-        XCTAssertEqual(timeline.spans.map(\.systemID), [second.id, first.id, second.id, first.id])
-        XCTAssertNotEqual(timeline.spans[0].id, timeline.spans[2].id)
+        XCTAssertEqual(timeline.spans.map(\.systemID),
+            [third.id, first.id, second.id, first.id, second.id, first.id, third.id, first.id, second.id])
+        XCTAssertNotEqual(timeline.spans[0].id, timeline.spans[6].id)
     }
 
     func testAddRemoveAndCropDraftKeepsUnaffectedAreasAndRemovesEveryReference() throws {
@@ -50,8 +57,21 @@ final class PreparationEditingTests: XCTestCase {
         invalid.quarterBeats = "1.25oops"
         XCTAssertThrowsError(try invalid.segment())
         invalid.quarterBeats = "1.25"
-        invalid.startingBarPhase = "4"
+        invalid.startingBeatInBar = "5"
         XCTAssertThrowsError(try invalid.segment())
+    }
+
+    func testWrittenBeatConversionAndUntouchedFractionalPhaseAreExact() throws {
+        for (denominator, phase) in [(4, 3.0), (8, 1.5)] {
+            var input = TimingSegmentInput(TimingSegment(quarterBeats: 1,
+                meter: .init(numerator: 6, denominator: denominator),
+                tempo: .init(bpm: 60), startingBarPhase: 0))
+            input.startingBeatInBar = "4"
+            XCTAssertEqual(try input.segment().startingBarPhase, phase)
+        }
+        let segment = TimingSegment(quarterBeats: 1.3, meter: .init(numerator: 6, denominator: 8),
+            tempo: .init(bpm: 60.125, pulse: .dottedQuarter), startingBarPhase: 0.3)
+        XCTAssertEqual(try TimingSegmentInput(segment).segment(), segment)
     }
 
     @MainActor
