@@ -2,7 +2,8 @@
 
 ## Entry points
 
-`LibraryView()` remains the app entry view. `ScoreLibrary.importOriginal(from:)`
+`LibraryView()` remains the app entry view and accepts optional
+`onReviewRequested: (UUID, Int) -> Void`. `ScoreLibrary.importOriginal(from:)`
 is async and copies a PDF/JPEG/PNG before security-scoped access ends. It saves
 only a relative `sourceFilename` using the existing ScoreProject JSON. Existing
 `importPDF(from:)` delegates to it and is now async. No shared models changed.
@@ -10,7 +11,7 @@ only a relative `sourceFilename` using the existing ScoreProject JSON. Existing
 `ScoreReader` receives the project, original URL and existing timing callback,
 plus `onCropSaved`, `onRename`, and `onDelete`. Its optional
 `onReviewRequested: (UUID, Int) -> Void` passes project ID and zero-based source
-page index to integration. Inject this callback from LibraryView when composing
+page index to integration. Inject this callback into LibraryView when composing
 the actual recognition/review destination. Without it, Review displays the full
 original page and an explicit "No clean edition yet" state.
 
@@ -44,7 +45,8 @@ The real Files picker, cloud-provider access, hardware and Photos picker remain
 separate coverage. All fixtures derive from the repository's owned SampleScore.
 
 Portrait, landscape, crop/review, image, rotated-PDF and large-text screenshots
-are retained as XCTest attachments inside Smoke.xcresult. Export with the verified
+are exported to build/*.png on the simulator host by the test helper, and
+retained as XCTest attachments inside Smoke.xcresult. Export with the verified
 Xcode's `xcresulttool export attachments --path build/Smoke.xcresult --output-path
 build/reader-attachments` when reviewing CI artifacts. Actual evidence is recorded
 in READER_BUILD_STATUS.md after CI; the foundation's older smoke evidence alone

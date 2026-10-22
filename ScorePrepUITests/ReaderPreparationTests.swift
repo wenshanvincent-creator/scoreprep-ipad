@@ -111,9 +111,19 @@ final class ReaderPreparationTests: XCTestCase {
     }
 
     private func capture(_ app: XCUIApplication, _ name: String) {
-        let attachment = XCTAttachment(screenshot: app.screenshot())
+        let screenshot = app.screenshot()
+        let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
+        #if targetEnvironment(simulator)
+        // The existing workflow uploads build/*.png. Export on the macOS
+        // simulator host as well as retaining the xcresult attachment.
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
+        do {
+            try screenshot.pngRepresentation.write(
+                to: root.appendingPathComponent("build/\(name).png"), options: .atomic)
+        } catch { XCTFail("Could not export native screenshot: \(error)") }
+        #endif
     }
 }

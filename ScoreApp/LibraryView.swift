@@ -3,6 +3,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct LibraryView: View {
+    var onReviewRequested: ((UUID, Int) -> Void)? = nil
     @StateObject private var library = ScoreLibrary()
     @SceneStorage("reader.selectedProject") private var selectedProject = ""
     @State private var importing = false
@@ -55,7 +56,8 @@ struct LibraryView: View {
                         try library.updateTiming(projectID: project.id, systemID: systemID, segment: segment)
                     }, onCropSaved: { systemID, bounds in
                         try library.updateCrop(projectID: project.id, systemID: systemID, bounds: bounds)
-                    }, onRename: { beginRename(project) }, onDelete: { deleting = project })
+                    }, onRename: { beginRename(project) }, onDelete: { deleting = project },
+                    onReviewRequested: onReviewRequested)
                     .id(project.id)
             } else {
                 ContentUnavailableView {
