@@ -7,24 +7,32 @@ final class PracticePreparationUITests: XCTestCase {
     }
 
     func testMultiAreaRouteSaveCancelAndOriginalAccessOnOwnedExercise() {
-        XCUIDevice.shared.orientation = .landscapeLeft
         let app = launch("practice-areas")
-        let exercise = app.buttons["open-practice-exercise"]
-        XCTAssertTrue(exercise.waitForExistence(timeout: 15))
-        exercise.tap()
-        XCTAssertTrue(app.navigationBars["Pickup and pulse"].waitForExistence(timeout: 15))
+        PracticeUITestActions.openExercise(in: app)
+        PracticeUITestActions.landscape(app)
         openPreparation(app)
         capture("practice-preparation-landscape")
-        app.buttons["add-preparation-area"].tap()
-        app.buttons["Add to Score"].tap()
+        let areaControls = app.collectionViews["preparation-area-controls"]
+        let addArea = app.buttons["add-preparation-area"]
+        PracticeUITestActions.reveal(addArea, in: areaControls)
+        addArea.tap()
+        PracticeUITestActions.sectionChoice(in: app, prefix: "add-preparation-area-to-", label: "Add to Score").tap()
         let name = app.textFields["preparation-area-name"]
-        reveal(name, in: app)
-        replace(name, with: "Ending")
-        app.buttons["preparation-area-actions-3"].tap()
+        PracticeUITestActions.reveal(name, in: areaControls)
+        replace(name, with: "Ending", in: areaControls)
+        let hideKeyboard = app.keyboards.buttons["Hide keyboard"]
+        if hideKeyboard.exists { hideKeyboard.tap() }
+        let endingActions = app.buttons["preparation-area-actions-3"]
+        PracticeUITestActions.reveal(endingActions, in: areaControls, toward: .earlier)
+        endingActions.tap()
         app.buttons["Move earlier"].tap()
         app.segmentedControls["preparation-mode"].buttons["Reading order"].tap()
-        app.buttons["add-preparation-pass"].tap()
-        app.buttons["Score"].tap()
+        let addPass = app.buttons["add-preparation-pass"]
+        PracticeUITestActions.reveal(addPass, in: app.collectionViews["preparation-order-controls"])
+        addPass.tap()
+        PracticeUITestActions.sectionChoice(in: app, prefix: "add-preparation-pass-section-", label: "Score").tap()
+        PracticeUITestActions.reveal(app.staticTexts["preparation-pass-1"],
+            in: app.collectionViews["preparation-order-controls"], toward: .earlier)
         XCTAssertTrue(app.staticTexts["preparation-pass-1"].waitForExistence(timeout: 5))
         capture("practice-reading-order-repeat")
         app.buttons["save-preparation"].tap()
@@ -33,13 +41,18 @@ final class PracticePreparationUITests: XCTestCase {
         app.launch()
         openPreparation(app)
         app.segmentedControls["preparation-mode"].buttons["Reading order"].tap()
+        PracticeUITestActions.reveal(app.staticTexts["preparation-pass-1"],
+            in: app.collectionViews["preparation-order-controls"])
         XCTAssertTrue(app.staticTexts["preparation-pass-1"].waitForExistence(timeout: 5))
         app.segmentedControls["preparation-mode"].buttons["Areas"].tap()
-        app.buttons["preparation-area-actions-2"].tap()
+        let removeActions = app.buttons["preparation-area-actions-2"]
+        PracticeUITestActions.reveal(removeActions, in: areaControls)
+        removeActions.tap()
         app.buttons["Remove area"].tap()
         app.buttons["Remove area"].tap()
-        app.buttons["Cancel"].tap()
+        app.buttons["cancel-preparation"].tap()
         openPreparation(app)
+        PracticeUITestActions.reveal(app.buttons["select-preparation-area-3"], in: areaControls)
         XCTAssertTrue(app.buttons["select-preparation-area-3"].waitForExistence(timeout: 5))
         XCUIDevice.shared.orientation = .portrait
         let portrait = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
@@ -47,7 +60,7 @@ final class PracticePreparationUITests: XCTestCase {
         }, object: app)
         XCTAssertEqual(XCTWaiter.wait(for: [portrait], timeout: 10), .completed)
         capture("practice-preparation-portrait")
-        app.buttons["Cancel"].tap()
+        app.buttons["cancel-preparation"].tap()
         app.buttons["score-options"].tap()
         app.buttons["view-original-pages"].tap()
         XCTAssertTrue(app.navigationBars["Original score"].waitForExistence(timeout: 5))
@@ -57,21 +70,21 @@ final class PracticePreparationUITests: XCTestCase {
         let app = launch("practice-timing")
         XCTAssertTrue(app.buttons["edit-timing-0"].waitForExistence(timeout: 15))
         app.buttons["edit-timing-0"].tap()
-        replace(app.textFields["timing-beats-0"], with: "1.25")
-        replace(app.textFields["timing-start-beat-0"], with: "4.5")
-        replace(app.textFields["timing-bpm-0"], with: "60")
+        let fields = app.collectionViews["timing-fields"]
+        replace(app.textFields["timing-beats-0"], with: "1.25", in: fields)
+        replace(app.textFields["timing-start-beat-0"], with: "4.5", in: fields)
+        replace(app.textFields["timing-bpm-0"], with: "60", in: fields)
         let add = app.buttons["add-timing-segment"]
-        reveal(add, in: app)
+        PracticeUITestActions.reveal(add, in: fields)
         add.tap()
         let secondBeats = app.textFields["timing-beats-1"]
-        reveal(secondBeats, in: app)
-        replace(secondBeats, with: "4.5")
-        replace(app.textFields["timing-start-beat-1"], with: "1.5")
-        replace(app.textFields["timing-numerator-1"], with: "6")
-        replace(app.textFields["timing-denominator-1"], with: "8")
-        replace(app.textFields["timing-bpm-1"], with: "96")
+        replace(secondBeats, with: "4.5", in: fields)
+        replace(app.textFields["timing-start-beat-1"], with: "1.5", in: fields)
+        replace(app.textFields["timing-numerator-1"], with: "6", in: fields)
+        replace(app.textFields["timing-denominator-1"], with: "8", in: fields)
+        replace(app.textFields["timing-bpm-1"], with: "96", in: fields)
         let pulse = app.buttons["timing-pulse-1"]
-        reveal(pulse, in: app)
+        PracticeUITestActions.reveal(pulse, in: fields)
         pulse.tap()
         app.buttons["Dotted quarter"].tap()
         capture("practice-multiple-timing-segments")
@@ -83,8 +96,9 @@ final class PracticePreparationUITests: XCTestCase {
         app.buttons["edit-timing-0"].tap()
         XCTAssertEqual(app.textFields["timing-beats-0"].value as? String, "1.25")
         XCTAssertEqual(app.textFields["timing-start-beat-0"].value as? String, "4.5")
-        reveal(app.textFields["timing-beats-1"], in: app)
+        PracticeUITestActions.reveal(app.textFields["timing-beats-1"], in: fields)
         XCTAssertEqual(app.textFields["timing-beats-1"].value as? String, "4.5")
+        PracticeUITestActions.reveal(app.textFields["timing-start-beat-1"], in: fields)
         XCTAssertEqual(app.textFields["timing-start-beat-1"].value as? String, "1.5")
         capture("practice-timing-reopened")
     }
@@ -103,19 +117,12 @@ final class PracticePreparationUITests: XCTestCase {
         return app
     }
 
-    private func replace(_ field: XCUIElement, with text: String) {
+    private func replace(_ field: XCUIElement, with text: String, in form: XCUIElement) {
+        PracticeUITestActions.reveal(field, in: form)
         XCTAssertTrue(field.waitForExistence(timeout: 5))
         let previous = field.value as? String ?? ""
         field.tap()
         field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count) + text)
-    }
-
-    private func reveal(_ element: XCUIElement, in app: XCUIApplication) {
-        for _ in 0..<10 {
-            if element.exists && element.isHittable { return }
-            app.swipeUp()
-        }
-        XCTAssertTrue(element.isHittable)
     }
 
     private func capture(_ name: String) {

@@ -49,7 +49,9 @@ struct ScorePreparationEditor: View {
             .navigationTitle("Prepare score")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }.accessibilityIdentifier("cancel-preparation")
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save preparation", action: save).accessibilityIdentifier("save-preparation")
                 }
@@ -177,7 +179,7 @@ struct ScorePreparationEditor: View {
                         Button("Add to \(section.name)") {
                             selectedAreaID = PreparationEditing.addArea(to: &draft,
                                 page: pageIndex, sectionID: section.id)
-                        }
+                        }.accessibilityIdentifier("add-preparation-area-to-\(section.id)")
                     }
                 }.disabled(draft.sections.isEmpty).accessibilityIdentifier("add-preparation-area")
                 Text("Choose a section when adding an area. Move earlier/later changes only the page list and manual browsing. Edit musical order inside Reading order. Shape the existing full-page area to its first system before adding the next.")
