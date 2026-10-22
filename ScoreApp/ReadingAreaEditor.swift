@@ -101,12 +101,12 @@ struct OriginalReviewView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    Label("Original · Page \(pageNumber)", systemImage: "doc")
-                        .font(.headline)
-                    SourcePageSurface(page: page)
                     Text("No clean edition yet").font(.headline)
                     Text("Keep reading the original. A recognized edition needs to be created and reviewed before comparison is available.")
                         .foregroundStyle(.secondary)
+                    Label("Original · Page \(pageNumber)", systemImage: "doc")
+                        .font(.headline)
+                    SourcePageSurface(page: page)
                 }.padding(20)
             }
             .background(Color(uiColor: .systemGroupedBackground))

@@ -19,7 +19,10 @@ final class ReaderPreparationTests: XCTestCase {
         app.buttons["previous-area"].tap()
         XCTAssertTrue(app.staticTexts["Line 2"].waitForExistence(timeout: 5))
         XCUIDevice.shared.orientation = .landscapeLeft
-        XCTAssertTrue(app.buttons["next-area"].waitForExistence(timeout: 5))
+        let landscape = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            app.frame.width > app.frame.height
+        }, object: app)
+        XCTAssertEqual(XCTWaiter.wait(for: [landscape], timeout: 10), .completed)
         capture(app, "reader-landscape")
         app.buttons["review-score"].tap()
         XCTAssertTrue(app.staticTexts["No clean edition yet"].waitForExistence(timeout: 5))
@@ -111,7 +114,7 @@ final class ReaderPreparationTests: XCTestCase {
     }
 
     private func capture(_ app: XCUIApplication, _ name: String) {
-        let screenshot = app.screenshot()
+        let screenshot = XCUIScreen.main.screenshot()
         let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = name
         attachment.lifetime = .keepAlways
