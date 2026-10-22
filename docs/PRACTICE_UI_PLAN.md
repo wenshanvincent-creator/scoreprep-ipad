@@ -187,6 +187,14 @@ unconfirmed-source rejection with manual reading retained. They export native
 portrait/landscape/large-text and repeat-loop captures when root runs the suite.
 These checks have been authored, not yet executed on this practice UI head.
 
+A separate automatic-advance UI take starts at area 1, silent at 100% with no
+count-in, and makes no transport or navigation commands after Play. It observes
+area 2 at 5 seconds, area 3 at 9 seconds and Finished at 13 seconds, with a
+runner-clock bracket around Play and 1.25 seconds of UI observation allowance.
+It captures all three current/upcoming compositions and attaches measured
+timing JSON. This verifies automatic visible focus independently of the manual
+Next/end test; exact transport/audio timing remains covered by their own tests.
+
 A full-screen practice presentation pauses on disappearance. Preparation/timing
 changes invalidate it; reopening compiles a fresh controller. Invalid timing
 keeps the original reader available with the actual preparation error. Original
