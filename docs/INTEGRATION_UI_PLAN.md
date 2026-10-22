@@ -29,3 +29,9 @@ automatic recognition upon opening a library item. Do not add voice or following
 Inspect actual portrait/landscape screenshots and verify original comparison,
 review state and offline reopen. Cloud recognition output and native component
 tests alone do not establish the integrated flow or a production deployment.
+
+Targeted persistence tests exercise real app-owned files: reject a result for
+different source bytes, preserve a prior edition when a replacement fails,
+and reopen saved XML/review decisions without changing the original. Native
+UI tests exercise replay/rejection and Keychain connection persistence. The
+recorded fixture is a known imperfect OMR output, not an accuracy assertion.

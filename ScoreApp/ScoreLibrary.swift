@@ -33,6 +33,11 @@ enum LibraryError: LocalizedError {
 struct ProjectStore {
     let directory: URL
 
+    init(directory: URL) throws {
+        self.directory = directory
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    }
+
     init() throws {
         let base = try FileManager.default.url(
             for: .applicationSupportDirectory, in: .userDomainMask,
@@ -85,9 +90,9 @@ final class ScoreLibrary: ObservableObject {
     @Published var errorMessage: String?
     private var store: ProjectStore?
 
-    init() {
+    init(store providedStore: ProjectStore? = nil) {
         do {
-            let openedStore = try ProjectStore()
+            let openedStore = try providedStore ?? ProjectStore()
             store = openedStore
             projects = try openedStore.load()
             if !FileManager.default.fileExists(

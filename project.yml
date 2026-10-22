@@ -57,6 +57,17 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.ScorePrep.UITests
         GENERATE_INFOPLIST_FILE: YES
+  ScorePrepTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - ScorePrepTests
+    dependencies:
+      - target: ScorePrep
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.ScorePrep.Tests
+        GENERATE_INFOPLIST_FILE: YES
   RecognitionHarness:
     type: application
     platform: iOS
@@ -119,7 +130,9 @@ schemes:
     build:
       targets:
         ScorePrep: all
+        ScorePrepTests: [test]
         ScorePrepUITests: [test]
     test:
       targets:
+        - ScorePrepTests
         - ScorePrepUITests
