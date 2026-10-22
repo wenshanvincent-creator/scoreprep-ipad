@@ -8,12 +8,14 @@ never join documents into a single XML string.
 
 `RecognitionClient(baseURL: URL, bearerToken: String, session: URLSession = .shared)`
 
-- `submit(document: Data, mediaType: String) async throws -> RecognitionJob`
+- `submit(document: Data, mediaType: String, deskew: Bool = true) async throws -> RecognitionJob`
 - `job(id: String) async throws -> RecognitionJob`
 - `waitForResult(id: String, timeout: Duration = .seconds(1800), progress: @Sendable (RecognitionJob) async -> Void) async throws -> RecognitionJob`
 
 Supported MIME types: `application/pdf`, `image/png`, `image/jpeg`. Up to 20 MiB
 and eight source pages. Submission returns HTTP 202 after source validation.
+Keep deskew enabled for photos. Set it false only for a known straight generated
+or scanned page; the targeted cloud trial records that explicit choice.
 Save the original locally before sending; the server also preserves its bytes.
 Keep the job ID so polling can resume after a network error. Poll cancellation
 does not cancel server inference. Transport, HTTP and decoding errors throw.
@@ -37,7 +39,13 @@ unreviewed/accepted/rejected decisions and local filenames.
 
 ## Renderer entry point
 
-`RecognizedScoreView(pages: [RecognitionPage])`
+`RecognizedScoreView(pages: [RecognitionPage], initialSourcePageIndex: Int = 0, onSourcePageChanged: ((Int) -> Void)? = nil)`
+
+The optional initial source index seeds the first layout. Size/rotation reflow
+then preserves the currently visible source. The callback reports visible source
+changes (including the first successful layout) so integration can align original
+comparison and review actions. Create a fresh view identity when opening a
+different edition; ordinary review-state changes can update the existing pages.
 
 Accepts successful page values, including ones reconstructed from local
 MusicXML and persisted source indexes. Requires ordered, unique indexes; input
@@ -54,7 +62,7 @@ with `.succeeded`, the sourcePageIndex and reviewRequired from saved metadata.
 Authenticated `POST /v1/jobs` with JSON:
 
 ```json
-{"mediaType":"image/png","contentBase64":"<base64 original bytes>"}
+{"mediaType":"image/png","contentBase64":"<base64 original bytes>","deskew":true}
 ```
 
 Authenticated `GET /v1/jobs/{UUID}` returns the same job shape. All endpoints

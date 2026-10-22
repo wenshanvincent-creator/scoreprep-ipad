@@ -41,6 +41,7 @@ final class RecognitionRenderingUITests: XCTestCase {
     @MainActor
     private func capture(_ name: String) {
         // Allow WebKit's SVG presentation after native engraving has completed.
+        Thread.sleep(forTimeInterval: 2)
         let screenshot = XCUIScreen.main.screenshot()
         let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = name
