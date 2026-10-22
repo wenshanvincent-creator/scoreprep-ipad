@@ -12,6 +12,7 @@ timing. Recreate the controller after preparation changes the route/timing.
 | --- | --- |
 | `timeline: CompiledTimeline` | The immutable occurrence route. |
 | `snapshot: PracticeSnapshot` (`@Published`) | Authoritative phase, reference position, cumulative take elapsed time, current/upcoming indices and count-in seconds remaining. |
+| `currentPulse: PracticePulseDisplay?` (`@Published`) | Current pulse plus sampled 0…1 progress, available in audible and silent modes, including count-in. Nil before the startup anchor and while stopped/paused/finished. |
 | `currentSpan: TimelineSpan` | Current occurrence; its `systemID` selects the source crop. |
 | `upcomingSpan: TimelineSpan?` | Upcoming occurrence, including the A-B wrap; nil at the end. |
 | `speed: Double` | Reference-speed multiplier, initially 1. |
@@ -25,6 +26,14 @@ timing. Recreate the controller after preparation changes the route/timing.
 count-in remaining value as seconds, not as a guessed beat number.
 Current/upcoming are occurrence identities, not merely source system IDs.
 Repeated sections can share a source while having distinct `TimelineSpan.id`.
+
+For a silent metronome, display `currentPulse.pulse.isDownbeat`,
+`currentPulse.pulse.isCountIn` and `currentPulse.progress`; use
+`currentPulse.pulse.elapsed` to recognize a new pulse. No view timer or beat
+math is needed. `pulse.beatInBar` is the one-based denominator beat: dotted
+quarter pulses in 6/8 occur on beats **1 and 4**. It can be fractional for
+valid pulse units that do not divide the meter. A pulse indicator may simply
+accent downbeats without labeling a guessed integer pulse-per-bar count.
 
 ## Commands (all synchronous, on the main actor)
 
@@ -68,6 +77,32 @@ simulator. Root owns project/test composition and the next native run. New
 targeted pure and native controller tests follow this interface commit.
 Generated PCM or scheduled buffers will establish their stated boundaries;
 heard output, Bluetooth latency and musician timing still require an iPad.
+
+## Continuous pulse semantics
+
+Confirmed duration, meter and tempo pulse units are retained. Pulse phase is a
+continuous coordinate across bars, systems, segment tempo/unit changes and
+loop wraps. Each segment converts its performed quarter beats into explicit
+tempo pulses; a tempo or unit change preserves the remaining fraction of a
+pulse while changing its future duration/size. Starting bar phase initializes
+a new take and determines musical beat labels and accents, rather than
+resetting the metronome at every bar/system.
+
+For 4/4 at dotted-quarter 60, clicks stay one second apart. One full-bar
+count-in lasts 8/3 seconds, so its musical entrance lies between clicks; no
+extra entrance click shortens the BPM interval. Accents occur only when a
+pulse coincides with a downbeat. A non-dividing A-B length also preserves the
+pulse phase across its wraps. Common 4/4 quarter and 6/8 dotted-quarter retain
+their usual four/two pulses per complete bar.
+
+`PracticePulsePlannerTests` covers the owned pickup/compound route, segment
+tempo changes, fractional/non-dividing boundaries, loop generations, missed
+lookahead and display phase. The owned `ScorePrepTests/PracticeAudioTests.swift`
+adds native controller cancellation/system notifications, live mixer PCM with
+host-time comparisons and a pause gap, and a separate offline rendering check.
+Live capture exports a WAV and JSON receipt; unavailable simulator output is
+reported as a skipped live test with a limitation receipt. Offline success is
+never labeled live output. These new checks await the macOS run.
 
 The iPadOS 18-compatible API choices follow Apple's
 [host-clock representation](https://developer.apple.com/documentation/avfaudio/avaudiotime),
