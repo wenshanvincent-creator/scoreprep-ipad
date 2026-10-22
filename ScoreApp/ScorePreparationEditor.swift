@@ -8,6 +8,7 @@ struct ScorePreparationEditor: View {
     @State private var draft: ScorePreparation
     @State private var pageIndex: Int
     @State private var selectedAreaID: UUID?
+    @State private var choosingAreaSection = false
     @State private var mode = PreparationMode.areas
     @State private var editingSection: ScoreSection?
     @State private var removingArea: SourceSystem?
@@ -170,18 +171,20 @@ struct ScorePreparationEditor: View {
                         .accessibilityIdentifier("preparation-area-actions-\(index)")
                     }.buttonStyle(.borderless)
                 }
-                Menu {
-                    ForEach(draft.sections) { section in
-                        Button("Add to \(section.name)") {
-                            selectedAreaID = PreparationEditing.addArea(to: &draft,
-                                page: pageIndex, sectionID: section.id)
-                        }
-                    }
-                } label: {
+                Button { choosingAreaSection = true } label: {
                     Label("Add reading area", systemImage: "plus")
                         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                         .contentShape(Rectangle())
                 }.disabled(draft.sections.isEmpty).accessibilityIdentifier("add-preparation-area")
+                .confirmationDialog("Add reading area to section", isPresented: $choosingAreaSection,
+                    titleVisibility: .visible) {
+                    ForEach(draft.sections) { section in
+                        Button("Add to \(section.name)") { [sectionID = section.id] in
+                            selectedAreaID = PreparationEditing.addArea(to: &draft,
+                                page: pageIndex, sectionID: sectionID)
+                        }
+                    }
+                }
                 Text("Choose a section when adding an area. Move earlier/later changes only the page list and manual browsing. Edit musical order inside Reading order. Shape the existing full-page area to its first system before adding the next.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
