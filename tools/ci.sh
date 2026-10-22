@@ -3,6 +3,7 @@ set -euo pipefail
 
 mkdir -p build
 xcodebuild -version | tee build/xcode-version.txt
+python3 tools/prepare_verovio.py
 xcodegen generate --spec project.yml
 SIMULATOR_ID=$(xcrun simctl list devices available --json | python3 tools/select_simulator.py)
 printf '%s\n' "$SIMULATOR_ID" > build/simulator-id.txt

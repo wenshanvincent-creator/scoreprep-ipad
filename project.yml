@@ -13,8 +13,7 @@ packages:
   ScoreCore:
     path: Packages/ScoreCore
   Verovio:
-    url: https://github.com/rism-digital/verovio.git
-    revision: 425dd7b6ba26edcecbe345c10b15586d095743d9
+    path: build/dependencies/verovio
 targets:
   ScorePrep:
     type: application

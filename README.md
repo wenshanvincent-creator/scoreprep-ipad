@@ -40,6 +40,7 @@ Requirements: a recent Xcode with the iOS 18 SDK or newer, its command-line
 tools, and XcodeGen. The deployment target is iPadOS 18.
 
     brew install xcodegen
+    python3 tools/prepare_verovio.py
     xcodegen generate
     open ScorePrep.xcodeproj
 

@@ -71,6 +71,9 @@ not silently replace invalid projects with a demo.
 project.yml is the source of the native Xcode project. XcodeGen generates
 ScorePrep.xcodeproj so parallel sessions do not edit a generated project file.
 The app links the local ScoreCore package and the pinned native Verovio toolkit.
+tools/prepare_verovio.py prepares its local Swift package in build/dependencies
+from an exact upstream revision and applies the documented negative-voice bounds
+fix. Both native CI entry points run this preparation before XcodeGen.
 Its built-in musicxml-hum import path preserves the interleaved piano voices
 returned by homr. The remote worker runs the existing OMR models; the iPad
 retains the original and saves per-source-page MusicXML for offline engraving.

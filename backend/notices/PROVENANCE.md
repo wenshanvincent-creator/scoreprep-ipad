@@ -57,6 +57,16 @@ N. Journet, *The ICDAR 2013 Music Scores Competition: Staff Removal*, ICDAR
 Competition: Staff Removal*, LNCS 8746 (2014).
 
 Verovio remains an upstream library rather than a replacement engraver.
+The native build applies tools/patches/verovio-negative-voice.patch to the pinned
+6.3.0 source. This adds a lower-bound check in MxmlEvent::getStaffIndex and
+getCrossStaffOffset. The iPad simulator crash at recognition source 8e50294 was
+SIGABRT from hardened vector indexing during musicxml-hum conversion; the
+existing upper-bound-only check admitted a negative voice index. C++ hardening
+stays enabled, and no recognized notation is rewritten. Source preparation
+checks the upstream commit, the original/patched file SHA-256, and unrelated
+tracked modifications. Full upstream source and notices remain in that local
+checkout; only the two-line patch and preparation code are committed here.
+The patched native build still requires its own passing runtime evidence.
 Public source and full notices are supplied. Distribution packaging must retain
 applicable font/dependency notices and satisfy the library's license terms;
 App Store distribution has not been performed or signed in this task.

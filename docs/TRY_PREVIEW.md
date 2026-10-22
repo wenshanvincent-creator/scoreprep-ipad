@@ -3,7 +3,8 @@
 This is a source-build preview for an iPad simulator or a signed iPad build.
 It is not an installable App Store release. Use the ScorePrep scheme with
 Xcode 16.4, an iOS 18.5 iPad simulator, and the project generated from project.yml.
-See the repository README for the build steps.
+See the repository README for the build steps, including the pinned Verovio
+source preparation before generating the Xcode project.
 
 ## Local original reading
 

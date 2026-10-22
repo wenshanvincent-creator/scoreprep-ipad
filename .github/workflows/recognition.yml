@@ -1,7 +1,7 @@
 name: Recognition and notation evidence
 on:
   pull_request:
-    paths: ['ScoreRecognition/**', 'ScoreRendering/Recognition/**', 'backend/**', 'project.yml', '.github/workflows/recognition.yml']
+    paths: ['ScoreRecognition/**', 'ScoreRendering/Recognition/**', 'backend/**', 'tools/prepare_verovio.py', 'tools/patches/**', 'project.yml', '.github/workflows/recognition.yml']
   workflow_dispatch:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
