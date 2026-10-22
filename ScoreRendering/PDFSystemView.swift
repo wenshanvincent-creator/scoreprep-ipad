@@ -25,20 +25,38 @@ final class PDFCropCanvas: UIView {
     var crop = NormalizedRect.fullPage
 
     override func draw(_ rect: CGRect) {
-        guard let page, let context = UIGraphicsGetCurrentContext() else { return }
-        let media = page.bounds(for: .mediaBox)
+        guard let page, let reference = page.pageRef,
+              let context = UIGraphicsGetCurrentContext() else { return }
+        let size = SourcePageGeometry.displaySize(of: page)
         let source = CGRect(
-            x: media.minX + crop.x * media.width,
-            y: media.minY + (1 - crop.y - crop.height) * media.height,
-            width: crop.width * media.width,
-            height: crop.height * media.height
+            x: crop.x * size.width, y: crop.y * size.height,
+            width: crop.width * size.width, height: crop.height * size.height
         )
         context.saveGState()
         context.clip(to: bounds)
-        context.translateBy(x: 0, y: bounds.height)
-        context.scaleBy(x: bounds.width / source.width, y: -bounds.height / source.height)
+        context.scaleBy(x: bounds.width / source.width, y: bounds.height / source.height)
         context.translateBy(x: -source.minX, y: -source.minY)
-        page.draw(with: .mediaBox, to: context)
+        // Crop coordinates describe the displayed, rotated page from its top-left.
+        context.translateBy(x: 0, y: size.height)
+        context.scaleBy(x: 1, y: -1)
+        context.concatenate(reference.getDrawingTransform(
+            .mediaBox, rect: CGRect(origin: .zero, size: size),
+            rotate: Int32(page.rotation) - reference.rotationAngle,
+            preserveAspectRatio: true
+        ))
+        context.drawPDFPage(reference)
+        // PDF annotation appearances (including ink) remain on the original.
+        for annotation in page.annotations where annotation.shouldDisplay {
+            annotation.draw(with: .mediaBox, in: context)
+        }
         context.restoreGState()
+    }
+}
+
+enum SourcePageGeometry {
+    static func displaySize(of page: PDFPage) -> CGSize {
+        let media = page.pageRef?.getBoxRect(.mediaBox) ?? page.bounds(for: .mediaBox)
+        return page.rotation % 180 == 0 ? media.size
+            : CGSize(width: media.height, height: media.width)
     }
 }
