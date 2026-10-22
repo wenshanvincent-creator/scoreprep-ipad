@@ -218,8 +218,9 @@ flow, fractional multi-segment cold reopen and the existing 7 UI tests. The
 remaining portrait failures have a sidebar `PopoverDismissRegion` over the
 reader and a BackButton instead of ToggleSidebar; no post-import hide tap ran.
 Plan: let LibraryView bind native columnVisibility (initially automatic), then
-set detailOnly only after the owned exercise imports successfully, alongside
-the existing compact-column selection. The test must wait for the actual
+set detailOnly after successful explicit exercise opening or file import,
+alongside the existing compact-column selection at those two success callbacks.
+Normal sidebar navigation stays native. The test must wait for the actual
 Practice button to become hittable, with no guessed sidebar dismissal action.
 Apple documents the combined visibility/compact-column initializer from iOS 17:
 [NavigationSplitView initializer](https://developer.apple.com/documentation/swiftui/navigationsplitview/init(columnvisibility:preferredcompactcolumn:sidebar:detail:)).

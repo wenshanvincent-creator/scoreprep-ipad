@@ -121,6 +121,7 @@ struct LibraryView: View {
                         defer { isImporting = false }
                         selection.wrappedValue = try await library.importOriginal(from: url)
                         compactColumn = .detail
+                        columnVisibility = .detailOnly
                     }
                 } catch { library.errorMessage = error.localizedDescription }
             }
