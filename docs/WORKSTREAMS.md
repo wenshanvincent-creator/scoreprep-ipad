@@ -1,67 +1,26 @@
 # Parallel work
 
-Use one repository with separate branches/worktrees, rather than separate
-repositories. Wait for a passing foundation build and stable contracts before
-starting native feature branches.
+Current phase: **V1 — import, recognize, clean display, manual swipe**.
+Read MVP_PLAN.md, ARCHITECTURE.md and UI_SKILLS.md before implementing.
 
-| Session | Owns | Initial task |
+| Chat | Owns | Current task |
 | --- | --- | --- |
-| Integration | App composition, project.yml, workflows, shared ScoreCore contracts | Keep main buildable; integrate completed branches and verify the entire reading flow. |
-| Reader and preparation | ScoreRendering, ScoreReader, ScoreLibrary, LibraryView and preparation views | PDF/image import, editable crops, portrait/landscape layout and upcoming context. |
-| Metronome and practice | ScoreAudio, TimingEditor and new practice controls | Continuous transport, beat-driven focus, count-in, speed, loops and interruption handling. |
-| Pencil and release | Annotation integration and device validation | Start after source transforms stabilize; implement source-linked drawings and collect device evidence. |
+| Integration | Shared ScoreCore contracts, app entry point, project.yml and workflows | Contracts, composition and end-to-end V1 verification. |
+| Reader and preparation | ScoreApp except ScorePrepApp.swift; existing PDF rendering and preparation views | PDF/image import, local originals, manual navigation and review integration. |
+| Recognition and rendering | ScoreRecognition, ScoreRendering/Recognition, backend and owned tests/fixtures | Remote oemer wrapper, typed client and Verovio rendering component. |
+| Metronome and practice | ScoreAudio and practice controls | Deferred until V1 passes. |
 
-Integration also owns the separate Follow Me chroma/online-DTW trial. Read
-MVP_PLAN.md for the revised scope before implementing either workstream.
+Each active chat uses its own branch/worktree. Inspect local and remote state,
+keep to owned paths, and return a commit/draft PR. Do not push or merge main.
+Integration owns shared contracts and composition. Recognition/Rendering may
+make narrowly scoped project.yml additions for its sources, Verovio dependency
+and dedicated tests, preserving the existing targets/toolchain.
 
-Start with integration plus at most two feature sessions. Pencil work overlaps
-the reader's coordinate transforms, so it should follow that contract.
+Before UI code, read the installed mobile-ios-design and swiftui-expert-skill
+instructions and the existing frontend-design process. Write READER_UI_PLAN.md
+or RECOGNITION_UI_PLAN.md under docs. Inspect actual native portrait/landscape
+screenshots before delivery.
 
-Each session should:
-
-1. Read AGENTS.md, the architecture and current main status.
-2. Create its own branch/worktree from the latest agreed main commit.
-3. Keep changes within its ownership; request an interface change before
-   editing another session's module or the shared data model.
-4. State what changed and provide relevant test/build results.
-5. Return a commit/PR for integration. Do not push directly to main while
-   another session is integrating.
-
-## Reader session brief
-
-Implement editable complete-system crops and readable iPad layout using the
-existing SourceSystem and NormalizedRect contracts. Add PDF/JPEG/PNG import
-and crop persistence. Preserve full piano systems and printed markings. Keep
-source transforms available for later export. Do not add OMR, PDF export, an
-advanced arrangement editor or change timing models in the first preview.
-Verify coordinates/persistence with owned fixtures, and report physical-device
-coverage separately.
-
-## Metronome session brief
-
-Implement the continuous metronome/reader transport from CompiledTimeline.
-Use an audio/host-time clock rather than accumulated UI timer callbacks.
-Provide count-in, accents, visual-only mode, practice speed, tap tempo and
-system-level loops. Handle pause/seek/loop invalidation and interruptions.
-Do not infer score timing from image spacing or change reader coordinates.
-Prove timing calculations separately from real audio/display synchronization.
-Expose current timeline position and transport actions for integration into
-the reader. Keep ScoreReader and ScoreLibrary changes in the reader workstream;
-the integration session will connect the full-score practice entry point.
-TimingEditor may demonstrate the owned transport controls without claiming
-that full-score automatic advancement has been integrated. A narrowly scoped
-project.yml change to add a dedicated audio unit-test target is permitted for
-this session; leave the existing app and UI-test targets unchanged.
-
-## Required UI preparation
-
-Before either workstream implements interface changes, follow UI_SKILLS.md:
-read the project-local native design/SwiftUI skills, write the workstream's
-UI plan, and review native screenshots before delivery. The integration
-environment's existing frontend-design skill provides the visual-direction
-process. Respect the current iPadOS 18 target and the existing PDF/Pencil
-bridges.
-
-The first foundation build has passed; see BUILD_STATUS.md. Reader and
-metronome work are the first two parallel sessions. Each receives an isolated
-worktree and these skill requirements in its initial brief.
+No model inference on the development PC, no custom training, no hosting
+purchase or unauthenticated production deployment. Preserve original scores
+and surface actual errors. Do not implement voice or score following in V1.

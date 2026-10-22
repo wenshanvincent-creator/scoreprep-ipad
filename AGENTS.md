@@ -2,6 +2,9 @@
 
 - Build a native iPad app. Keep musical content readable and preserve original
   notation, source coordinates and user markings.
+- Current phase is V1: import, existing OMR, Verovio clean display and manual
+  swipe. Read docs/MVP_PLAN.md. No voice or following code before V1 passes.
+  Wrap oemer/Verovio; do not train a custom model.
 - Read docs/ARCHITECTURE.md and docs/WORKSTREAMS.md before changing shared
   models or working in parallel.
 - Before building or changing UI, read docs/UI_SKILLS.md, docs/DESIGN.md,
@@ -23,7 +26,7 @@
   composition and shared-model changes.
 - Do not commit private scores, account information, signing material or local
   machine paths. Use the app's generated exercise or redistributable fixtures.
-- No real model execution on the development PC. OMR is outside this milestone.
+- No real model execution on the development PC. V1 OMR runs on a remote worker.
 - Core check on macOS: swift test --package-path Packages/ScoreCore.
 - Native check on macOS: bash tools/ci.sh. Review simulator artifacts and state
   precisely which device/audio features were actually tested.

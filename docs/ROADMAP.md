@@ -1,43 +1,34 @@
 # Roadmap
 
-The current scope is [MVP_PLAN.md](MVP_PLAN.md). The flagship direction is
-Follow Me: retain the original score and follow the musician's playing.
+Current phase and completion criteria: [MVP_PLAN.md](MVP_PLAN.md).
 
-## M0 — native foundation, passed
+## Foundation — passed
 
-PDF import, local projects, source rendering, confirmed musical timing,
-reading-order compilation and a one-bar click preview. Ten core tests and one
-native UI smoke test passed; see [BUILD_STATUS.md](BUILD_STATUS.md).
+Native PDF library, source rendering, confirmed timing, route compilation and
+one-bar click preview. Ten core tests and one native UI smoke test passed;
+see BUILD_STATUS.md.
 
-## M1 — dependable rehearsal preview
+## V1 — active
 
-- PDF/JPEG/PNG import and local reopen.
-- Manual complete-system crops and readable portrait/landscape layouts.
-- Timing with explicit pulse units, performed beats and pickup handling.
-- Continuous shared audio/visual clock and automatic next-system focus.
-- Count-in, practice speed, whole-system loops and manual pause/navigation.
-- Accessible controls for an initial system Voice Control check.
+PDF/photo import → remote existing OMR → MusicXML → Verovio display → manual
+swipe. Include progress/errors, original comparison, local reopen and actual
+native portrait/landscape evidence. Finish this phase before voice/following.
 
-## Follow Me experiment — starting now
+## V2 — voice
 
-Try causal chroma/online-DTW alignment against a known MusicXML/MIDI reference.
-No model training. Prove small streaming fixtures, then a real recording and
-a live iPad passage. Keep this approach if it meets its demo gate. Hold position
-when uncertain rather than forcing a page turn.
+Opt-in Apple Speech with forced on-device recognition, capability checks,
+explicit permissions, touch operation and instrument-noise testing.
 
-## M2 — performer beta
+## V3 — tempo-guided practice
 
-Physical-iPad synchronization/readability checks, Pencil notes, prepared PDF
-export, richer arrangement, tested pedals and Voice Control. Signing and
-TestFlight need device/account setup. Simulator success and signed installation
-are separate results.
+Continuous metronome, beat-driven line changes, count-in, speed and loops.
 
-## M3 — structured scores and wider following
+## V4 — Follow Me
 
-Link structured scores to source pages; add reviewed OMR/correction and
-same-pitch clef conversion. Expand Follow Me to cases supported by evidence,
-then consider ensemble synchronization.
+Classical chroma/causal online DTW against the structured reference. Try this
+approach first and retain it if it works. No custom training.
 
-No release date is promised for acoustic following. The first reader can ship
-independently. App Store distribution remains the destination; enrollment and
-review timing are separate dependencies.
+## Larger product
+
+Pencil, same-pitch clef conversion, arrangement/export, pedals and ensemble sync.
+Signed-device, physical validation and App Store review remain separate gates.

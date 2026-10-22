@@ -11,6 +11,10 @@ their position. Slow down, pause, then continue: the reader should stay with
 the passage. This is the planned flagship; microphone following has not been
 validated yet.
 
+Current build order: finish V1 import/recognition/clean display/manual swipe,
+then voice, tempo-guided practice and finally Follow Me. Do not film a planned
+feature as if it were already implemented.
+
 ## Strongest short demonstration
 
 1. A musician reaches to turn a page and interrupts the phrase.

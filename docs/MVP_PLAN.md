@@ -1,125 +1,92 @@
-# ScorePrep implementation plan
+# ScorePrep phased build plan
 
-Updated 22 October 2026. The native foundation passed its first macOS build
-and iPad simulator smoke test; see [build evidence](BUILD_STATUS.md).
-The automatic engineering goal is active. This document is the current scope.
+Updated 22 October 2026. Automatic engineering goal: active.
+Current phase: **V1 — import, recognize, clean display, manual swipe**.
 
-## Product promise
+## Product direction
 
-**Your score. Your tempo. Your markings.**
+Your score. Your tempo. Your markings.
 
-Prepare readable music from your own PDF or photo and keep your hands on the
-instrument. The flagship direction is **Follow Me**: the displayed original
-score follows the musician's actual position. The dependable reader uses
-confirmed timing and a metronome. The first Follow Me trial uses classical
-chroma features and online dynamic time warping, without model training.
+The eventual flagship is Follow Me: play at your own pace and the score
+follows. Complete V1 before implementing voice commands or score following.
+Keep the native iPad app and existing repository.
 
-Keep the ScorePrep name and repository. The supplied ScoreVoice proposal
-strengthens the hands-free workflow, small command vocabulary and eventual
-MusicXML interoperability. Adding OMR, notation correction, re-engraving and
-audio following as prerequisites would expand the first release substantially.
-Develop alignment from a known structured score first, independently of OMR.
+Wrap existing tools: **oemer** is the first OMR integration; **Verovio** renders
+MusicXML. The later following trial uses classical chroma/online DTW. No custom
+model training, replacement notation engraver or comparison of follower options.
 
-## First usable engineering preview
+## V1 — current work
 
-1. Import a PDF, JPEG or PNG and reopen it from an offline local library.
-2. Manually define complete musical systems and adjust their boundaries.
-   Include both piano staves, ledger lines, dynamics, lyrics and markings.
-3. Read at an appropriate size in portrait or landscape, with upcoming context.
-4. Confirm meter, tempo pulse, BPM and performed beats. Apply common settings,
-   then correct pickups, shortened bars and explicit changes.
-5. Start a count-in and practise with a continuous audio or silent metronome.
-   A shared clock advances system focus at the confirmed musical boundaries.
-6. Change practice speed, loop whole systems, or navigate manually. Manual
-   navigation pauses playback and makes the resume point visible.
-7. Reopen with originals, crops and timing intact and playback stopped.
+1. Import PDF, JPEG or PNG into an app-owned library.
+2. Use the existing OMR engine on a remote worker to produce MusicXML per source
+   page, preserving original assets and page order.
+3. Render recognized notation with Verovio at an adjustable reading size.
+4. Show progress and actual recognition errors. Offer original/recognized
+   comparison and an explicit review state.
+5. Read with manual swipe and previous/next controls in portrait and landscape.
+6. Reopen original and recognized editions locally. Completed editions work
+   offline; initial server recognition needs a connection.
 
-Use three focused surfaces: Library, Prepare and Perform. Keep source order
-initially. Existing section/occurrence contracts remain available; an advanced
-arrangement editor is a follow-up rather than a prerequisite.
+Original handwriting stays in the source view. It is not automatically
+transferred onto re-engraved staves. Recognition output needs musical review.
+Users can reject a page and retain the original. Full note editing, automatic
+clef conversion and semantic annotation transfer are later tasks.
 
-## Follow Me trial, starting now
+No real models run on the development PC. Run OMR on a suitable cloud/server
+worker with a pinned engine and an owned fixture. A mock response is not OMR
+evidence. A container recipe is not a deployed service. Do not buy hosting or
+publish an unauthenticated production endpoint.
 
-Use one owned short MusicXML melody with a known note/beat map and explicit
-links from beats to displayed systems. Convert the reference into chroma
-frames, extract corresponding features from causal audio chunks, update an
-online DTW path and publish position estimates. MIDI is event data: render it
-to audio or convert its notes into compatible reference features.
+## V1 completion gate
 
-Start with small generated audio fixtures with different timing, harmonics
-and noise. That validates the pipeline, not microphone reliability. Then use
-a real recording of the same passage and finally live iPad audio. Retain this
-approach if it meets the declared demo gate. Do not investigate alternative
-followers merely to add options.
+- An actual PDF/photo passes through the existing OMR engine.
+- Its MusicXML renders through Verovio inside the native iPad app.
+- Manual navigation, original comparison and local reopen work.
+- Inspect native portrait/landscape screenshots and compare notation with the
+  source fixture; record observed recognition errors.
+- Relevant macOS build and integration checks pass.
+- Record the actual worker/endpoint and any remaining deployment, device,
+  signing or account dependency. Do not mark an incomplete flow complete.
 
-Process only audio available at each update. A whole-recording DTW result
-cannot establish live following. Log source timestamps, estimated beats,
-system transitions and uncertainty. Test pauses, written rests, sustained notes
-and tempo changes separately. Silence alone is not a score position. Hold the
-display when uncertain; never silently switch to fixed-speed scrolling. Users
-can select metronome mode explicitly.
+## V2 — voice, after V1
 
-First demonstration: one declared instrument/part, a short known passage,
-moderate tempo changes and a deliberate pause. Arbitrary repeats, polyphonic
-piano, ensembles and every imported photo are outside this first demo.
-MusicXML alone does not identify measure positions on an unrelated scan;
-source-image anchors must be confirmed.
+Use Apple's Speech framework with forced on-device recognition and capability
+checks. Explicit permissions, touch fallback, visible activation, a small
+distinct command vocabulary and rehearsal-noise checks are required.
+See VOICE_REQUIREMENTS.md. No voice implementation or microphone permission now.
 
-## Hands-free commands
+## V3 — tempo-guided practice
 
-Expose native controls named Start practice, Pause, Next line, Previous line
-and Restart loop. Check Apple's built-in Voice Control before adding an
-app-owned recognizer. Apple documents offline operation after an initial
-download. Reliability while instruments play still needs device testing.
+Keep the existing quarter-beat timeline and one-bar preview. After V1, add a
+continuous shared audio/display clock, count-in, speed, whole-system loops and
+automatic line advancement. Confirm performed beats; do not infer them from
+pixel spacing.
 
-If app-owned commands become necessary, start with a small, explicitly enabled
-rehearsal vocabulary. Offline Speech support depends on device and language.
+## V4 — Follow Me
 
-## Follow-up releases
+Try classical chroma features and causal online DTW against a known reference
+derived from MusicXML/MIDI. No training. Start with one short passage and
+confirmed links from beats to displayed systems. Keep this approach if it
+passes its demo gate; do not explore alternatives just to compare them.
 
-- Native Pencil annotations, prepared PDF export, richer arrangement, tested
-  pedals and image cleanup after the basic reading flow works.
-- MusicXML import linked to original pages, reviewed OMR conversion and
-  correction UI. Keep the original visible for musical verification.
-- Same-pitch clef conversion and semantic reflow after structured notation is
-  trustworthy; no silent transposition or octave shift.
-- Broader audio following, ambiguous repeats/recovery and ensemble sync after
-  the narrow Follow Me trial succeeds.
+MIDI is event data: synthesize reference audio or derive compatible features.
+A whole-recording DTW result is not live following evidence. Test held notes,
+rests, pauses and tempo changes. Hold position when uncertain; do not silently
+switch to a fixed timer. Expand repeats, instruments and polyphony only after
+a narrow real-recording/live-iPad demonstration.
 
-Original source images and markings remain authoritative. Review actual code,
-weights and distribution terms before adding an OMR engine. No model execution
-on the development PC; later model work uses a suitable server. The present
-small signal-processing trial uses no model.
+## Larger product
 
-## Delivery and evidence
+Pencil notes, reviewed same-pitch clef conversion, richer arrangements, PDF
+export, tested pedals and ensemble sync follow the core phases.
 
-Reader/Preparation owns import, crop persistence and layout. Metronome/Practice
-owns transport and controls. Integration connects Perform and owns the bounded
-Follow Me experiment. Every UI workstream follows [UI_SKILLS.md](UI_SKILLS.md),
-writes its plan before coding and inspects native screenshots. Keep iPadOS 18
-and the verified toolchain.
+Both UI chats follow UI_SKILLS.md before interface code. Keep iPadOS 18 and
+the verified toolchain. App Store distribution remains the destination.
+Physical-iPad validation, signing, enrollment and TestFlight are separate gates.
 
-The engineering preview needs passing macOS CI, an import/prepare/perform
-smoke flow, portrait/landscape screenshots, persistent crops/timing and a
-reproducible demo. Focused checks cover coordinates, pulse conventions,
-pickups, count-in, pause/seek/speed/loops and stale audio scheduling.
+## Sources already checked
 
-For Follow Me, publish fixtures, causal replay traces and an error report.
-A synthetic pass is a prototype result. A promotion claiming live following
-needs a real-instrument demonstration and declared setup. Hardware audio/display
-alignment, Voice Control, musician usability and signed TestFlight installation
-remain separate checks. App Store distribution remains the destination.
-
-## Primary references
-
-- [Chroma and online alignment reference implementation](https://github.com/pymatchmaker/matchmaker).
-- [CQT/DTW score-following report](https://arxiv.org/abs/2205.03247).
-- [Apple Voice Control](https://support.apple.com/en-ie/guide/ipad/ipad4b6c9ee4/ipados).
-- [Apple on-device Speech capability](https://developer.apple.com/documentation/speech/sfspeechrecognizer/supportsondevicerecognition).
-- [homr limitations](https://github.com/liebharc/homr) and [license notes](https://github.com/liebharc/homr/blob/main/LICENSE_FAQ.md).
-
-Related behavior is advertised by [Newzik](https://support.newzik.com/en/support/solutions/articles/77000495892),
-[Metronaut](https://community.metronautapp.com/hc/en-us/articles/360022170040-Sheet-music-tools-in-Metronaut-Modes-feedback-and-score-settings)
-and [SheetScroll](https://sheetscroll.com/). These are vendor descriptions, not
-hands-on validation. Our direction is an open-source implementation with
-editable preparation and reproducible evidence; musician validation remains.
+- [oemer](https://github.com/BreezeWhite/oemer).
+- [Verovio](https://github.com/rism-digital/verovio).
+- [Apple Speech capability](https://developer.apple.com/documentation/speech/sfspeechrecognizer/supportsondevicerecognition).
+- [Chroma/online alignment reference](https://github.com/pymatchmaker/matchmaker).

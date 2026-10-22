@@ -27,7 +27,7 @@ screens, so it is not the design authority for this iPad interface.
    installed frontend-design skill when available for the visual-direction
    process. Do not copy its local licensed source into the public repository.
 2. Before UI code, write a compact plan in the workstream's own
-   READER_UI_PLAN.md or METRONOME_UI_PLAN.md. Describe the main action,
+   READER_UI_PLAN.md or RECOGNITION_UI_PLAN.md. Describe the main action,
    hierarchy, state ownership, layout adaptations and relevant accessibility
    behavior.
 3. Review that plan against the music-reading task. Music stays dominant;

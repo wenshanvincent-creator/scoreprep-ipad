@@ -1,5 +1,20 @@
 # Architecture
 
+## Current V1 pipeline
+
+Keep the existing source reader and musical-timing foundation. V1 adds a remote
+oemer worker, a thin native recognition client and a Verovio rendering view.
+MusicXML is the interchange artifact for recognized notation. Original-page
+coordinates remain the authority for source images and existing markings.
+Do not replace those two representations with one lossy model.
+
+Recognition/Rendering owns the new ScoreRecognition and
+ScoreRendering/Recognition directories plus backend. It should provide a small
+documented result contract and a self-contained rendering view for integration.
+Integration owns changes to shared ScoreCore persistence and app composition.
+V1 needs the actual OMR output and native Verovio evidence; a fixture response
+alone does not establish an end-to-end recognition service.
+
 ## Boundaries
 
 ScoreCore owns the Codable project, normalized source rectangles, section
