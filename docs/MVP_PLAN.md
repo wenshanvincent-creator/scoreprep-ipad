@@ -11,8 +11,9 @@ The eventual flagship is Follow Me: play at your own pace and the score
 follows. Complete V1 before implementing voice commands or score following.
 Keep the native iPad app and existing repository.
 
-Wrap existing tools: **oemer** is the first OMR integration; **Verovio** renders
-MusicXML. The later following trial uses classical chroma/online DTW. No custom
+Wrap existing tools: **homr** is the current OMR integration after the first
+oemer trials failed musical review; **Verovio** renders MusicXML.
+The later following trial uses classical chroma/online DTW. No custom
 model training, replacement notation engraver or comparison of follower options.
 
 ## V1 — current work

@@ -234,7 +234,7 @@ final class ScoreLibrary: ObservableObject {
             }
             var updated = projects
             updated[index].recognizedEdition = RecognizedEdition(
-                id: editionID, engine: "oemer@\(job.engineRevision)", pages: pages
+                id: editionID, engine: "\(job.engineName ?? "oemer")@\(job.engineRevision)", pages: pages
             )
             updated[index].pendingRecognition = nil
             try store.save(updated)

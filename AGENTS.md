@@ -4,7 +4,7 @@
   notation, source coordinates and user markings.
 - Current phase is V1: import, existing OMR, Verovio clean display and manual
   swipe. Read docs/MVP_PLAN.md. No voice or following code before V1 passes.
-  Wrap oemer/Verovio; do not train a custom model.
+  Wrap the existing homr worker and Verovio; do not train a custom model.
 - Read docs/ARCHITECTURE.md and docs/WORKSTREAMS.md before changing shared
   models or working in parallel.
 - Before building or changing UI, read docs/UI_SKILLS.md, docs/DESIGN.md,
