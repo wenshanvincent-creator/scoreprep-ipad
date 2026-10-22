@@ -111,7 +111,8 @@ public struct RecognizedScoreView: View {
 
     private var sizeControl: some View {
         HStack(spacing: 4) {
-            Text("Size \(scale)").font(.body).monospacedDigit()
+            Text("Size").font(.body)
+                .accessibilityValue("\(Int(Double(scale) / 45 * 100)) percent")
                 .accessibilityIdentifier("notationSizeValue")
             Button { scale -= 5 } label: {
                 Image(systemName: "minus").frame(minWidth: 44, minHeight: 44)

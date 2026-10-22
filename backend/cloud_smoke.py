@@ -72,3 +72,5 @@ with TestClient(app) as client:
     (OUT / "quality-report.json").write_text(json.dumps(report, indent=2))
     print(f"Musical quality passed: {report['matchesOwnedExercise']}", flush=True)
     print(f"Recognition completed: {len(notes(actual))} notes; review comparison.json and both images", flush=True)
+    if not report["matchesOwnedExercise"]:
+        raise AssertionError("Recognized pitch/onset/duration/key/meter does not match the owned exercise; raw evidence retained")
