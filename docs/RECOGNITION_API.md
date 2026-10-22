@@ -4,18 +4,20 @@ All source indexes are **zero-based**, contiguous, and in original PDF order.
 One source image has index 0. Each source page has its own MusicXML document;
 never join documents into a single XML string.
 
+The worker now uses pinned homr after both the default and known-straight-page
+oemer trials failed musical quality. The client/job/page contract is unchanged.
+The optional deskew field only records historical oemer receipts.
+
 ## Public Swift entry points
 
 `RecognitionClient(baseURL: URL, bearerToken: String, session: URLSession = .shared)`
 
-- `submit(document: Data, mediaType: String, deskew: Bool = true) async throws -> RecognitionJob`
+- `submit(document: Data, mediaType: String) async throws -> RecognitionJob`
 - `job(id: String) async throws -> RecognitionJob`
 - `waitForResult(id: String, timeout: Duration = .seconds(1800), progress: @Sendable (RecognitionJob) async -> Void) async throws -> RecognitionJob`
 
 Supported MIME types: `application/pdf`, `image/png`, `image/jpeg`. Up to 20 MiB
 and eight source pages. Submission returns HTTP 202 after source validation.
-Keep deskew enabled for photos. Set it false only for a known straight generated
-or scanned page; the targeted cloud trial records that explicit choice.
 Save the original locally before sending; the server also preserves its bytes.
 Keep the job ID so polling can resume after a network error. Poll cancellation
 does not cancel server inference. Transport, HTTP and decoding errors throw.
@@ -26,13 +28,15 @@ the value retains successful prior pages and the failing page's error.
 
 `RecognitionJob` (Codable, Sendable, Identifiable) fields:
 `schemaVersion: Int` (1), `id: String` (UUID), `state: RecognitionState`,
-`completedPages: Int`, `engineRevision: String`, `originalSHA256: String`,
+`completedPages: Int`, `engineRevision: String`, `engineName: String?`, `originalSHA256: String`, `deskew: Bool?`,
 `pages: [RecognitionPage]`, `error: String?`.
 
 `RecognitionPage` (Codable, Sendable, Identifiable) fields:
 `sourcePageIndex: Int`, `state: RecognitionState`, `musicXML: String?`,
 `reviewRequired: Bool?`, `musicXMLSHA256: String?`, `error: String?`.
 Its ID is sourcePageIndex. Success requires nonempty MusicXML for every page.
+engineName is optional so the first oemer receipts still decode. Use engineName
+when present, and record the exact engineRevision alongside saved provenance.
 Progress is completed source pages / total source pages, not model percent.
 Every generated page starts with reviewRequired=true. Integration owns persisted
 unreviewed/accepted/rejected decisions and local filenames.
@@ -62,7 +66,7 @@ with `.succeeded`, the sourcePageIndex and reviewRequired from saved metadata.
 Authenticated `POST /v1/jobs` with JSON:
 
 ```json
-{"mediaType":"image/png","contentBase64":"<base64 original bytes>","deskew":true}
+{"mediaType":"image/png","contentBase64":"<base64 original bytes>"}
 ```
 
 Authenticated `GET /v1/jobs/{UUID}` returns the same job shape. All endpoints

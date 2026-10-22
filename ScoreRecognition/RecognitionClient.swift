@@ -30,7 +30,9 @@ public struct RecognitionJob: Codable, Equatable, Sendable, Identifiable {
     public let state: RecognitionState
     public let completedPages: Int
     public let engineRevision: String
+    public let engineName: String?
     public let originalSHA256: String
+    public let deskew: Bool?
     public let pages: [RecognitionPage]
     public let error: String?
 }
@@ -61,13 +63,13 @@ public struct RecognitionClient: Sendable {
         self.session = session
     }
 
-    public func submit(document: Data, mediaType: String, deskew: Bool = true) async throws -> RecognitionJob {
-        struct Submission: Encodable { let mediaType: String; let contentBase64: String; let deskew: Bool }
+    public func submit(document: Data, mediaType: String) async throws -> RecognitionJob {
+        struct Submission: Encodable { let mediaType: String; let contentBase64: String }
         var request = makeRequest(path: "v1/jobs")
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONEncoder().encode(Submission(mediaType: mediaType,
-                                                              contentBase64: document.base64EncodedString(), deskew: deskew))
+                                                              contentBase64: document.base64EncodedString()))
         return try await send(request)
     }
 

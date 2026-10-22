@@ -3,7 +3,18 @@
 Updated 22 October 2026. V1 recognition/rendering workstream; full app import,
 comparison, persistence and reopen are integration-owned.
 
-## Actual recognition
+## Active path
+
+The two oemer trials failed musical quality. The targeted second run disabled
+deskew for a verified horizontal generated page and still had only 40/64 exact
+pitch/onset/duration events, 55 pitched notes plus 7 rests, one-sharp key and no
+meter. Raw result: backend/fixtures/observed-oemer-straight, job
+1483125d-fbf4-425b-87b3-b01f8ebe45b7, workflow 39761660770. This justified the
+authorized move to homr, now pinned at ab369ac54277afab582afa4725441f7cbba76593.
+The homr cloud trial is in progress; no musical-quality success is claimed yet.
+The client contract remains the same and includes optional engineName metadata.
+
+## First actual recognition trial
 
 [Workflow 39759659441](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39759659441)
 at branch commit 6b3a2c04185a99cc80e92145f3c68eed34ec40db completed an actual
@@ -26,10 +37,13 @@ backend/notices/PROVENANCE.md.
 | Key | C major, no sharps | One-sharp key; F naturals become F sharps |
 | Time signature | 4/4 | Missing |
 | First bass note | C3 | D3 |
-| Other differences | Both hands have four quarters per bar | Missing notes, inserted rests and changed onset placement; final double barline missing |
+| Other differences | Both hands have four quarters per bar | Missing notes, inserted rests and changed onset placement; first-measure treble notes shifted one quarter beat; final double barline missing |
 
 The successful job state means that MusicXML was produced, not that its musical
-content has been accepted. Every output page requires review. These errors are
+content has been accepted. Every output page requires review. The fixture event comparison found 41/64
+exact pitch/onset/duration events; this single-input figure is not a general
+accuracy benchmark. The pinned oemer MusicXML serializer does not emit a time
+signature, so disabling deskew cannot by itself recover the missing meter. These errors are
 retained without correction. The exercise is original MIT-licensed content;
 this is one printed input, with no accuracy claim for photographs or arbitrary
 multi-page scores. PDF page-order rasterization has a separate boundary test.

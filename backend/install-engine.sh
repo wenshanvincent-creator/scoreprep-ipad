@@ -2,5 +2,5 @@
 set -euo pipefail
 # Execute on the remote worker only. Never install/run the engine on the dev PC.
 python -m pip install -r backend/requirements.txt
-python -m pip install --no-deps 'oemer @ git+https://github.com/BreezeWhite/oemer.git@dbe2a933d630d0f74805d717960eb259473f5978'
+python -m pip install 'homr[cpu] @ git+https://github.com/liebharc/homr.git@ab369ac54277afab582afa4725441f7cbba76593'
 python backend/model_assets.py

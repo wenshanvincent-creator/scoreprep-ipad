@@ -1,6 +1,6 @@
 # Private recognition worker
 
-This worker wraps the pinned, unmodified oemer ONNX CLI. Run it on a remote
+This worker wraps the pinned, unmodified homr ONNX CLI. Run it on a remote
 Linux server or cloud runner. Never execute model inference on the development
 PC. No endpoint has been deployed by this repository.
 
@@ -44,9 +44,13 @@ available for review even when a later page fails.
 
 ## Reproduce the cloud trial
 
+The two oemer trials failed musical quality; their raw output remains in
+fixtures/observed-omr and fixtures/observed-oemer-straight. The active worker
+now uses homr with explicit remote CPU execution and title OCR disabled.
+
 The independent `Recognition and notation evidence` GitHub workflow runs on
-this PR. It installs Python 3.11, pinned requirements, pinned oemer source and
-two upstream ONNX assets, then records their SHA-256 receipts. The trial
+this PR. It installs Python 3.11, pinned requirements, pinned homr source and
+three upstream ONNX asset archives, then records their SHA-256 receipts. The trial
 generates a printed PNG from the owned exercise and submits it through the
 authenticated worker API in process. **The API host is in process, but the
 OMR subprocess and model predictions are real.** No public HTTP endpoint is

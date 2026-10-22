@@ -2,6 +2,22 @@
 
 Reviewed 22 October 2026 from upstream source and release metadata.
 
+The active worker uses homr after oemer failed musical quality in both the
+default and targeted no-deskew trials. The following oemer record remains for
+the actual preserved receipts; it is not the active engine installation.
+
+## Active homr dependency
+
+- [Source ab369ac54277afab582afa4725441f7cbba76593](https://github.com/liebharc/homr/tree/ab369ac54277afab582afa4725441f7cbba76593), unmodified CLI, AGPL-3.0. Full upstream license and LICENSE_FAQ are retained alongside this file. CLI flags: --gpu no --no-title, one source PNG at a time. No training or title OCR models.
+- [ONNX asset release](https://github.com/liebharc/homr/releases/tag/onnx_checkpoints), CPU fp32 assets. Their release-published ZIP SHA-256 values are enforced before extraction:
+  - segnet_308-3296ccd40960f90ca6ab9c035cca945675d30a0f.zip, asset 347844592: 1d4277354a8397a6830ef1279232e6d989c2d254b7451525e53ff3d3754b1f70.
+  - encoder_pytorch_model_465-597144cab54c8f6d0f6c9619df5c5312694eadd6.zip, asset 590910100: 48cd28aef03d230e30e4983d7444e882225e3710a07880c4c15523c55ae7b7b1.
+  - decoder_pytorch_model_465-597144cab54c8f6d0f6c9619df5c5312694eadd6.zip, asset 590911217: 8012b73b05cc18fcf38596185cf2c27b35deb121f376c0037d8601917884fbac.
+- The upstream [license FAQ](https://github.com/liebharc/homr/blob/ab369ac54277afab582afa4725441f7cbba76593/LICENSE_FAQ.md) states that weights are AGPL but identifies training data including a non-commercial PrIMuS source. It does not claim the code/weight license clears all training-data rights. Keep that unresolved commercial-release dependency separate from prototype performance.
+- This repository publishes the wrapper source and upstream revision. The engine stays on a separate remote process; no weights or engine binaries are bundled into the iPad app. Network-service/distribution obligations and data permissions must be resolved for the intended deployment.
+
+## Original oemer trial and shared engraving dependencies
+
 | Component | Exact source | Notice / status |
 | --- | --- | --- |
 | oemer Python CLI, version 0.1.8 metadata | [BreezeWhite/oemer dbe2a933d630d0f74805d717960eb259473f5978](https://github.com/BreezeWhite/oemer/tree/dbe2a933d630d0f74805d717960eb259473f5978) | Upstream MIT text retained as oemer-MIT.txt, including its original placeholder copyright line. Source is installed unmodified with --no-deps; our dependency versions are explicit. |

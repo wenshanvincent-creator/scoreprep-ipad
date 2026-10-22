@@ -1,4 +1,4 @@
-"""Single-process private oemer worker. Inference runs only in a remote subprocess."""
+"""Single-process private homr worker. Inference runs only in a remote subprocess."""
 import base64
 import binascii
 from concurrent.futures import ThreadPoolExecutor
@@ -17,12 +17,12 @@ from fastapi import FastAPI, Header, HTTPException, Request
 from PIL import Image, ImageOps
 import pypdfium2 as pdfium
 
-ENGINE_REVISION = "dbe2a933d630d0f74805d717960eb259473f5978"
+ENGINE_REVISION = "ab369ac54277afab582afa4725441f7cbba76593"
 MAX_BYTES = 20 * 1024 * 1024
 MAX_PAGES = 8
 ROOT = Path(os.environ.get("SCOREPREP_JOB_DIR", "/data/jobs"))
 TOKEN = os.environ.get("SCOREPREP_WORKER_TOKEN", "")
-POOL = ThreadPoolExecutor(max_workers=1)  # oemer uses process-global layer state.
+POOL = ThreadPoolExecutor(max_workers=1)
 LOCK = threading.Lock()
 app = FastAPI(title="ScorePrep private recognition worker", version="1.0.0")
 
@@ -98,20 +98,22 @@ def recognize(folder, job):
         output = folder / f"page-{index:04d}.musicxml"
         try:
             with (folder / f"page-{index:04d}.log").open("w") as log:
-                command = ["oemer", str(folder / f"source-{index:04d}.png"), "-o", str(output)]
-                if not job.get("deskew", True):
-                    command.append("--without-deskew")
+                source = folder / f"source-{index:04d}.png"
+                # One invocation per source page; CPU inference is explicit and remote.
+                # Title OCR is outside this trial. Do not merge the XML documents.
+                command = ["homr", "--no-title", "--gpu", "no", str(source)]
                 result = subprocess.run(
                     command,
                     stdout=log, stderr=subprocess.STDOUT, timeout=900, check=False)
             if result.returncode:
-                raise RuntimeError(f"oemer exited with status {result.returncode}")
+                raise RuntimeError(f"homr exited with status {result.returncode}")
+            source.with_suffix(".musicxml").replace(output)
             xml = output.read_text(encoding="utf-8")
             root = ET.fromstring(xml)
             if root.tag.split("}")[-1] not in ("score-partwise", "score-timewise"):
-                raise ValueError("oemer output is not a MusicXML score")
+                raise ValueError("homr output is not a MusicXML score")
             if not root.findall(".//note"):
-                raise ValueError("oemer produced no notes; review the original")
+                raise ValueError("homr produced no notes; review the original")
             page.update(state="succeeded", musicXML=xml, reviewRequired=True,
                         musicXMLSHA256=hashlib.sha256(output.read_bytes()).hexdigest())
             job["completedPages"] += 1
@@ -142,9 +144,6 @@ async def submit(request: Request, authorization: str | None = Header(default=No
         payload = json.loads(chunks)
         data = base64.b64decode(payload["contentBase64"], validate=True)
         media_type = payload["mediaType"]
-        deskew = payload.get("deskew", True)
-        if not isinstance(deskew, bool):
-            raise ValueError("deskew must be true or false")
         if not data or len(data) > MAX_BYTES:
             raise ValueError("Document must contain 1 byte–20 MiB")
     except (ValueError, KeyError, TypeError, binascii.Error) as error:
@@ -158,8 +157,8 @@ async def submit(request: Request, authorization: str | None = Header(default=No
     except Exception as error:
         # Input decode errors are request failures, never successful empty jobs.
         raise HTTPException(422, str(error))
-    job = dict(schemaVersion=1, id=job_id, state="queued", completedPages=0, deskew=deskew,
-               engineRevision=ENGINE_REVISION,
+    job = dict(schemaVersion=1, id=job_id, state="queued", completedPages=0,
+               engineRevision=ENGINE_REVISION, engineName="homr",
                originalSHA256=hashlib.sha256(data).hexdigest(),
                pages=[dict(sourcePageIndex=i, state="queued") for i in range(len(paths))])
     save(folder, job)
