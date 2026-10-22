@@ -7,9 +7,12 @@ starting native feature branches.
 | Session | Owns | Initial task |
 | --- | --- | --- |
 | Integration | App composition, project.yml, workflows, shared ScoreCore contracts | Keep main buildable; integrate completed branches and verify the entire reading flow. |
-| Reader and preparation | ScoreRendering, ScoreReader, ScoreLibrary and preparation views | Editable system crops, portrait/landscape layout, next-system context and PDF export. |
+| Reader and preparation | ScoreRendering, ScoreReader, ScoreLibrary, LibraryView and preparation views | PDF/image import, editable crops, portrait/landscape layout and upcoming context. |
 | Metronome and practice | ScoreAudio, TimingEditor and new practice controls | Continuous transport, beat-driven focus, count-in, speed, loops and interruption handling. |
 | Pencil and release | Annotation integration and device validation | Start after source transforms stabilize; implement source-linked drawings and collect device evidence. |
+
+Integration also owns the separate Follow Me chroma/online-DTW trial. Read
+MVP_PLAN.md for the revised scope before implementing either workstream.
 
 Start with integration plus at most two feature sessions. Pencil work overlaps
 the reader's coordinate transforms, so it should follow that contract.
@@ -27,10 +30,12 @@ Each session should:
 ## Reader session brief
 
 Implement editable complete-system crops and readable iPad layout using the
-existing SourceSystem and NormalizedRect contracts. Preserve full piano
-systems and printed markings. Share view/export transforms. Do not add OMR or
-change timing models. Verify coordinate and export behavior with owned
-fixtures, and report physical-device coverage separately.
+existing SourceSystem and NormalizedRect contracts. Add PDF/JPEG/PNG import
+and crop persistence. Preserve full piano systems and printed markings. Keep
+source transforms available for later export. Do not add OMR, PDF export, an
+advanced arrangement editor or change timing models in the first preview.
+Verify coordinates/persistence with owned fixtures, and report physical-device
+coverage separately.
 
 ## Metronome session brief
 

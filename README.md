@@ -7,6 +7,11 @@ practising with metronome-driven line advancement. The intended workflow is to
 import a score, prepare readable music systems, confirm timing, and practise
 without managing page turns.
 
+The flagship direction is **Follow Me: play at your own pace, and the score
+follows**. A bounded chroma/online-DTW experiment is starting alongside the
+metronome reader. See the [implementation plan](docs/MVP_PLAN.md) and
+[promotion brief](docs/PROMOTION_BRIEF.md) for scope and demonstration gates.
+
 ## Current milestone
 
 The first milestone contains the native project, PDF import and reading,

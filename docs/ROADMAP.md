@@ -1,42 +1,43 @@
 # Roadmap
 
-## M0 — buildable native foundation
+The current scope is [MVP_PLAN.md](MVP_PLAN.md). The flagship direction is
+Follow Me: retain the original score and follow the musician's playing.
 
-- Native iPad shell, generated Xcode project and macOS CI.
-- Original sample PDF, file import, local projects and PDF-system rendering.
-- Explicit meter/tempo/bar timing and tested reading-order compilation.
-- Short one-bar audible preview.
-- Simulator launch/reading smoke check and screenshot.
+## M0 — native foundation, passed
 
-Check the Actions result for build evidence. This list describes the milestone
-scope; real-device validation is tracked separately.
+PDF import, local projects, source rendering, confirmed musical timing,
+reading-order compilation and a one-bar click preview. Ten core tests and one
+native UI smoke test passed; see [BUILD_STATUS.md](BUILD_STATUS.md).
 
-## M1 — prepare a performance edition
+## M1 — dependable rehearsal preview
 
-- Editable complete-system crops; preserve piano grand staves and markings.
-- Section arrangement and repeated occurrences in the app.
-- Pinned breaks and original-resolution PDF export.
-- Optional suggestions for clean printed system boundaries.
+- PDF/JPEG/PNG import and local reopen.
+- Manual complete-system crops and readable portrait/landscape layouts.
+- Timing with explicit pulse units, performed beats and pickup handling.
+- Continuous shared audio/visual clock and automatic next-system focus.
+- Count-in, practice speed, whole-system loops and manual pause/navigation.
+- Accessible controls for an initial system Voice Control check.
 
-## M2 — metronome-driven reading
+## Follow Me experiment — starting now
 
-- Continuous shared audio/visual transport and line focus.
-- Count-in, bar accents, silent visual mode and next-system preview.
-- Practice speed, tap tempo and system-level A–B loops.
-- Correct pauses, manual overrides, interruptions and route completion.
+Try causal chroma/online-DTW alignment against a known MusicXML/MIDI reference.
+No model training. Prove small streaming fixtures, then a real recording and
+a live iPad passage. Keep this approach if it meets its demo gate. Hold position
+when uncertain rather than forcing a page turn.
 
-## M3 — native rehearsal and release
+## M2 — performer beta
 
-- Pencil notes stored against source coordinates.
-- Tested keyboard-style pedal input.
-- Physical-iPad readability, synchronization and offline validation.
-- TestFlight, support/privacy pages and App Store submission.
+Physical-iPad synchronization/readability checks, Pencil notes, prepared PDF
+export, richer arrangement, tested pedals and Voice Control. Signing and
+TestFlight need device/account setup. Simulator success and signed installation
+are separate results.
 
-The estimated first-beta window is four to five build weeks, conditional on
-infrastructure and test-device access. Apple enrollment/review timing is
-separate. Source publication does not mean an app is available to install.
+## M3 — structured scores and wider following
 
-## Later
+Link structured scores to source pages; add reviewed OMR/correction and
+same-pitch clef conversion. Expand Follow Me to cases supported by evidence,
+then consider ensemble synchronization.
 
-Same-pitch clef conversion, OMR-assisted timing, bar-level reflow, automatic
-repeat interpretation, microphone following and richer practice feedback.
+No release date is promised for acoustic following. The first reader can ship
+independently. App Store distribution remains the destination; enrollment and
+review timing are separate dependencies.
