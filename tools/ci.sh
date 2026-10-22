@@ -3,6 +3,7 @@ set -euo pipefail
 
 mkdir -p build
 xcodebuild -version | tee build/xcode-version.txt
+test "$(head -1 build/xcode-version.txt)" = 'Xcode 16.4'
 python3 tools/prepare_verovio.py
 swift package --package-path build/dependencies/verovio describe > build/verovio-package.txt
 xcodegen generate --spec project.yml
