@@ -65,20 +65,16 @@ struct ScorePreparationEditor: View {
             }
             .confirmationDialog("Remove this area from every section? The original page stays available.",
                 isPresented: Binding(get: { removingArea != nil }, set: { if !$0 { removingArea = nil } }),
-                titleVisibility: .visible) {
+                titleVisibility: .visible, presenting: removingArea) { area in
                 Button("Remove area", role: .destructive) {
-                    if let area = removingArea {
-                        PreparationEditing.removeArea(area.id, from: &draft)
-                    }
+                    PreparationEditing.removeArea(area.id, from: &draft)
                 }
             }
             .confirmationDialog("Remove this section and all its reading passes?",
                 isPresented: Binding(get: { removingSection != nil }, set: { if !$0 { removingSection = nil } }),
-                titleVisibility: .visible) {
+                titleVisibility: .visible, presenting: removingSection) { section in
                 Button("Remove section", role: .destructive) {
-                    if let section = removingSection {
-                        PreparationEditing.removeSection(section.id, from: &draft)
-                    }
+                    PreparationEditing.removeSection(section.id, from: &draft)
                 }
             }
             .alert("Could not save preparation", isPresented: Binding(
@@ -174,13 +170,17 @@ struct ScorePreparationEditor: View {
                         .accessibilityIdentifier("preparation-area-actions-\(index)")
                     }.buttonStyle(.borderless)
                 }
-                Menu("Add reading area", systemImage: "plus") {
+                Menu {
                     ForEach(draft.sections) { section in
                         Button("Add to \(section.name)") {
                             selectedAreaID = PreparationEditing.addArea(to: &draft,
                                 page: pageIndex, sectionID: section.id)
-                        }.accessibilityIdentifier("add-preparation-area-to-\(section.id)")
+                        }
                     }
+                } label: {
+                    Label("Add reading area", systemImage: "plus")
+                        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
                 }.disabled(draft.sections.isEmpty).accessibilityIdentifier("add-preparation-area")
                 Text("Choose a section when adding an area. Move earlier/later changes only the page list and manual browsing. Edit musical order inside Reading order. Shape the existing full-page area to its first system before adding the next.")
                     .font(.footnote).foregroundStyle(.secondary)

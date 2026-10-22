@@ -67,9 +67,21 @@ final class ReaderPreparationTests: XCTestCase {
         app.buttons["score-options"].tap()
         app.buttons["Delete"].tap()
         app.buttons["Delete score"].tap()
+        XCTAssertTrue(app.staticTexts["Line 1"].waitForExistence(timeout: 15))
+        let deletion = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            !app.navigationBars["Evening practice"].exists
+        }, object: app)
+        XCTAssertEqual(XCTWaiter.wait(for: [deletion], timeout: 5), .completed)
         app.terminate()
         app.launch()
+        XCTAssertTrue(app.staticTexts["Line 1"].waitForExistence(timeout: 15))
         XCTAssertFalse(app.navigationBars["Evening practice"].exists)
+        let sidebar = app.buttons["ToggleSidebar"]
+        if sidebar.label == "Show Sidebar" { sidebar.tap() }
+        let library = app.collectionViews["score-library"]
+        XCTAssertTrue(library.waitForExistence(timeout: 5))
+        XCTAssertTrue(library.isHittable)
+        XCTAssertFalse(library.staticTexts["Evening practice"].exists)
     }
 
     func testPNGAndJPEGImportAndMalformedInput() {

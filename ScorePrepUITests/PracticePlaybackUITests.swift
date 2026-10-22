@@ -111,7 +111,7 @@ final class PracticePlaybackUITests: XCTestCase {
         let addPass = app.buttons["add-preparation-pass"]
         PracticeUITestActions.reveal(addPass, in: app.collectionViews["preparation-order-controls"])
         addPass.tap()
-        PracticeUITestActions.sectionChoice(in: app, prefix: "add-preparation-pass-section-", label: "Score").tap()
+        PracticeUITestActions.sectionChoice(in: app, label: "Score").tap()
         app.buttons["save-preparation"].tap()
         app.buttons["open-practice"].tap()
         XCTAssertTrue(app.buttons["practice-options"].waitForExistence(timeout: 5))
