@@ -5,7 +5,8 @@ import SwiftUI
 struct ScoreReader: View {
     let project: ScoreProject
     let sourceURL: URL
-    let onTimingSaved: (UUID, TimingSegment) throws -> Void
+    let onTimingSaved: (UUID, [TimingSegment]) throws -> Void
+    let onPreparationSaved: (ScorePreparation) throws -> Void
     let onCropSaved: (UUID, NormalizedRect) throws -> Void
     let onRename: () -> Void
     let onDelete: () -> Void
@@ -15,6 +16,8 @@ struct ScoreReader: View {
     @State private var loadingError: String?
     @State private var currentID: UUID?
     @State private var sheet: ReaderSheet?
+    @State private var practiceRequest: ReaderPracticeRequest?
+    @State private var practiceError: String?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var currentIndex: Int {
@@ -43,6 +46,9 @@ struct ScoreReader: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
+                Button("Practice", systemImage: "play.rectangle", action: openPractice)
+                    .labelStyle(.iconOnly).disabled(document == nil)
+                    .accessibilityIdentifier("open-practice")
                 if let current {
                     Button("Timing", systemImage: "metronome") { sheet = .timing(current) }
                         .labelStyle(.iconOnly)
@@ -55,6 +61,14 @@ struct ScoreReader: View {
                     }
                 }.disabled(current == nil).accessibilityIdentifier("review-score")
                 Menu {
+                    if document != nil {
+                        Button("Reading areas and order", systemImage: "rectangle.split.3x1") {
+                            sheet = .preparation(current?.pageIndex ?? 0)
+                        }.accessibilityIdentifier("prepare-score")
+                        Button("View original pages", systemImage: "doc") {
+                            sheet = .original(current?.pageIndex ?? 0)
+                        }.accessibilityIdentifier("view-original-pages")
+                    }
                     if let current {
                         Button("Adjust reading area", systemImage: "crop") { sheet = .crop(current) }
                     }
@@ -71,8 +85,32 @@ struct ScoreReader: View {
                 if currentID == nil { currentID = project.systems.first?.id }
             } catch { loadingError = error.localizedDescription }
         }
+        .onChange(of: project.systems.map(\.id)) { _, ids in
+            if currentID.map({ ids.contains($0) }) != true { currentID = ids.first }
+        }
+        .onChange(of: ScorePreparation(project: project)) { _, _ in
+            if practiceRequest != nil {
+                practiceRequest = nil
+                practiceError = "The preparation changed. Open practice again to use its updated order and timing."
+            }
+        }
+        .fullScreenCover(item: $practiceRequest) { request in
+            if let document {
+                PracticeView(project: request.project, document: document, timeline: request.timeline)
+            }
+        }
+        .alert("Practice needs preparation", isPresented: Binding(
+            get: { practiceError != nil }, set: { if !$0 { practiceError = nil } }
+        )) { Button("OK") {} } message: { Text(practiceError ?? "") }
         .sheet(item: $sheet) { destination in
             switch destination {
+            case .preparation(let pageIndex):
+                if let document {
+                    ScorePreparationEditor(project: project, document: document,
+                        initialPageIndex: pageIndex, onSave: onPreparationSaved)
+                }
+            case .original(let pageIndex):
+                if let document { OriginalPagesView(document: document, initialPageIndex: pageIndex) }
             case .timing(let system):
                 TimingEditor(system: system) { try onTimingSaved(system.id, $0) }
             case .crop(let system):
@@ -117,6 +155,16 @@ struct ScoreReader: View {
         .padding(.horizontal).padding(.vertical, 6).background(.bar)
     }
 
+    private func openPractice() {
+        do {
+            practiceRequest = ReaderPracticeRequest(project: project,
+                timeline: try TimelineCompiler.compile(project))
+        } catch TimingError.unconfirmedTiming(let id) {
+            let area = project.systems.first { $0.id == id }
+            practiceError = "Confirm timing for \(area?.label ?? "this reading area") before practice. Manual reading remains available."
+        } catch { practiceError = error.localizedDescription }
+    }
+
     private func move(_ delta: Int) {
         let index = currentIndex + delta
         guard project.systems.indices.contains(index) else { return }
@@ -125,10 +173,19 @@ struct ScoreReader: View {
     }
 }
 
+private struct ReaderPracticeRequest: Identifiable {
+    let id = UUID()
+    let project: ScoreProject
+    let timeline: CompiledTimeline
+}
+
 private enum ReaderSheet: Identifiable {
     case timing(SourceSystem), crop(SourceSystem), review(SourceSystem)
+    case preparation(Int), original(Int)
     var id: String {
         switch self {
+        case .preparation(let page): return "preparation-\(page)"
+        case .original(let page): return "original-\(page)"
         case .timing(let s): return "timing-\(s.id)"
         case .crop(let s): return "crop-\(s.id)"
         case .review(let s): return "review-\(s.id)"

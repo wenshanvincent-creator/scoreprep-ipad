@@ -43,6 +43,20 @@ struct LibraryView: View {
                         description: Text("Import a PDF, JPEG or PNG to start reading."))
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                Button("Open practice exercise", systemImage: "music.note") {
+                    Task {
+                        isImporting = true
+                        defer { isImporting = false }
+                        do {
+                            selection.wrappedValue = try await PracticeExercise.install(into: library)
+                            compactColumn = .detail
+                        } catch { library.errorMessage = error.localizedDescription }
+                    }
+                }
+                .disabled(isImporting).padding()
+                .accessibilityIdentifier("open-practice-exercise")
+            }
             .navigationTitle("ScorePrep")
             .navigationSplitViewColumnWidth(min: 240, ideal: 280, max: 340)
             .toolbar {
@@ -53,8 +67,10 @@ struct LibraryView: View {
             if let project = library.projects.first(where: { $0.id == selection.wrappedValue }),
                let sourceURL = library.sourceURL(for: project) {
                 ScoreReader(project: project, sourceURL: sourceURL,
-                    onTimingSaved: { systemID, segment in
-                        try library.updateTiming(projectID: project.id, systemID: systemID, segment: segment)
+                    onTimingSaved: { systemID, segments in
+                        try library.updateTiming(projectID: project.id, systemID: systemID, segments: segments)
+                    }, onPreparationSaved: { draft in
+                        try library.savePreparation(projectID: project.id, draft: draft)
                     }, onCropSaved: { systemID, bounds in
                         try library.updateCrop(projectID: project.id, systemID: systemID, bounds: bounds)
                     }, onRename: { beginRename(project) }, onDelete: { deleting = project },
