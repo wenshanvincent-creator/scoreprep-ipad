@@ -50,6 +50,7 @@ final class PracticePlaybackUITests: XCTestCase {
             "playCommandDurationSeconds": playReturned - playBegan,
             "observedSecondsSincePlayBegan": [area2 - playBegan, area3 - playBegan, end - playBegan],
             "observedSecondsSincePlayReturned": [area2 - playReturned, area3 - playReturned, end - playReturned],
+            "observationMethod": "captured-label-block-predicate-with-neutral-object",
             "uiPollingAllowanceSeconds": 1.25
         ]
         let attachment = XCTAttachment(data: try JSONSerialization.data(withJSONObject: receipt, options: [.prettyPrinted, .sortedKeys]),
@@ -190,7 +191,11 @@ final class PracticePlaybackUITests: XCTestCase {
     }
 
     private func wait(_ element: XCUIElement, contains text: String, timeout: TimeInterval = 5) {
-        let expectation = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", text), object: element)
+        // Passing the AX element as the diagnostic object makes a false poll
+        // collect its debug description and extra snapshots on this SDK.
+        let expectation = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            element.exists && element.label.contains(text)
+        }, object: nil)
         XCTAssertEqual(XCTWaiter.wait(for: [expectation], timeout: timeout), .completed)
     }
 
