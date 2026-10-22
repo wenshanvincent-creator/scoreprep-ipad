@@ -1,0 +1,44 @@
+# Parallel work
+
+Use one repository with separate branches/worktrees, rather than separate
+repositories. Wait for a passing foundation build and stable contracts before
+starting native feature branches.
+
+| Session | Owns | Initial task |
+| --- | --- | --- |
+| Integration | App composition, project.yml, workflows, shared ScoreCore contracts | Keep main buildable; integrate completed branches and verify the entire reading flow. |
+| Reader and preparation | ScoreRendering and preparation views | Editable system crops, portrait/landscape layout, next-system context and PDF export. |
+| Metronome and practice | ScoreAudio and practice controls | Continuous transport, beat-driven focus, count-in, speed, loops and interruption handling. |
+| Pencil and release | Annotation integration and device validation | Start after source transforms stabilize; implement source-linked drawings and collect device evidence. |
+
+Start with integration plus at most two feature sessions. Pencil work overlaps
+the reader's coordinate transforms, so it should follow that contract.
+
+Each session should:
+
+1. Read AGENTS.md, the architecture and current main status.
+2. Create its own branch/worktree from the latest agreed main commit.
+3. Keep changes within its ownership; request an interface change before
+   editing another session's module or the shared data model.
+4. State what changed and provide relevant test/build results.
+5. Return a commit/PR for integration. Do not push directly to main while
+   another session is integrating.
+
+## Reader session brief
+
+Implement editable complete-system crops and readable iPad layout using the
+existing SourceSystem and NormalizedRect contracts. Preserve full piano
+systems and printed markings. Share view/export transforms. Do not add OMR or
+change timing models. Verify coordinate and export behavior with owned
+fixtures, and report physical-device coverage separately.
+
+## Metronome session brief
+
+Implement the continuous metronome/reader transport from CompiledTimeline.
+Use an audio/host-time clock rather than accumulated UI timer callbacks.
+Provide count-in, accents, visual-only mode, practice speed, tap tempo and
+system-level loops. Handle pause/seek/loop invalidation and interruptions.
+Do not infer score timing from image spacing or change reader coordinates.
+Prove timing calculations separately from real audio/display synchronization.
+
+No additional session has been started merely by adding this guide.
