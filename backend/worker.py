@@ -98,8 +98,11 @@ def recognize(folder, job):
         output = folder / f"page-{index:04d}.musicxml"
         try:
             with (folder / f"page-{index:04d}.log").open("w") as log:
+                command = ["oemer", str(folder / f"source-{index:04d}.png"), "-o", str(output)]
+                if not job.get("deskew", True):
+                    command.append("--without-deskew")
                 result = subprocess.run(
-                    ["oemer", str(folder / f"source-{index:04d}.png"), "-o", str(output)],
+                    command,
                     stdout=log, stderr=subprocess.STDOUT, timeout=900, check=False)
             if result.returncode:
                 raise RuntimeError(f"oemer exited with status {result.returncode}")
@@ -139,6 +142,9 @@ async def submit(request: Request, authorization: str | None = Header(default=No
         payload = json.loads(chunks)
         data = base64.b64decode(payload["contentBase64"], validate=True)
         media_type = payload["mediaType"]
+        deskew = payload.get("deskew", True)
+        if not isinstance(deskew, bool):
+            raise ValueError("deskew must be true or false")
         if not data or len(data) > MAX_BYTES:
             raise ValueError("Document must contain 1 byte–20 MiB")
     except (ValueError, KeyError, TypeError, binascii.Error) as error:
@@ -152,7 +158,7 @@ async def submit(request: Request, authorization: str | None = Header(default=No
     except Exception as error:
         # Input decode errors are request failures, never successful empty jobs.
         raise HTTPException(422, str(error))
-    job = dict(schemaVersion=1, id=job_id, state="queued", completedPages=0,
+    job = dict(schemaVersion=1, id=job_id, state="queued", completedPages=0, deskew=deskew,
                engineRevision=ENGINE_REVISION,
                originalSHA256=hashlib.sha256(data).hexdigest(),
                pages=[dict(sourcePageIndex=i, state="queued") for i in range(len(paths))])

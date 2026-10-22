@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-mkdir -p build/recognition-native
+mkdir -p build/recognition-native backend/native-harness/Resources
 test "$(xcodebuild -version | head -1)" = 'Xcode 16.4'
 cp build/recognition/job.json backend/native-harness/Resources/job.json
 xcodegen generate --spec project.yml

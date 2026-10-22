@@ -9,9 +9,9 @@ import urllib.request
 def prepare():
     root = Path(importlib.util.find_spec("oemer").origin).parent
     assets = []
-    for name, folder, length in [
-        ("1st_model.onnx", "unet_big", 70767752),
-        ("2nd_model.onnx", "seg_net", 38448467),
+    for name, folder, length, expected_hash in [
+        ("1st_model.onnx", "unet_big", 70767752, "37512e858731096439746f60b377c049f07055b4a23ec6eb9a178ce92cfba174"),
+        ("2nd_model.onnx", "seg_net", 38448467, "ed2e1a86ea75712ee6cdc740e96f7a36753543cf9bb980227c071c9256d9d82e"),
     ]:
         target = root / "checkpoints" / folder / "model.onnx"
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -19,10 +19,11 @@ def prepare():
         if not target.exists():
             urllib.request.urlretrieve(url, target)
         data = target.read_bytes()
-        if len(data) != length:
-            raise ValueError(f"Unexpected upstream asset size: {name}")
+        digest = hashlib.sha256(data).hexdigest()
+        if len(data) != length or digest != expected_hash:
+            raise ValueError(f"Upstream asset does not match the verified trial: {name}")
         assets.append(dict(name=name, url=url, bytes=length,
-                           sha256=hashlib.sha256(data).hexdigest()))
+                           sha256=digest))
     Path("backend-model-receipt.json").write_text(json.dumps(assets, indent=2))
 
 

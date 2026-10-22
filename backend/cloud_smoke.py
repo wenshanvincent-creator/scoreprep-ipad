@@ -11,6 +11,7 @@ from pathlib import Path
 import secrets
 import time
 import xml.etree.ElementTree as ET
+from compare_notation import compare
 
 import cairosvg
 import verovio
@@ -31,7 +32,8 @@ def render(xml, stem):
         raise RuntimeError(toolkit.getLog())
     svg = toolkit.renderToSVG(1)
     (OUT / f"{stem}.svg").write_text(svg)
-    cairosvg.svg2png(bytestring=svg.encode(), write_to=str(OUT / f"{stem}.png"), output_width=1800)
+    cairosvg.svg2png(bytestring=svg.encode(), write_to=str(OUT / f"{stem}.png"), output_width=1800,
+                    background_color="white")
 
 
 original = Path("backend/fixtures/recognition-study.musicxml").read_text()
@@ -39,7 +41,8 @@ render(original, "original-study")
 headers = {"Authorization": f"Bearer {os.environ['SCOREPREP_WORKER_TOKEN']}"}
 with TestClient(app) as client:
     response = client.post("/v1/jobs", headers=headers, json=dict(
-        mediaType="image/png", contentBase64=base64.b64encode((OUT / "original-study.png").read_bytes()).decode()))
+        mediaType="image/png", deskew=False,  # Generated staff lines are exactly horizontal.
+        contentBase64=base64.b64encode((OUT / "original-study.png").read_bytes()).decode()))
     response.raise_for_status()
     job = response.json()
     print(f"Actual oemer job: {job['id']}", flush=True)
@@ -65,4 +68,7 @@ with TestClient(app) as client:
                       recognizedMeasures=len(actual.findall(".//measure")),
                       expectedNotes=notes(expected), recognizedNotes=notes(actual))
     (OUT / "comparison.json").write_text(json.dumps(comparison, indent=2))
+    report = compare(original, recognized)
+    (OUT / "quality-report.json").write_text(json.dumps(report, indent=2))
+    print(f"Musical quality passed: {report['matchesOwnedExercise']}", flush=True)
     print(f"Recognition completed: {len(notes(actual))} notes; review comparison.json and both images", flush=True)

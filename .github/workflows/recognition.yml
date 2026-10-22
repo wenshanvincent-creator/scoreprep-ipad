@@ -18,6 +18,8 @@ jobs:
         run: |
           bash backend/install-engine.sh
           python -m pip install verovio==6.3.0 cairosvg==2.7.1
+      - name: Check worker boundaries without model execution
+        run: python backend/test_worker_contract.py
       - name: Recognize original printed fixture through the worker API
         env:
           OMP_NUM_THREADS: '2'

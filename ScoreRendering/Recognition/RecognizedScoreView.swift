@@ -3,15 +3,23 @@ import WebKit
 
 public struct RecognizedScoreView: View {
     public let pages: [RecognitionPage]
+    public let initialSourcePageIndex: Int
+    public let onSourcePageChanged: ((Int) -> Void)?
     @State private var rendered: [RenderedNotationPage] = []
     @State private var selection = 0
     @State private var scale = 45
     @State private var failure: String?
     @State private var isRendering = false
     @State private var renderer = VerovioRenderer()
-    @Environment(\.dynamicTypeSize) private var typeSize
+    @State private var hasRendered = false
 
-    public init(pages: [RecognitionPage]) { self.pages = pages }
+    /// initialSourcePageIndex seeds the first layout only; later layouts preserve the visible source.
+    public init(pages: [RecognitionPage], initialSourcePageIndex: Int = 0,
+                onSourcePageChanged: ((Int) -> Void)? = nil) {
+        self.pages = pages
+        self.initialSourcePageIndex = initialSourcePageIndex
+        self.onSourcePageChanged = onSourcePageChanged
+    }
 
     public var body: some View {
         VStack(spacing: 0) {
@@ -53,7 +61,7 @@ public struct RecognizedScoreView: View {
                     isRendering = true
                     failure = nil
                     // Keep the same source page visible when a size/rotation changes pagination.
-                    let sourceIndex = rendered.indices.contains(selection) ? rendered[selection].sourcePageIndex : nil
+                    let sourceIndex = hasRendered ? visibleSourcePageIndex : initialSourcePageIndex
                     do {
                         let output = try await renderer.render(pages: request.pages,
                                                                width: Double(request.width),
@@ -61,6 +69,7 @@ public struct RecognizedScoreView: View {
                         try Task.checkCancellation()
                         rendered = output
                         selection = output.firstIndex(where: { $0.sourcePageIndex == sourceIndex }) ?? 0
+                        hasRendered = true
                         isRendering = false
                     } catch is CancellationError {
                         // The replacement task owns the current progress state.
@@ -74,6 +83,13 @@ public struct RecognizedScoreView: View {
             }
         }
         .tint(Color(red: 0.157, green: 0.369, blue: 0.475))
+        .onChange(of: visibleSourcePageIndex) { _, index in
+            if let index { onSourcePageChanged?(index) }
+        }
+    }
+
+    private var visibleSourcePageIndex: Int? {
+        rendered.indices.contains(selection) ? rendered[selection].sourcePageIndex : nil
     }
 
     private var pageCaption: some View {
