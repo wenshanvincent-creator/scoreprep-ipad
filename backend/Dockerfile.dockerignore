@@ -1,0 +1,8 @@
+**
+!backend/
+!backend/**
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/native-harness/Resources/job.json
+backend/.env
+backend/.env.*
