@@ -83,3 +83,17 @@ after the built-in importer; the component UI checks first render, repeated
 layout, page navigation and source callbacks. Review the prepared patch and
 run these on the verified SDK before recording a native pass. Simulator and
 physical-device evidence remain separate.
+
+## Local package resolution
+
+The first prepared-checkout app run, 39768871134 at 520095e, passed source
+preparation but stopped during Swift-package resolution, before compiling or
+executing the app. The published Package.swift declares VerovioToolkitTests
+without a corresponding test directory. As a local package, SwiftPM reported
+overlapping library/test sources. The additional public
+tools/patches/verovio-local-package.patch removes that empty declaration;
+there are no upstream test implementations to remove at this revision.
+All ScorePrep native regression targets remain enabled. Both native entry
+scripts now describe the prepared package before simulator boot, so this
+specific packaging failure is reported early. The next native run must still
+establish that the bounds fix resolves the runtime crash.

@@ -67,8 +67,15 @@ existing upper-bound-only check admitted a negative voice index. C++ hardening
 stays enabled, and no recognized notation is rewritten. Source preparation
 checks the upstream commit, the original/patched file SHA-256, and unrelated
 tracked modifications. Full upstream source and notices remain in that local
-checkout; only the two-line patch and preparation code are committed here.
+checkout; only the small documented patches and preparation code are committed here.
 The patched native build still requires its own passing runtime evidence.
+Local Swift-package resolution also exposed a manifest declaration for
+VerovioToolkitTests without any test-source directory in the published commit.
+tools/patches/verovio-local-package.patch removes that empty declaration; it
+does not remove any test implementation. The app's native contract, rendering
+and integration tests remain enabled. The preparer verifies the original and
+patched Package.swift SHA-256 as well as the Humdrum source hashes. The failed
+build receipt is run 39768871134, before compilation or app execution.
 The [native crash analysis](../../docs/RECOGNITION_NATIVE_CRASH.md) retains
 the failing input, backtrace and independent source/hash review.
 Public source and full notices are supplied. Distribution packaging must retain

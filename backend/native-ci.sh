@@ -3,6 +3,7 @@ set -euo pipefail
 mkdir -p build/recognition-native backend/native-harness/Resources
 test "$(xcodebuild -version | head -1)" = 'Xcode 16.4'
 python3 tools/prepare_verovio.py
+swift package --package-path build/dependencies/verovio describe > build/recognition-native/verovio-package.txt
 cp build/recognition/job.json backend/native-harness/Resources/job.json
 xcodegen generate --spec project.yml
 SIMULATOR_ID=$(xcrun simctl list devices available --json | python3 tools/select_simulator.py)
