@@ -295,6 +295,24 @@ The first preparation failure includes a keyboard/dictation accessory over its
 bottom edge; give area-name editing a Done submit action that clears FocusState,
 and complete that ordinary input action before revealing area operations.
 
+Candidate 90fcc7b (run 39815509990) passed 35 Core, 13 native and 12/13 UI,
+including actual 200% automatic wrapping and full preparation/save/cancel.
+Only the first automatic-advance observation exceeded the unchanged 1.25-second
+UI allowance. Trace: Play returned near test time 25.40; the first Bar 2 poll
+at 30.16 was false, causing a debug description and three extra AX snapshots
+through 30.81. The next poll did not occur until 32.11, with observation 6.81984
+seconds after Play returned. The area 3 and final boundary checks passed.
+
+Minimal harness correction: use a block predicate that closes over the real
+element/label, with XCTNSPredicateExpectation.object nil, rather than providing
+the AX element for diagnostic formatting. Retain all existing 5/9/13-second
+boundary bounds, phase/order/upcoming assertions, three captures and the timing
+receipt; record the observation method. No production clock/telemetry or added
+tolerance. The next root native run must verify the negative-poll trace and
+the same acceptance bounds.
+[Apple's initializer accepts an optional object](https://developer.apple.com/documentation/xctest/xctnspredicateexpectation/init(predicate:object:));
+the block captures the actual UI element and evaluates its unchanged label match.
+
 A full-screen practice presentation pauses on disappearance. Preparation/timing
 changes invalidate it; reopening compiles a fresh controller. Invalid timing
 keeps the original reader available with the actual preparation error. Original
