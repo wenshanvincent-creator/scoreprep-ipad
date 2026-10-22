@@ -18,14 +18,6 @@ the actual preserved receipts; it is not the active engine installation.
 
 ## Original oemer trial and shared engraving dependencies
 
-The native Verovio dependency requires the narrow negative-voice bounds patch
-documented in docs/RECOGNITION_NATIVE_CRASH.md. Integration prepares the exact
-upstream commit plus the public two-line patch in an ignored local Swift package.
-Both getStaffIndex and getCrossStaffOffset reject negative vector indexes;
-hardening remains enabled. This is a library safety fix, not a change to the
-recognized musical content. Preserve the source pin, patch and LGPL notices
-when distributing a prepared native build.
-
 | Component | Exact source | Notice / status |
 | --- | --- | --- |
 | oemer Python CLI, version 0.1.8 metadata | [BreezeWhite/oemer dbe2a933d630d0f74805d717960eb259473f5978](https://github.com/BreezeWhite/oemer/tree/dbe2a933d630d0f74805d717960eb259473f5978) | Upstream MIT text retained as oemer-MIT.txt, including its original placeholder copyright line. Source is installed unmodified with --no-deps; our dependency versions are explicit. |
@@ -64,6 +56,8 @@ N. Journet, *The ICDAR 2013 Music Scores Competition: Staff Removal*, ICDAR
 2013, pp. 1439–1443; and A. Fornés et al., *The ICDAR/GREC 2013 Music Scores
 Competition: Staff Removal*, LNCS 8746 (2014).
 
+## Native Verovio patch
+
 Verovio remains an upstream library rather than a replacement engraver.
 The native build applies tools/patches/verovio-negative-voice.patch to the pinned
 6.3.0 source. This adds a lower-bound check in MxmlEvent::getStaffIndex and
@@ -75,6 +69,8 @@ checks the upstream commit, the original/patched file SHA-256, and unrelated
 tracked modifications. Full upstream source and notices remain in that local
 checkout; only the two-line patch and preparation code are committed here.
 The patched native build still requires its own passing runtime evidence.
+The [native crash analysis](../../docs/RECOGNITION_NATIVE_CRASH.md) retains
+the failing input, backtrace and independent source/hash review.
 Public source and full notices are supplied. Distribution packaging must retain
 applicable font/dependency notices and satisfy the library's license terms;
 App Store distribution has not been performed or signed in this task.
