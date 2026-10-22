@@ -34,6 +34,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.ScorePrep
         GENERATE_INFOPLIST_FILE: YES
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": tools/ScorePrep-Simulator.entitlements
     info:
       path: build/ScorePrep-Info.plist
       properties:

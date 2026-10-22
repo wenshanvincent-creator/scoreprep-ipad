@@ -15,6 +15,7 @@ final class RecognitionIntegrationTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.navigationBars["Recorded OMR trial"].waitForExistence(timeout: 20))
         app.buttons["review-score"].tap()
+        XCTAssertFalse(app.alerts.firstMatch.exists)
         XCTAssertTrue(app.staticTexts["notationPageCaption"].waitForExistence(timeout: 20))
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["accept-recognized-page"].exists)
@@ -63,7 +64,9 @@ final class RecognitionIntegrationTests: XCTestCase {
         let oldValue = address.value as? String ?? ""
         address.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: oldValue.count))
         address.typeText("https://worker.example")
+        XCTAssertEqual(address.value as? String, "https://worker.example")
         app.buttons["save-recognition-connection"].tap()
+        XCTAssertFalse(app.alerts.firstMatch.exists)
         XCTAssertTrue(app.buttons["recognize-original"].waitForExistence(timeout: 5))
         app.terminate()
         app.launchArguments = ["--smoke-test", "--reader-test-id", "worker-settings"]
@@ -77,6 +80,7 @@ final class RecognitionIntegrationTests: XCTestCase {
     }
 
     private func capture(_ app: XCUIApplication, _ name: String) {
+        XCTAssertFalse(app.alerts.firstMatch.exists, "An alert must not obscure native evidence.")
         let screenshot = XCUIScreen.main.screenshot()
         let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = name

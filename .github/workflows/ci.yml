@@ -29,7 +29,9 @@ jobs:
           path: |
             build/*.log
             build/*.txt
+            build/*.plist
             build/*.png
+            build/attachments/
             build/Smoke.xcresult/
           retention-days: 7
           if-no-files-found: warn
