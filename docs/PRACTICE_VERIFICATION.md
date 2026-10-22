@@ -15,6 +15,18 @@ The integrated checkout also includes 058b7d4's focused final-pulse display
 correction. Its new regression and the resulting source still need validation.
 No acceptance claim depends on the existence of tests alone.
 
+## v0.1 requirement coverage
+
+| Requirement | Evidence boundary |
+| --- | --- |
+| PDF/JPEG/PNG import and offline original library | Existing native import/copy, rename, crop, rotated-page and cold-reopen UI checks passed at the recorded V1 and bc3c8b1 checkpoints. |
+| Several complete-system areas, explicit sections/repeat order, original preservation | Core preparation validation and native atomic-store/draft tests passed. The full add/move/remove/save/cancel UI walkthrough still needs its corrected native run. |
+| Full meter, pulse, BPM and performed-quarter-beat arrays, including pickups | Core timeline/count-in checks and native fractional/one-based phase round trips passed. The multi-segment timing-editor cold-reopen UI check still needs its corrected run. |
+| Current/upcoming music in both orientations | Native landscape inspected; portrait and large-text captures remain pending. |
+| One clock, audible/silent beat, count-in and automatic line focus | Transport/pulse checks and actual native mixer capture passed. The uninterrupted visible 5/9/13-second advancement take remains pending. |
+| Speed, A–B looping and immediate manual pause/navigation | Pure transport and native controller cancellation checks passed. Full UI interaction, timed loop wrap at 200% and manual-interruption evidence remain pending. |
+| Native design process and repeatable demonstration | UI_SKILLS.md and the workstream plans record the selected skills and preflight. PRACTICE_DEMO.md supplies the owned exercise and import walkthrough; final inspected captures and native receipts complete acceptance. |
+
 ## Captured audio at bc3c8b1
 
 The actual native live-mixer test passed without a skip on the iPad Pro

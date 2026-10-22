@@ -17,6 +17,19 @@ oemer trials failed musical review; **Verovio** renders MusicXML.
 The later following trial uses classical chroma/online DTW. No custom
 model training, replacement notation engraver or comparison of follower options.
 
+## Changes adopted from the ScoreVoice proposal
+
+Keep its native Swift/SwiftUI platform, existing-engine OMR, MusicXML interchange,
+Verovio engraving and the first rendering/manual-navigation gate. Preserve the
+original alongside recognition so a musician can review or reject an imperfect
+edition and reopen saved work offline.
+
+Tempo-guided practice stays before voice because it is part of the existing
+v0.1 goal. Voice is the next bounded experiment; microphone following follows
+that. Full note correction, annotation transfer across re-engraving and ensemble
+sync remain later work. An uncertain follower must hold position visibly;
+silently substituting a fixed timer would misrepresent following behavior.
+
 ## V1 — verified engineering checkpoint
 
 1. Import PDF, JPEG or PNG into an app-owned library.
