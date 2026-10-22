@@ -1,0 +1,65 @@
+name: Recognition and notation evidence
+on:
+  pull_request:
+    paths: ['ScoreRecognition/**', 'ScoreRendering/Recognition/**', 'backend/**', 'tools/prepare_verovio.py', 'tools/patches/**', 'project.yml', '.github/workflows/recognition.yml']
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  actual-omr:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install pinned homr after failed oemer quality trials
+        run: |
+          bash backend/install-engine.sh
+          python -m pip install verovio==6.3.0 cairosvg==2.7.1
+      - name: Check worker boundaries without model execution
+        run: python backend/test_worker_contract.py
+      - name: Recognize original printed fixture through the worker API
+        env:
+          OMP_NUM_THREADS: '2'
+          OPENBLAS_NUM_THREADS: '2'
+          MPLBACKEND: Agg
+        run: python backend/cloud_smoke.py
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: recognition-actual-omr
+          path: |
+            build/recognition/
+            backend-model-receipt.json
+          retention-days: 14
+  native-notation:
+    needs: actual-omr
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/download-artifact@v8
+        with:
+          name: recognition-actual-omr
+          path: build/cloud-artifact
+      - name: Stage actual OMR payload
+        run: |
+          mkdir -p build/recognition
+          cp build/cloud-artifact/build/recognition/job.json build/recognition/job.json
+      - name: Select verified SDK and install project generator
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+          brew install xcodegen
+      - name: Build toolkit and inspect native reading interactions
+        run: bash backend/native-ci.sh
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: recognition-native-notation
+          path: build/recognition-native/
+          retention-days: 14

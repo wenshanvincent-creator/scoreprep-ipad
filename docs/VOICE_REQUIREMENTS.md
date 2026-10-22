@@ -1,4 +1,4 @@
-# Voice requirements — V2, after V1
+# Voice requirements — V3, after the v0.1 practice preview
 
 These are saved requirements, not current implementation tasks.
 
@@ -8,7 +8,7 @@ These are saved requirements, not current implementation tasks.
 - If unsupported, unavailable or denied, retain touch. Never silently remove
   the flag or route audio to a server.
 - Request microphone and Speech permissions explicitly with accurate Info.plist
-  text when implementing V2, not during V1.
+  text when implementing V3, not during V1.
 - Use a small distinct command set and test start/stop-type confusions.
 - SFCustomLanguageModelData can bias toward phrases on supported systems.
   Biasing does not constrain output to a hard grammar or guarantee accuracy.

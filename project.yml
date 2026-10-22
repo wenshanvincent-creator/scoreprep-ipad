@@ -12,6 +12,8 @@ settings:
 packages:
   ScoreCore:
     path: Packages/ScoreCore
+  Verovio:
+    path: build/dependencies/verovio
 targets:
   ScorePrep:
     type: application
@@ -20,12 +22,19 @@ targets:
       - ScoreApp
       - ScoreRendering
       - ScoreAudio
+      - ScoreRecognition
+      - path: Fixtures/RecognitionReplay
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: ScoreCore
+      - package: Verovio
+        product: VerovioToolkit
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.ScorePrep
         GENERATE_INFOPLIST_FILE: YES
+        "CODE_SIGN_ENTITLEMENTS[sdk=iphonesimulator*]": tools/ScorePrep-Simulator.entitlements
     info:
       path: build/ScorePrep-Info.plist
       properties:
@@ -48,12 +57,86 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.ScorePrep.UITests
         GENERATE_INFOPLIST_FILE: YES
+  ScorePrepTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - ScorePrepTests
+    dependencies:
+      - target: ScorePrep
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.ScorePrep.Tests
+        GENERATE_INFOPLIST_FILE: YES
+  RecognitionHarness:
+    type: application
+    platform: iOS
+    sources:
+      - backend/native-harness
+      - path: backend/fixtures/recognition-study.musicxml
+        buildPhase: resources
+      - ScoreRecognition
+      - ScoreRendering/Recognition
+    dependencies:
+      - package: Verovio
+        product: VerovioToolkit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.RecognitionHarness
+        GENERATE_INFOPLIST_FILE: YES
+    info:
+      path: build/RecognitionHarness-Info.plist
+      properties:
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+  RecognitionRenderingUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [backend/native-tests]
+    dependencies:
+      - target: RecognitionHarness
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.RecognitionRenderingUITests
+  RecognitionContractTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - backend/native-unit
+      - path: backend/fixtures/recognition-study.musicxml
+        buildPhase: resources
+      - path: backend/fixtures/observed-homr/homr-observed.musicxml
+        buildPhase: resources
+    dependencies:
+      - package: Verovio
+        product: VerovioToolkit
+      - target: RecognitionHarness
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: org.scoreprep.RecognitionContractTests
 schemes:
+  RecognitionHarness:
+    build:
+      targets:
+        RecognitionHarness: all
+        RecognitionRenderingUITests: [test]
+        RecognitionContractTests: [test]
+    test:
+      targets:
+        - RecognitionContractTests
+        - RecognitionRenderingUITests
   ScorePrep:
     build:
       targets:
         ScorePrep: all
+        ScorePrepTests: [test]
         ScorePrepUITests: [test]
     test:
       targets:
+        - ScorePrepTests
         - ScorePrepUITests

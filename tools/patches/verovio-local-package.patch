@@ -1,0 +1,13 @@
+--- a/Package.swift
++++ b/Package.swift
+@@ -45,10 +45,6 @@
+             path: ".",
+             sources: ["bindings/swift-toolkit"],
+             resources: [.copy("data")]
+-        ),
+-        .testTarget(
+-            name: "VerovioToolkitTests",
+-            dependencies: ["VerovioToolkit"]
+         )
+     ]
+ )

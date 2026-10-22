@@ -1,0 +1,29 @@
+--- a/src/hum/humlib.cpp
++++ b/src/hum/humlib.cpp
+@@ -50289,7 +50289,7 @@
+ int MxmlEvent::getStaffIndex(void) const {
+ 	if (m_staff > 0) {
+ 		vector<pair<int, int>> mapping = getOwner()->getOwner()->getVoiceMapping();
+-		if (getVoiceNumber() < (int)mapping.size()) {
++		if (getVoiceNumber() >= 0 && getVoiceNumber() < (int)mapping.size()) {
+ 			const auto& [mappingStaffIndex, mappingVoiceIndex] = mapping[getVoiceNumber()];
+ 			if (m_staff - 1 != mappingStaffIndex) {
+ 				return mappingStaffIndex;
+@@ -50322,7 +50322,7 @@
+ int MxmlEvent::getCrossStaffOffset(void) const {
+ 	if (m_staff > 0) {
+ 		vector<pair<int, int>> mapping = getOwner()->getOwner()->getVoiceMapping();
+-		if (getVoiceNumber() < (int)mapping.size()) {
++		if (getVoiceNumber() >= 0 && getVoiceNumber() < (int)mapping.size()) {
+ 			const auto& [mappingStaffIndex, mappingVoiceIndex] = mapping[getVoiceNumber()];
+ 			return m_staff - 1 - mappingStaffIndex;
+ 		}
+@@ -119794,7 +119794,7 @@
+ 	if (!(isPageBreak || isSystemBreak)) {
+ 		return;
+ 	}
+-	GridSlice* gs = outdata->back();
++	GridSlice* gs = outdata->empty() ? NULL : outdata->back();
+ 
+ 	HTp token = NULL;
+ 	if (gs && gs->size() > 0) {

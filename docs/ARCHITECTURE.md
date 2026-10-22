@@ -3,7 +3,7 @@
 ## Current V1 pipeline
 
 Keep the existing source reader and musical-timing foundation. V1 adds a remote
-oemer worker, a thin native recognition client and a Verovio rendering view.
+homr worker, a thin native recognition client and a Verovio rendering view.
 MusicXML is the interchange artifact for recognized notation. Original-page
 coordinates remain the authority for source images and existing markings.
 Do not replace those two representations with one lossy model.
@@ -51,6 +51,9 @@ The project stores only the relative source filename.
   RecognizedSourcePage records. Each record keeps its zero-based source page,
   app-generated local MusicXML filename and unreviewed/accepted/rejected state.
   These records never replace the original source filename, crops or timing.
+- PendingRecognition retains a remote job ID, worker URL and original checksum
+  so polling can resume. Worker credentials stay in Keychain, outside project
+  JSON. Results must match the pending job and original bytes before saving.
 
 The first app edits timing for one source system at a time. The continuous
 transport will derive visual focus and audio events from one clock, preserving
@@ -67,5 +70,10 @@ not silently replace invalid projects with a demo.
 
 project.yml is the source of the native Xcode project. XcodeGen generates
 ScorePrep.xcodeproj so parallel sessions do not edit a generated project file.
-The app links the local ScoreCore package; there are no runtime third-party
-dependencies in the initial milestone.
+The app links the local ScoreCore package and the pinned native Verovio toolkit.
+tools/prepare_verovio.py prepares its local Swift package in build/dependencies
+from an exact upstream revision and applies the documented negative-voice bounds
+fix. Both native CI entry points run this preparation before XcodeGen.
+Its built-in musicxml-hum import path preserves the interleaved piano voices
+returned by homr. The remote worker runs the existing OMR models; the iPad
+retains the original and saves per-source-page MusicXML for offline engraving.
