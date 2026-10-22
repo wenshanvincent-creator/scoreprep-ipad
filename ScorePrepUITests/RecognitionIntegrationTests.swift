@@ -81,6 +81,9 @@ final class RecognitionIntegrationTests: XCTestCase {
 
     private func capture(_ app: XCUIApplication, _ name: String) {
         XCTAssertFalse(app.alerts.firstMatch.exists, "An alert must not obscure native evidence.")
+        // WebKit can exist in accessibility before its first SVG paint, as the
+        // earlier blank portrait capture demonstrated. Match the harness settle.
+        Thread.sleep(forTimeInterval: 2)
         let screenshot = XCUIScreen.main.screenshot()
         let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = name

@@ -19,8 +19,10 @@ xcodebuild test \
   -resultBundlePath build/Smoke.xcresult \
   CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual \
   | tee build/xcodebuild.log
-codesign -d --entitlements :- build/DerivedData/Build/Products/Debug-iphonesimulator/ScorePrep.app \
-  > build/simulator-entitlements.plist
+cp build/DerivedData/Build/Intermediates.noindex/ScorePrep.build/Debug-iphonesimulator/ScorePrep.build/ScorePrep.app-Simulated.xcent \
+  build/simulator-entitlements.plist
+codesign -dv build/DerivedData/Build/Products/Debug-iphonesimulator/ScorePrep.app \
+  > build/simulator-signature.txt 2>&1
 xcrun simctl launch "$SIMULATOR_ID" org.scoreprep.ScorePrep --smoke-test
 sleep 2
 xcrun simctl io "$SIMULATOR_ID" screenshot build/scoreprep-ipad.png
