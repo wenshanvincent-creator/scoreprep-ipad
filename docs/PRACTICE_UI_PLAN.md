@@ -254,6 +254,18 @@ deleted library row is absent. No shared persistence mutation changes are needed
 These focused corrections await the next root native candidate.
 [Apple presenting-data confirmation dialog](https://developer.apple.com/documentation/swiftui/view/confirmationdialog(_:ispresented:titlevisibility:presenting:actions:)-9ibgk).
 
+Candidate bb36d24 (run 39804100969) passed 35 Core, 13 native and the other
+11 UI checks, including confirmed deletion/cold reopen and automatic practice.
+Both Add-menu section choices still failed with the full-row Label. Replace
+only those two Form Menu triggers with explicit Buttons presenting native
+confirmation dialogs. Each owns an independent Bool, keeps the existing
+44-point full-row Label and shows every existing section choice with the same
+title and empty-section policy. Choice closures capture sectionID directly;
+they neither read a nullable action payload nor change membership semantics.
+Attach each dialog to its trigger for native iPad anchoring. Existing section
+choice, repeat, save/cancel and timed-loop assertions remain unchanged. No
+coordinate fallback or new suite is introduced; root owns native verification.
+
 A full-screen practice presentation pauses on disappearance. Preparation/timing
 changes invalidate it; reopening compiles a fresh controller. Invalid timing
 keeps the original reader available with the actual preparation error. Original
