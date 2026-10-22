@@ -16,6 +16,7 @@ final class RecognitionIntegrationTests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Recorded OMR trial"].waitForExistence(timeout: 20))
         app.buttons["review-score"].tap()
         XCTAssertTrue(app.staticTexts["notationPageCaption"].waitForExistence(timeout: 20))
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["accept-recognized-page"].exists)
         capture(app, "integrated-recognition-portrait")
         XCUIDevice.shared.orientation = .landscapeLeft
@@ -25,6 +26,9 @@ final class RecognitionIntegrationTests: XCTestCase {
         XCTAssertEqual(XCTWaiter.wait(for: [landscape], timeout: 10), .completed)
         XCTAssertTrue(app.staticTexts["notationPageCaption"].waitForExistence(timeout: 10))
         capture(app, "integrated-recognition-landscape")
+        app.buttons["accept-recognized-page"].tap()
+        XCTAssertTrue(app.staticTexts["Page 1 reviewed"].waitForExistence(timeout: 5))
+        app.buttons["Review again"].tap()
         app.buttons["reject-recognized-page"].tap()
         XCTAssertTrue(app.staticTexts["Use the original for page 1"].waitForExistence(timeout: 5))
         capture(app, "integrated-recognition-rejected")

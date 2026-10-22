@@ -8,9 +8,6 @@ concurrency:
   cancel-in-progress: true
 permissions:
   contents: read
-concurrency:
-  group: recognition-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 jobs:
   actual-omr:
     runs-on: ubuntu-24.04

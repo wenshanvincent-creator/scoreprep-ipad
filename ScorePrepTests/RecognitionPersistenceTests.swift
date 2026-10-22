@@ -11,10 +11,17 @@ final class RecognitionPersistenceTests: XCTestCase {
         try record(job, for: projectID, in: library)
         try library.saveRecognition(projectID: projectID, job: job)
         try library.setRecognitionReview(projectID: projectID, sourcePageIndex: 0, state: .rejected)
+        try library.rename(projectID: projectID, title: "My rehearsal")
+        let systemID = try XCTUnwrap(library.projects.first(where: { $0.id == projectID })?.systems.first?.id)
+        try library.updateCrop(projectID: projectID, systemID: systemID,
+                               bounds: .init(x: 0, y: 0, width: 1, height: 0.5))
 
         let reopened = ScoreLibrary(store: store)
         let project = try XCTUnwrap(reopened.projects.first(where: { $0.id == projectID }))
         XCTAssertEqual(project.recognizedEdition?.pages.first?.reviewState, .rejected)
+        XCTAssertEqual(project.recognizedEdition?.engine, "homr@\(job.engineRevision)")
+        XCTAssertEqual(project.title, "My rehearsal")
+        XCTAssertEqual(project.systems.first?.bounds.height, 0.5)
         XCTAssertNil(project.pendingRecognition)
         let url = try XCTUnwrap(reopened.sourceURL(for: project))
         XCTAssertEqual(ScoreLibrary.sourceHash(try Data(contentsOf: url)), job.originalSHA256)

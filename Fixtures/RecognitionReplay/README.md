@@ -1,14 +1,18 @@
 # Recorded cloud OMR result
 
 This owned ScorePrep piano exercise and raw job response came from the actual
-remote oemer run [39759659441](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39759659441),
-at source revision 6b3a2c04185a99cc80e92145f3c68eed34ec40db.
+remote homr run [39763758219](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39763758219),
+at source revision 10c7c4e817510691d6bf87e7bc62177219dc2207.
+Worker job: 0c9fcdfd-e2a0-43ca-8c8e-aa456bc36bd2.
 The original MusicXML is backend/fixtures/recognition-study.musicxml.
 
-The result is intentionally **unreviewed**: the first run converted some notes
-to rests, changed the key and omitted meter. It is a regression fixture for
-source identity, review/rejection and offline persistence, not an accurate
-edition or evidence of live network recognition inside the simulator.
+The result is initially **unreviewed**. On this one printed exercise, its 64
+pitch/onset/duration events, eight measures, C-major key and 4/4 meter match
+the source. This is a regression fixture for source identity, native display,
+acceptance/rejection and offline persistence. It does not establish accuracy
+for arbitrary scores or live network recognition inside the simulator.
+The earlier failed oemer outputs remain under backend/fixtures/observed-omr
+and observed-oemer-straight.
 
 The native DEBUG replay imports original.png through the real local library,
 decodes job.json, verifies its original SHA-256 and saves its MusicXML through

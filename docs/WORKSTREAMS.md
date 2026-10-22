@@ -7,7 +7,7 @@ Read MVP_PLAN.md, ARCHITECTURE.md and UI_SKILLS.md before implementing.
 | --- | --- | --- |
 | Integration | Shared ScoreCore contracts, app entry point, project.yml and workflows | Contracts, composition and end-to-end V1 verification. |
 | Reader and preparation | ScoreApp except ScorePrepApp.swift; existing PDF rendering and preparation views | PDF/image import, local originals, manual navigation and review integration. |
-| Recognition and rendering | ScoreRecognition, ScoreRendering/Recognition, backend and owned tests/fixtures | Remote oemer wrapper, typed client and Verovio rendering component. |
+| Recognition and rendering | ScoreRecognition, ScoreRendering/Recognition, backend and owned tests/fixtures | Remote homr wrapper, typed client and Verovio rendering component. |
 | Metronome and practice | ScoreAudio and practice controls | Deferred until V1 passes. |
 
 Each active chat uses its own branch/worktree. Inspect local and remote state,
