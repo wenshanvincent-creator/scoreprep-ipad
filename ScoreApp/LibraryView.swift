@@ -12,6 +12,7 @@ struct LibraryView: View {
     @State private var deleting: ScoreProject?
     @State private var title = ""
     @State private var compactColumn: NavigationSplitViewColumn = .detail
+    @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
     @State private var reviewRequest: SourceReviewRequest?
 
     private var selection: Binding<UUID?> {
@@ -21,7 +22,7 @@ struct LibraryView: View {
     }
 
     var body: some View {
-        NavigationSplitView(preferredCompactColumn: $compactColumn) {
+        NavigationSplitView(columnVisibility: $columnVisibility, preferredCompactColumn: $compactColumn) {
             List(library.projects, selection: selection) { project in
                 NavigationLink(value: project.id) {
                     Label {
@@ -51,6 +52,7 @@ struct LibraryView: View {
                         do {
                             selection.wrappedValue = try await PracticeExercise.install(into: library)
                             compactColumn = .detail
+                            columnVisibility = .detailOnly
                         } catch { library.errorMessage = error.localizedDescription }
                     }
                 }
@@ -119,6 +121,7 @@ struct LibraryView: View {
                         defer { isImporting = false }
                         selection.wrappedValue = try await library.importOriginal(from: url)
                         compactColumn = .detail
+                        columnVisibility = .detailOnly
                     }
                 } catch { library.errorMessage = error.localizedDescription }
             }
