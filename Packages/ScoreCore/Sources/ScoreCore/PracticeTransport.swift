@@ -167,10 +167,15 @@ public struct PracticeTransport: Sendable {
         moveCursor(to: cursor, at: hostTime)
     }
 
-    /// Audio events use this mapping rather than deriving a second clock.
-    public func hostTime(forElapsed elapsed: Double) -> Double? {
-        guard activity == .running else { return nil }
-        return anchorHostTime + (elapsed - anchorElapsed) / speed
+    /// Maps current/future events in the running epoch, never historical events.
+    /// Native commands must cancel queued buffers and begin a new scheduling generation.
+    public func hostTime(forElapsed eventElapsed: Double, after hostTime: Double) -> Double? {
+        let current = snapshot(at: hostTime)
+        guard current.isRunning, eventElapsed >= current.elapsed else { return nil }
+        if loop == nil, eventElapsed > countInDuration + timeline.duration - entryPosition {
+            return nil
+        }
+        return anchorHostTime + (eventElapsed - anchorElapsed) / speed
     }
 
     private func elapsed(at hostTime: Double) -> Double {

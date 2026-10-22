@@ -7,8 +7,17 @@ foundation, not voice or audio following.
 ScoreCore owns a pure PracticeTransport over TimelineCompiler's confirmed route.
 It contains no timer, device API or audio engine. One native controller will own
 it and pass seconds from a single monotonic host clock to both visual snapshots
-and audio-event scheduling. hostTime(forElapsed:) is the matching audio mapping.
+and audio-event scheduling. hostTime(forElapsed:after:) is the matching audio mapping.
 Reference seconds preserve logical musical position when speed changes.
+
+That mapping accepts only current/future events while the transport is running,
+and does not extrapolate historical event times after a speed change or accept
+events after the passage ends. The native controller must cancel queued audio
+and start a new scheduling generation on start, pause/resume, speed, seek,
+stop or loop edits. Event identity includes that generation and monotonically
+elapsed take time; span ID plus beat position alone would incorrectly suppress
+later A-B cycles. None of these commands may leave an old completion callback
+in control of a newer take.
 
 A take has an entry position and reference elapsed time including count-in.
 Count-in holds the selected system in view and does not consume score beats.

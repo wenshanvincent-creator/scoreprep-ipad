@@ -51,9 +51,9 @@ final class PracticeTransportTests: XCTestCase {
         XCTAssertEqual(transport.snapshot(at: 13).referencePosition, 2, accuracy: 0.000_001)
         transport.pause(at: 13)
         XCTAssertEqual(transport.snapshot(at: 99).referencePosition, 2, accuracy: 0.000_001)
-        XCTAssertNil(transport.hostTime(forElapsed: 3))
+        XCTAssertNil(transport.hostTime(forElapsed: 3, after: 99))
         transport.resume(at: 100)
-        XCTAssertEqual(try XCTUnwrap(transport.hostTime(forElapsed: 3)), 102, accuracy: 0.000_001)
+        XCTAssertEqual(try XCTUnwrap(transport.hostTime(forElapsed: 3, after: 100)), 102, accuracy: 0.000_001)
         XCTAssertEqual(transport.snapshot(at: 103).referencePosition, 3.5, accuracy: 0.000_001)
         XCTAssertEqual(transport.snapshot(at: 103).currentSpanIndex, 1)
     }
@@ -82,7 +82,7 @@ final class PracticeTransportTests: XCTestCase {
         XCTAssertEqual(transport.snapshot(at: 99).referencePosition, 0)
         XCTAssertEqual(transport.snapshot(at: 99).countInRemaining, 1, accuracy: 0.000_001)
         transport.resume(at: 100)
-        XCTAssertEqual(try XCTUnwrap(transport.hostTime(forElapsed: 3)), 101, accuracy: 0.000_001)
+        XCTAssertEqual(try XCTUnwrap(transport.hostTime(forElapsed: 3, after: 100)), 101, accuracy: 0.000_001)
         XCTAssertEqual(transport.snapshot(at: 101).phase, .playing)
         XCTAssertEqual(transport.snapshot(at: 101).referencePosition, 0)
         XCTAssertEqual(transport.snapshot(at: 102).referencePosition, 2, accuracy: 0.000_001)
@@ -104,6 +104,17 @@ final class PracticeTransportTests: XCTestCase {
         try transport.start(at: 0, countInBars: 0)
         XCTAssertEqual(transport.snapshot(at: 6).currentSpanIndex, 1)
         XCTAssertEqual(transport.snapshot(at: 6).upcomingSpanIndex, 1)
+    }
+
+    func testAudioMappingRejectsHistoryAndEventsAfterThePassageEnds() throws {
+        var transport = PracticeTransport(timeline: try route([common(), common()]))
+        try transport.start(at: 0, countInBars: 0)
+        try transport.setSpeed(0.5, at: 1)
+        XCTAssertNil(transport.hostTime(forElapsed: 0.5, after: 1))
+        XCTAssertEqual(try XCTUnwrap(transport.hostTime(forElapsed: 2, after: 1)), 3, accuracy: 0.000_001)
+        XCTAssertNil(transport.hostTime(forElapsed: 7, after: 1))
+        XCTAssertEqual(transport.snapshot(at: 11).phase, .finished)
+        XCTAssertNil(transport.hostTime(forElapsed: 6, after: 11))
     }
 
     func testInvalidControlsCannotChangeTheRunningPosition() throws {
