@@ -19,6 +19,10 @@ final class RecognitionIntegrationTests: XCTestCase {
         XCTAssertTrue(app.buttons["accept-recognized-page"].exists)
         capture(app, "integrated-recognition-portrait")
         XCUIDevice.shared.orientation = .landscapeLeft
+        let landscape = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            app.frame.width > app.frame.height
+        }, object: app)
+        XCTAssertEqual(XCTWaiter.wait(for: [landscape], timeout: 10), .completed)
         XCTAssertTrue(app.staticTexts["notationPageCaption"].waitForExistence(timeout: 10))
         capture(app, "integrated-recognition-landscape")
         app.buttons["reject-recognized-page"].tap()
@@ -69,7 +73,7 @@ final class RecognitionIntegrationTests: XCTestCase {
     }
 
     private func capture(_ app: XCUIApplication, _ name: String) {
-        let screenshot = app.screenshot()
+        let screenshot = XCUIScreen.main.screenshot()
         let attachment = XCTAttachment(screenshot: screenshot)
         attachment.name = name
         attachment.lifetime = .keepAlways
