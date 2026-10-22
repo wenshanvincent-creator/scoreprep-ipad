@@ -198,7 +198,9 @@ private struct PracticeControls: View {
     let onPrevious: () -> Void
     let onNext: () -> Void
     let previousAvailable: Bool
+    @State private var choosingSpeed = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
         Group {
@@ -208,15 +210,16 @@ private struct PracticeControls: View {
                     GridRow { stopButton; nextButton }
                 }.frame(maxWidth: .infinity)
             } else {
-                ViewThatFits(in: .horizontal) {
-                    HStack { navigation; Spacer(); speedMenu; soundButton }
-                    VStack(spacing: 8) {
-                        navigation
-                        HStack { Spacer(); speedMenu; soundButton; Spacer() }
-                    }
+                let stacked = horizontalSizeClass == .compact || dynamicTypeSize > .large
+                let layout = stacked ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout())
+                layout {
+                    navigation
+                    if !stacked { Spacer() }
+                    HStack { speedButton; soundButton }
                 }
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(.horizontal, 16).padding(.vertical, 8).background(.bar)
     }
 
@@ -225,17 +228,21 @@ private struct PracticeControls: View {
     }
 
     private var previousButton: some View {
-        Button("Previous", systemImage: "chevron.left", action: onPrevious)
-            .labelStyle(.iconOnly).frame(minWidth: 44, minHeight: 44)
-            .disabled(!previousAvailable).accessibilityIdentifier("practice-previous")
-            .accessibilityHint("Pauses practice and moves to the previous reading occurrence.")
+        Button(action: onPrevious) {
+            Label("Previous", systemImage: "chevron.left").labelStyle(.iconOnly)
+                .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+        }
+        .disabled(!previousAvailable).accessibilityIdentifier("practice-previous")
+        .accessibilityHint("Pauses practice and moves to the previous reading occurrence.")
     }
 
     private var nextButton: some View {
-        Button("Next", systemImage: "chevron.right", action: onNext)
-            .labelStyle(.iconOnly).frame(minWidth: 44, minHeight: 44)
-            .disabled(controller.upcomingSpan == nil).accessibilityIdentifier("practice-next")
-            .accessibilityHint("Pauses practice and moves to the next reading occurrence.")
+        Button(action: onNext) {
+            Label("Next", systemImage: "chevron.right").labelStyle(.iconOnly)
+                .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+        }
+        .disabled(controller.upcomingSpan == nil).accessibilityIdentifier("practice-next")
+        .accessibilityHint("Pauses practice and moves to the next reading occurrence.")
     }
 
     private var playbackButton: some View {
@@ -243,32 +250,42 @@ private struct PracticeControls: View {
             let title = controller.snapshot.isRunning ? "Pause" :
                 (controller.snapshot.phase == .paused ? "Resume" : "Play")
             let icon = controller.snapshot.isRunning ? "pause.fill" : "play.fill"
-            if dynamicTypeSize.isAccessibilitySize { Label(title, systemImage: icon).labelStyle(.iconOnly) }
-            else { Label(title, systemImage: icon) }
+            Group {
+                if dynamicTypeSize.isAccessibilitySize { Label(title, systemImage: icon).labelStyle(.iconOnly) }
+                else { Label(title, systemImage: icon).fixedSize(horizontal: true, vertical: false) }
+            }.frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
         }
-        .frame(minWidth: 44, minHeight: 44)
         .buttonStyle(.borderedProminent).accessibilityIdentifier("practice-play-pause")
     }
 
     private var stopButton: some View {
-        Button("Stop", systemImage: "stop.fill") { controller.stop() }
-            .labelStyle(.iconOnly).frame(minWidth: 44, minHeight: 44)
-            .accessibilityIdentifier("practice-stop")
+        Button { controller.stop() } label: {
+            Label("Stop", systemImage: "stop.fill").labelStyle(.iconOnly)
+                .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+        }
+        .accessibilityIdentifier("practice-stop")
     }
 
-    private var speedMenu: some View {
-        Menu("Speed \(Int((controller.speed * 100).rounded()))%", systemImage: "speedometer") {
+    private var speedButton: some View {
+        Button { choosingSpeed = true } label: {
+            Label("Speed \(Int((controller.speed * 100).rounded()))%", systemImage: "speedometer")
+                .frame(minHeight: 44).contentShape(Rectangle())
+        }.accessibilityIdentifier("practice-speed")
+        .confirmationDialog("Practice speed", isPresented: $choosingSpeed, titleVisibility: .visible) {
             ForEach([0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0], id: \.self) { speed in
                 Button("\(Int(speed * 100))%") { controller.setSpeed(speed) }
             }
-        }.frame(minHeight: 44).accessibilityIdentifier("practice-speed")
+        }
     }
 
     private var soundButton: some View {
-        Button(controller.isAudible ? "Sound on" : "Silent",
-            systemImage: controller.isAudible ? "speaker.wave.2" : "speaker.slash") {
+        Button {
             controller.setAudible(!controller.isAudible)
-        }.frame(minHeight: 44).accessibilityIdentifier("practice-sound")
+        } label: {
+            Label(controller.isAudible ? "Sound on" : "Silent",
+                systemImage: controller.isAudible ? "speaker.wave.2" : "speaker.slash")
+                .frame(minHeight: 44).contentShape(Rectangle())
+        }.accessibilityIdentifier("practice-sound")
     }
 
     private func playOrPause() {

@@ -19,9 +19,7 @@ final class PracticePreparationUITests: XCTestCase {
         PracticeUITestActions.sectionChoice(in: app, label: "Add to Score").tap()
         let name = app.textFields["preparation-area-name"]
         PracticeUITestActions.reveal(name, in: areaControls)
-        replace(name, with: "Ending", in: areaControls)
-        let hideKeyboard = app.keyboards.buttons["Hide keyboard"]
-        if hideKeyboard.exists { hideKeyboard.tap() }
+        replace(name, with: "Ending\n", in: areaControls)
         let endingActions = app.buttons["preparation-area-actions-3"]
         PracticeUITestActions.reveal(endingActions, in: areaControls, toward: .earlier)
         endingActions.tap()
@@ -65,7 +63,14 @@ final class PracticePreparationUITests: XCTestCase {
         XCTAssertEqual(XCTWaiter.wait(for: [portrait], timeout: 10), .completed)
         capture("practice-preparation-portrait")
         app.buttons["cancel-preparation"].tap()
-        app.buttons["score-options"].tap()
+        let sidebarDismissal = app.otherElements["PopoverDismissRegion"]
+        if sidebarDismissal.exists { sidebarDismissal.tap() }
+        let options = app.buttons["score-options"]
+        let readerReady = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            options.exists && options.isHittable
+        }, object: options)
+        XCTAssertEqual(XCTWaiter.wait(for: [readerReady], timeout: 5), .completed)
+        options.tap()
         app.buttons["view-original-pages"].tap()
         XCTAssertTrue(app.navigationBars["Original score"].waitForExistence(timeout: 5))
     }
