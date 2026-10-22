@@ -9,6 +9,10 @@ enum LibraryError: LocalizedError {
     case unavailableStorage
     case missingProject
     case missingSystem
+    case unreadableImage
+    case imageTooLarge
+    case emptyTitle
+    case invalidCrop
 
     var errorDescription: String? {
         switch self {
@@ -17,6 +21,10 @@ enum LibraryError: LocalizedError {
         case .unavailableStorage: return "The score library could not be opened."
         case .missingProject: return "This score is no longer in the library."
         case .missingSystem: return "This musical line is no longer in the score."
+        case .unreadableImage: return "Choose a readable JPEG or PNG image."
+        case .imageTooLarge: return "Choose an image with 40 megapixels or fewer."
+        case .emptyTitle: return "Enter a title for this score."
+        case .invalidCrop: return "Keep the reading area inside the original page."
         }
     }
 }
@@ -29,8 +37,23 @@ struct ProjectStore {
             for: .applicationSupportDirectory, in: .userDomainMask,
             appropriateFor: nil, create: true
         )
-        let name = ProcessInfo.processInfo.arguments.contains("--smoke-test")
+        var name = ProcessInfo.processInfo.arguments.contains("--smoke-test")
             ? "ScorePrep-Smoke" : "ScorePrep"
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        if let flag = arguments.firstIndex(of: "--reader-test-id"),
+           arguments.indices.contains(flag + 1) {
+            let id = arguments[flag + 1]
+            guard !id.isEmpty, id.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "-") })
+            else { throw LibraryError.unavailableStorage }
+            name = "ScorePrep-ReaderTests-\(id)"
+            let testDirectory = base.appendingPathComponent(name, isDirectory: true)
+            if arguments.contains("--reader-reset"),
+               FileManager.default.fileExists(atPath: testDirectory.path) {
+                try FileManager.default.removeItem(at: testDirectory)
+            }
+        }
+        #endif
         directory = base.appendingPathComponent(name, isDirectory: true)
         try FileManager.default.createDirectory(
             at: directory, withIntermediateDirectories: true
@@ -66,7 +89,9 @@ final class ScoreLibrary: ObservableObject {
             let openedStore = try ProjectStore()
             store = openedStore
             projects = try openedStore.load()
-            if projects.isEmpty {
+            if !FileManager.default.fileExists(
+                atPath: openedStore.directory.appendingPathComponent("library.json").path
+            ) {
                 let sample = SampleScore.project()
                 try SampleScore.pdfData().write(
                     to: openedStore.sourceURL(for: sample), options: .atomic
@@ -84,15 +109,33 @@ final class ScoreLibrary: ObservableObject {
     }
 
     @discardableResult
-    func importPDF(from url: URL) throws -> UUID {
+    func importPDF(from url: URL) async throws -> UUID {
+        try await importOriginal(from: url)
+    }
+
+    @discardableResult
+    func importOriginal(from url: URL) async throws -> UUID {
         guard let store else { throw LibraryError.unavailableStorage }
+        let project = try await Task.detached(priority: .userInitiated) {
+            try Self.prepareOriginal(url, store: store)
+        }.value
+        var updated = projects
+        updated.append(project)
+        do {
+            try store.save(updated)
+        } catch {
+            // The copy is unreferenced if metadata could not be committed.
+            try FileManager.default.removeItem(at: store.sourceURL(for: project))
+            throw error
+        }
+        projects = updated
+        return project.id
+    }
+
+    private nonisolated static func prepareOriginal(_ url: URL, store: ProjectStore) throws -> ScoreProject {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        guard let document = PDFDocument(url: url), !document.isLocked,
-              document.pageCount > 0 else {
-            throw LibraryError.unreadablePDF
-        }
-        guard document.pageCount <= 20 else { throw LibraryError.tooManyPages }
+        let document = try OriginalDocument.open(url)
 
         let systems = (0..<document.pageCount).map {
             SourceSystem(
@@ -103,16 +146,60 @@ final class ScoreLibrary: ObservableObject {
         let section = ScoreSection(name: "Score", systemIDs: systems.map(\.id))
         let project = ScoreProject(
             title: url.deletingPathExtension().lastPathComponent,
-            sourceFilename: "\(UUID().uuidString).pdf",
+            sourceFilename: "\(UUID().uuidString).\(url.pathExtension.lowercased())",
             systems: systems, sections: [section],
             readingOrder: [SectionOccurrence(sectionID: section.id)]
         )
         try FileManager.default.copyItem(at: url, to: store.sourceURL(for: project))
-        var updated = projects
-        updated.append(project)
+        return project
+    }
+
+    func rename(projectID: UUID, title: String) throws {
+        let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else { throw LibraryError.emptyTitle }
+        try update(projectID: projectID) { $0.title = title }
+    }
+
+    func delete(projectID: UUID) throws {
+        guard let store else { throw LibraryError.unavailableStorage }
+        guard let project = projects.first(where: { $0.id == projectID }) else {
+            throw LibraryError.missingProject
+        }
+        let updated = projects.filter { $0.id != projectID }
+        // Persist removal first so a failed metadata write cannot lose an original.
         try store.save(updated)
         projects = updated
-        return project.id
+        let source = store.sourceURL(for: project)
+        if FileManager.default.fileExists(atPath: source.path) {
+            try FileManager.default.removeItem(at: source)
+        }
+    }
+
+    func updateCrop(projectID: UUID, systemID: UUID, bounds: NormalizedRect) throws {
+        guard [bounds.x, bounds.y, bounds.width, bounds.height].allSatisfy(\.isFinite),
+              bounds.x >= 0, bounds.y >= 0, bounds.width >= 0.05, bounds.height >= 0.05,
+              bounds.x + bounds.width <= 1.000001,
+              bounds.y + bounds.height <= 1.000001 else { throw LibraryError.invalidCrop }
+        try update(projectID: projectID) { project in
+            guard let index = project.systems.firstIndex(where: { $0.id == systemID }) else {
+                throw LibraryError.missingSystem
+            }
+            if project.systems[index].bounds != bounds {
+                project.systems[index].bounds = bounds
+                project.systems[index].timing = nil
+            }
+        }
+    }
+
+    private func update(projectID: UUID, edit: (inout ScoreProject) throws -> Void) throws {
+        guard let store else { throw LibraryError.unavailableStorage }
+        guard let index = projects.firstIndex(where: { $0.id == projectID }) else {
+            throw LibraryError.missingProject
+        }
+        var updated = projects
+        try edit(&updated[index])
+        try store.save(updated)
+        projects = updated
     }
 
     func updateTiming(
