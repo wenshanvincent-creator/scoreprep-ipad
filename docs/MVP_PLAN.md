@@ -71,8 +71,8 @@ existing one-bar audible preview is only a foundation for this work.
 
 1. Let the musician define multiple complete-system reading areas on one source
    page, arrange them in reading order, and preserve original notation and bytes.
-   The current crop editor adjusts an existing area; it does not yet create
-   several areas per imported page.
+   The preparation editor provides these operations; its complete native
+   save/cancel walkthrough remains part of the acceptance gate.
 2. Show the current system with upcoming-system context in portrait and
    landscape. A single cropped system with an otherwise empty screen does not
    meet this requirement.

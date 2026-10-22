@@ -1,45 +1,51 @@
 # ScorePrep
 
-Your score, prepared for your performance.
+Your score. Your practice tempo. Hands-free line changes.
 
-ScorePrep is an early native iPad app for turning existing sheet music into a
-comfortable reading edition. Import a PDF or image, keep its original, and
-review a clean edition before using it in rehearsal.
+ScorePrep is a native iPad reader and practice app. Import a PDF, JPEG or PNG,
+prepare complete musical systems, and keep current and upcoming music visible
+while the metronome advances the score at your chosen practice tempo. Your
+original notation and existing markings stay intact.
 
-The flagship direction is **Follow Me: play at your own pace, and the score
-follows**. The V1 import, recognition review and manual-reading checkpoint
-is verified. Current work is tempo-guided practice; voice and chroma/online-DTW
-following remain later phases. See the
-[implementation plan](docs/MVP_PLAN.md) and
-[promotion brief](docs/PROMOTION_BRIEF.md) for scope and demonstration gates.
+![Native iPad practice: current and upcoming music](docs/assets/practice-automatic-area-2.png)
+
+This is an actual simulator capture from the verified automatic-advancement
+take. See the [practice evidence](docs/PRACTICE_VERIFICATION.md) for its source,
+timing record, audio capture and the remaining acceptance checks.
 
 ## Current milestone
 
-V1 passed its engineering gate on 22 October 2026. It includes PDF/JPEG/PNG import, local originals,
-manual reading and crop preparation, a private remote homr worker, native
-Verovio engraving, per-source-page acceptance/rejection, and saved MusicXML
-that can be reopened offline. Recognition settings use Keychain; no worker
-is preconfigured. See [worker setup](backend/README.md).
+The v0.1 practice candidate is implemented; full native acceptance is still
+in progress. It includes multiple reading areas, explicit sections and repeat
+order, confirmed timing arrays, pickup-aware count-in, audible or silent beats,
+practice speed, system-level A–B loops, and immediate manual pause/navigation.
+Native checks have verified automatic line changes, large-text controls,
+manual interruption, timing cold reopen and captured metronome output.
 
-The actual homr cloud trial matched all 64 note events, key and meter on one
-owned eight-bar exercise. [Recognition evidence](docs/RECOGNITION_BUILD_STATUS.md)
-records the input, raw result and limitations. The
-[verified native checkpoint](docs/V1_NATIVE_VERIFICATION.md) records passing
-macOS checks and inspected portrait/landscape, page navigation and offline
-reopen captures. App Store and TestFlight distribution remain separate gates.
+Try **Open practice exercise** in the library, then **Practice**. The included
+owned exercise has a pickup, 4/4 and 6/8. Follow the
+[practice walkthrough](docs/PRACTICE_DEMO.md) to reproduce its 13-second passage
+or prepare your own import. Source reading and practice work offline without
+an account or microphone permission.
 
-Use the [preview walkthrough](docs/TRY_PREVIEW.md) for original reading, the
-recorded cloud-result demo, or a new conversion through your own worker.
+The separate [V1 recognition checkpoint](docs/V1_NATIVE_VERIFICATION.md) passed
+its engineering gate on 22 October 2026. It wraps a remote homr worker and
+native Verovio engraving, with per-source-page review and saved MusicXML for
+offline reopening. A real cloud trial matched 64 note events, key and meter
+on one owned eight-bar exercise; its final barline differs. See
+[recognition evidence](docs/RECOGNITION_BUILD_STATUS.md) and the
+[recognition walkthrough](docs/TRY_PREVIEW.md). New conversions require your
+private authenticated HTTPS worker; none is preconfigured. Connection settings
+use Keychain. [Worker setup](backend/README.md) describes deployment.
 
-The [first foundation build](docs/BUILD_STATUS.md) remains an earlier checkpoint.
-Continuous metronome/line advancement is being implemented in the practice
-branch. Voice, live audio following, Pencil and export remain later phases.
-Physical-device and audio validation remain separate.
-
-The v0.1 engineering goal continues after V1 with current/upcoming-system
-reading, confirmed beats including pickups, continuous metronome timing,
-count-in, practice speed and A-B loops. Voice is the next bounded experiment
-after that preview.
+The larger direction is **Follow Me: play at your own pace, and the score
+follows**. Voice and classical chroma/online-DTW following are later phases.
+The current mode follows confirmed timing, not live microphone input. Read
+the [implementation plan](docs/MVP_PLAN.md),
+[roadmap](docs/ROADMAP.md) and [promotion brief](docs/PROMOTION_BRIEF.md).
+Physical-iPad rehearsal, Apple signing, TestFlight and App Store distribution
+remain separate gates. The [first foundation build](docs/BUILD_STATUS.md)
+records the earlier starting point.
 
 ## Build on macOS
 
@@ -55,10 +61,10 @@ Choose an iPad simulator and run the ScorePrep scheme. Simulator builds do not
 need an Apple Developer membership. Signing and device distribution are
 separate setup steps.
 
-The GitHub Actions workflow generates the project, runs the core tests, builds
-and smoke-tests the iPad app, and saves build logs and a simulator screenshot.
-Its actual result is available in Actions; the presence of the workflow does
-not establish a passing build.
+GitHub Actions generates the project, runs Core checks, builds the native app,
+and runs persistence, audio and UI checks. It exports logs, native screenshots,
+audio and timing receipts. Exact accepted sources and run results belong in
+the verification notes linked above.
 
 ## Run core tests
 
@@ -74,9 +80,9 @@ quarter-note tempo of 80 BPM take 12 seconds; two bars of 6/8 at a
 dotted-quarter tempo of 60 BPM take 4 seconds. The app does not infer rhythm
 from the horizontal spacing of printed notes.
 
-The existing foundation includes timing editing, a beat timeline and a short
-audible tempo preview. Continuous metronome synchronization will use a shared
-audio/display clock in the current practice workstream. Live microphone following is a later phase.
+One continuous transport drives the audible/silent beat, count-in and system
+focus. Pausing or changing speed preserves musical position. Manual navigation
+pauses immediately. The separate timing editor also offers a one-bar preview.
 
 ## Contribute
 
