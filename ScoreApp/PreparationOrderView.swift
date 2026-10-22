@@ -50,12 +50,13 @@ struct PreparationOrderView: View {
                         Button(section.name) {
                             draft.readingOrder.append(SectionOccurrence(sectionID: section.id))
                         }.disabled(section.systemIDs.isEmpty)
+                        .accessibilityIdentifier("add-preparation-pass-section-\(section.id)")
                     }
                 }.accessibilityIdentifier("add-preparation-pass")
                 Text("Add the same section again for a repeat. Each pass keeps its own identity when moved; area order is edited inside its section.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
-        }
+        }.accessibilityIdentifier("preparation-order-controls")
     }
 
     private func sectionName(_ id: UUID) -> String {

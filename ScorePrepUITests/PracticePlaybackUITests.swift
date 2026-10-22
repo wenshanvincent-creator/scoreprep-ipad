@@ -14,7 +14,7 @@ final class PracticePlaybackUITests: XCTestCase {
         app.buttons["practice-options"].tap()
         app.buttons["practice-count-in-bars"].tap()
         app.buttons["None"].tap()
-        app.buttons["Done"].tap()
+        app.buttons["close-practice-options"].tap()
         XCTAssertTrue(app.buttons["practice-speed"].label.contains("100%"))
         app.buttons["practice-sound"].tap()
         XCTAssertEqual(app.buttons["practice-sound"].label, "Silent")
@@ -60,8 +60,8 @@ final class PracticePlaybackUITests: XCTestCase {
     }
 
     func testManualNavigationInterruptsCountInAndPlaybackAndReachesEnd() {
-        XCUIDevice.shared.orientation = .landscapeLeft
         let app = launchExercise("practice-navigation")
+        PracticeUITestActions.landscape(app)
         app.buttons["open-practice"].tap()
         let current = app.staticTexts["practice-current"]
         wait(current, contains: "Pickup and bar 1")
@@ -70,7 +70,7 @@ final class PracticePlaybackUITests: XCTestCase {
         app.buttons["practice-options"].tap()
         app.buttons["practice-count-in-bars"].tap()
         app.buttons["4"].tap()
-        app.buttons["Done"].tap()
+        app.buttons["close-practice-options"].tap()
         app.buttons["practice-sound"].tap()
         app.buttons["practice-play-pause"].tap()
         wait(app.staticTexts["practice-phase"], contains: "Count-in")
@@ -96,7 +96,7 @@ final class PracticePlaybackUITests: XCTestCase {
         capture("practice-playback-portrait")
         app.buttons["practice-original"].tap()
         XCTAssertTrue(app.navigationBars["Original score"].waitForExistence(timeout: 5))
-        app.buttons["Done"].tap()
+        app.buttons["close-original-pages"].tap()
         app.buttons["leave-practice"].tap()
         XCTAssertTrue(app.buttons["open-practice"].waitForExistence(timeout: 5))
         app.buttons["open-practice"].tap()
@@ -108,8 +108,10 @@ final class PracticePlaybackUITests: XCTestCase {
         app.buttons["score-options"].tap()
         app.buttons["prepare-score"].tap()
         app.segmentedControls["preparation-mode"].buttons["Reading order"].tap()
-        app.buttons["add-preparation-pass"].tap()
-        app.buttons["Score"].tap()
+        let addPass = app.buttons["add-preparation-pass"]
+        PracticeUITestActions.reveal(addPass, in: app.collectionViews["preparation-order-controls"])
+        addPass.tap()
+        PracticeUITestActions.sectionChoice(in: app, prefix: "add-preparation-pass-section-", label: "Score").tap()
         app.buttons["save-preparation"].tap()
         app.buttons["open-practice"].tap()
         XCTAssertTrue(app.buttons["practice-options"].waitForExistence(timeout: 5))
@@ -160,9 +162,7 @@ final class PracticePlaybackUITests: XCTestCase {
             app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
         }
         app.launch()
-        XCTAssertTrue(app.buttons["open-practice-exercise"].waitForExistence(timeout: 15))
-        app.buttons["open-practice-exercise"].tap()
-        XCTAssertTrue(app.navigationBars["Pickup and pulse"].waitForExistence(timeout: 15))
+        PracticeUITestActions.openExercise(in: app)
         return app
     }
 

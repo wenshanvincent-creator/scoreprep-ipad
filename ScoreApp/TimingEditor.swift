@@ -54,7 +54,7 @@ struct TimingEditor: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-            }
+            }.accessibilityIdentifier("timing-fields")
             .navigationTitle("\(system.label) timing")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -195,6 +195,17 @@ It captures all three current/upcoming compositions and attaches measured
 timing JSON. This verifies automatic visible focus independently of the manual
 Next/end test; exact transport/audio timing remains covered by their own tests.
 
+First composed native candidate bc3c8b1 (run 39788035850) compiled and passed
+34 Core, 13 native and the existing 7 UI tests. The six new practice UI tests
+failed before their intended assertions: collapsed portrait sidebar, ambiguous
+global Done selectors, a partly clipped Add menu row, and offscreen segment
+fields. Focused corrections open the actual sidebar, uniquely identify sheet
+completion/menu choices, and reveal complete targets inside their own Form
+viewport before each action. Landscape tests now apply rotation after launch
+and assert app-frame orientation. Original action, persistence and automatic
+5/9/13-second boundary assertions remain. The corrected UI tests await root's
+next composed native run.
+
 A full-screen practice presentation pauses on disappearance. Preparation/timing
 changes invalidate it; reopening compiles a fresh controller. Invalid timing
 keeps the original reader available with the actual preparation error. Original

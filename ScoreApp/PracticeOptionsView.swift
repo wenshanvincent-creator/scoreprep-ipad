@@ -63,7 +63,11 @@ struct PracticeOptionsView: View {
             }
             .navigationTitle("Practice options")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { dismiss() }.accessibilityIdentifier("close-practice-options")
+                }
+            }
         }
     }
 
