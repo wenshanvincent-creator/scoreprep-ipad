@@ -20,6 +20,11 @@ component now explicitly uses **Verovio's own musicxml-hum importer**, which
 retains four quarter notes per staff per bar on this actual output. No MusicXML
 notes, timings or pitches are modified by the wrapper. Raw data remains here.
 
+The event check does not assert every engraving detail. The source's final
+light-heavy barline was recognized as heavy-heavy, and the built-in Humdrum
+importer displays a regular line. Title OCR was explicitly disabled. These
+differences remain visible review items; no silent correction is applied.
+
 The page remains reviewRequired=true until a musician accepts it. Upstream
 training-data license limitations are recorded independently of this prototype
 success in backend/notices/PROVENANCE.md. No model ran on the development PC.
