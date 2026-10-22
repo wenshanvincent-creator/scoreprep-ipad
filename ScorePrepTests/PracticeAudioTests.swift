@@ -105,9 +105,17 @@ final class PracticeAudioTests: XCTestCase {
 
     @MainActor
     func testLiveMixerPCMMatchesHostScheduledClicksAndPauseCancelsPendingSound() async throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("practice-audio-\(UUID())")
+        let store = try ProjectStore(directory: directory)
+        addTeardownBlock { try FileManager.default.removeItem(at: directory) }
+        let library = ScoreLibrary(store: store)
+        let projectID = try await PracticeExercise.install(into: library)
+        let project = try XCTUnwrap(library.projects.first { $0.id == projectID })
+        let source = try XCTUnwrap(library.sourceURL(for: project))
+        let sourceHash = ScoreLibrary.sourceHash(try Data(contentsOf: source))
         let output = RecordingClickOutput()
         let now = { AVAudioTime.seconds(forHostTime: mach_absolute_time()) }
-        let controller = PracticeController(timeline: try timeline(), output: output, hostNow: now)
+        let controller = PracticeController(timeline: try TimelineCompiler.compile(project), output: output, hostNow: now)
         defer { controller.stop() }
         controller.setSpeed(2)
         controller.play(countInBars: 1)
@@ -116,9 +124,18 @@ final class PracticeAudioTests: XCTestCase {
             throw XCTSkip("Live simulator output unavailable: \(error). Offline rendering is checked separately.")
         }
         let firstGeneration = try XCTUnwrap(output.events.first?.id.generation)
-        try await Task.sleep(nanoseconds: 2_400_000_000)
-        let pausedAt = now()
-        let pending = output.events.filter { $0.id.generation == firstGeneration && $0.hostTime > pausedAt + 0.03 }
+        try await Task.sleep(nanoseconds: 2_300_000_000)
+        let pauseDeadline = now() + 1
+        var pausedAt = now()
+        var pending: [ScheduledPracticePulse] = []
+        repeat {
+            controller.refresh()
+            pausedAt = now()
+            pending = output.events.filter {
+                $0.id.generation == firstGeneration && $0.hostTime > pausedAt + 0.1 && $0.hostTime < pausedAt + 0.22
+            }
+            if pending.isEmpty { try await Task.sleep(nanoseconds: 10_000_000) }
+        } while pending.isEmpty && now() < pauseDeadline
         controller.pause()
         let cursor = controller.snapshot.referencePosition
         XCTAssertFalse(pending.isEmpty, "The cancellation check needs an actually queued future click")
@@ -149,6 +166,7 @@ final class PracticeAudioTests: XCTestCase {
         let expected = output.events.filter { $0.id.generation != firstGeneration || $0.hostTime < pausedAt }
         attachJSON([
             "mode": "simulator-live-mixer-output", "speed": 2, "countInBars": 1,
+            "sourceFixtureSHA256": sourceHash,
             "pausedAtHostSeconds": pausedAt, "resumedAtHostSeconds": resumedAt,
             "pendingCanceledHostSeconds": pending.map(\.hostTime), "observedOnsetHostSeconds": onsets,
             "scheduled": output.events.map { ["generation": $0.id.generation, "elapsed": $0.pulse.elapsed,
