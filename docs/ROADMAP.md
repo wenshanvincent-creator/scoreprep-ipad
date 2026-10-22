@@ -8,13 +8,14 @@ Native PDF library, source rendering, confirmed timing, route compilation and
 one-bar click preview. Ten core tests and one native UI smoke test passed;
 see BUILD_STATUS.md.
 
-## V1 — active
+## V1 — engineering gate passed
 
 PDF/photo import → remote existing OMR → MusicXML → Verovio display → manual
 swipe. Include progress/errors, original comparison, local reopen and actual
-native portrait/landscape evidence. Finish this phase before voice/following.
+native portrait/landscape evidence. Verified at 276418b; see
+V1_NATIVE_VERIFICATION.md for the actual worker/replay and device boundaries.
 
-## V2 — tempo-guided practice
+## V2 — tempo-guided practice, active
 
 Complete the active v0.1 engineering goal: multiple complete-system reading
 areas, current/upcoming music, confirmed performed beats including pickups,

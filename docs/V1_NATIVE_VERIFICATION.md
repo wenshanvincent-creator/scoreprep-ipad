@@ -1,8 +1,51 @@
 # V1 native verification checkpoint
 
-22 October 2026. V1 remains gated; the full practice goal remains active.
+22 October 2026. **V1 engineering gate passed at 276418b.**
+The full v0.1 practice goal remains active.
 
-## Corrected runtime checkpoint
+## Accepted checkpoint
+
+[App run 39780518636](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39780518636)
+passed 13 Core, three native persistence and seven UI checks. This covers
+PDF/JPEG/PNG import, original copy/reopen, crop/rename/delete, source rotation,
+review/accept/reject/offline reopen, and actual Keychain validation/save/remove.
+[Recognition run 39780518401](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39780518401)
+passed actual cloud homr recognition, five native client/engraving unit checks
+and three native UI checks. Toolkit hardening remains enabled.
+
+The final integrated portrait and landscape captures show the recognized
+grand staff with no alert or blank first frame. Rejection and cold reopen show
+the unchanged original and saved rejection state; the full source is vertically
+scrollable in landscape review. These four captures were independently
+inspected. Artifact 12427163951 retains the full app evidence; its generated
+simulator entitlement contains org.scoreprep.ScorePrep, and its signature is
+ad-hoc. Xcode 16.4 (16F6), iPad Pro 11-inch (M4), iOS 18.5.
+
+![Integrated portrait](assets/v1-clean-portrait.png)
+
+![Integrated landscape](assets/v1-clean-landscape.png)
+
+![Offline rejection retained](assets/v1-offline-reopen.png)
+
+## Demonstration boundary
+
+The cloud trial runs the pinned real engine through the authenticated worker
+API in GitHub's Linux job. The native app walkthrough imports that actual
+recorded result and tests local review/reopen; it makes no server request.
+This establishes the engineering components on the owned exercise. A new
+native conversion needs a separately provisioned private HTTPS worker, as
+documented in backend/README.md; no production endpoint was deployed here.
+The raw result matches 64 note pitch/onset/duration events, key and meter on
+this exercise; its final barline style differs. Recognition remains unreviewed
+until the musician accepts it. No broad photograph accuracy, physical iPad,
+App Store signing or TestFlight result is claimed.
+
+V2 still needs its multi-area/timing UI, shared-clock audio and current/upcoming
+practice composition, controls and inspected demonstration. V1 does not
+complete that engineering goal. The earlier failed checkpoints below preserve
+the evidence for the three importer guards and simulator signing correction.
+
+## Earlier runtime checkpoint
 
 At b1c0e0b, app run
 [39777128239](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39777128239)

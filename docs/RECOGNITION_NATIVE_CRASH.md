@@ -1,5 +1,10 @@
 # Native Humdrum import failure and patch review
 
+Native acceptance subsequently passed at 276418b, with hardening enabled and
+the original result unchanged. See [V1_NATIVE_VERIFICATION.md](V1_NATIVE_VERIFICATION.md)
+for the passing unit/UI runs and inspected captures. The failure investigation
+below is retained as the patch receipt.
+
 Source checkpoint: 8e50294. iPadOS 18.5 simulator, Xcode 16.4.
 [Run 39765175832](https://github.com/wenshanvincent-creator/scoreprep-ipad/actions/runs/39765175832),
 native artifact 12420518265, crash attachment

@@ -7,14 +7,15 @@ comfortable reading edition. Import a PDF or image, keep its original, and
 review a clean edition before using it in rehearsal.
 
 The flagship direction is **Follow Me: play at your own pace, and the score
-follows**. Current work is V1: import, recognize, clean display and manual
-swipe. Voice and chroma/online-DTW following come after that gate. See the
+follows**. The V1 import, recognition review and manual-reading checkpoint
+is verified. Current work is tempo-guided practice; voice and chroma/online-DTW
+following remain later phases. See the
 [implementation plan](docs/MVP_PLAN.md) and
 [promotion brief](docs/PROMOTION_BRIEF.md) for scope and demonstration gates.
 
 ## Current milestone
 
-V1 integration is under review. It includes PDF/JPEG/PNG import, local originals,
+V1 passed its engineering gate on 22 October 2026. It includes PDF/JPEG/PNG import, local originals,
 manual reading and crop preparation, a private remote homr worker, native
 Verovio engraving, per-source-page acceptance/rejection, and saved MusicXML
 that can be reopened offline. Recognition settings use Keychain; no worker
@@ -22,17 +23,18 @@ is preconfigured. See [worker setup](backend/README.md).
 
 The actual homr cloud trial matched all 64 note events, key and meter on one
 owned eight-bar exercise. [Recognition evidence](docs/RECOGNITION_BUILD_STATUS.md)
-records the input, raw result and limitations. Native integration checks and
-screenshot review remain release gates; this is not an App Store or TestFlight
-release.
+records the input, raw result and limitations. The
+[verified native checkpoint](docs/V1_NATIVE_VERIFICATION.md) records passing
+macOS checks and inspected portrait/landscape, page navigation and offline
+reopen captures. App Store and TestFlight distribution remain separate gates.
 
 Use the [preview walkthrough](docs/TRY_PREVIEW.md) for original reading, the
 recorded cloud-result demo, or a new conversion through your own worker.
 
-The [first macOS/iPad simulator foundation build passed](docs/BUILD_STATUS.md).
-Continuous metronome/line advancement, voice commands, live audio following,
-Pencil and export are later phases. Physical-device and audio validation remain
-separate.
+The [first foundation build](docs/BUILD_STATUS.md) remains an earlier checkpoint.
+Continuous metronome/line advancement is being implemented in the practice
+branch. Voice, live audio following, Pencil and export remain later phases.
+Physical-device and audio validation remain separate.
 
 The v0.1 engineering goal continues after V1 with current/upcoming-system
 reading, confirmed beats including pickups, continuous metronome timing,
@@ -41,8 +43,8 @@ after that preview.
 
 ## Build on macOS
 
-Requirements: a recent Xcode with the iOS 18 SDK or newer, its command-line
-tools, and XcodeGen. The deployment target is iPadOS 18.
+Verified toolchain: Xcode 16.4 with its command-line tools and XcodeGen.
+The deployment target is iPadOS 18; CI uses an iOS 18.5 iPad simulator.
 
     brew install xcodegen
     python3 tools/prepare_verovio.py
@@ -74,7 +76,7 @@ from the horizontal spacing of printed notes.
 
 The existing foundation includes timing editing, a beat timeline and a short
 audible tempo preview. Continuous metronome synchronization will use a shared
-audio/display clock after V1 passes. Live microphone following is a later phase.
+audio/display clock in the current practice workstream. Live microphone following is a later phase.
 
 ## Contribute
 

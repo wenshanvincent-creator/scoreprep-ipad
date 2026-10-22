@@ -1,5 +1,9 @@
 # First native build
 
+The later accepted V1 checkpoint is recorded in
+[V1_NATIVE_VERIFICATION.md](V1_NATIVE_VERIFICATION.md). The evidence below is
+the original foundation checkpoint, not the final practice-preview result.
+
 Verified on 22 October 2026 at commit
 792a59e5e90a1a26805a8d484401c85cf1f15a42.
 
