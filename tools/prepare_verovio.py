@@ -12,9 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 CHECKOUT = ROOT / "build/dependencies/verovio"
 PATCHES = {
     "src/hum/humlib.cpp": (
-        "verovio-negative-voice.patch",
+        "verovio-import.patch",
         "8ac7d09a3350247c8c6599e3bb4aaa2c4d582772b3cb2fecd35b9a9ce688ff99",
-        "2bef068f92cd28abdf4fe40024060426c7a34ac0c267e00f2508545dcb963a29",
+        "dcdb9e08af2c01198a20b3180705230de560e4b8bbd890fb9a4144f3f297b4cc",
     ),
     # The published manifest declares a test target with no test-source directory.
     # Local package resolution otherwise claims the library sources as tests.

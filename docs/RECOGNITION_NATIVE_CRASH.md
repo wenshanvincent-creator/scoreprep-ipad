@@ -97,3 +97,31 @@ All ScorePrep native regression targets remain enabled. Both native entry
 scripts now describe the prepared package before simulator boot, so this
 specific packaging failure is reported early. The next native run must still
 establish that the bounds fix resolves the runtime crash.
+
+## Second hardened-runtime failure
+
+At 8fbf8ce, package resolution and compilation passed. Fixture-only narrow/large
+text and source-page callback UI checks passed, while the actual homr result
+still terminated the app. Run 39769984895, artifact 12422846622, crash attachment
+B2B1FE6F-BE49-41F1-B8DA-13964F17D0A8.ips reports:
+
+```text
+std::list<hum::GridSlice*>::back
+hum::Tool_musicxml2hum::processPrintElement
+hum::Tool_musicxml2hum::appendZeroEvents
+hum::Tool_musicxml2hum::convertNowEvents
+hum::Tool_musicxml2hum::insertMeasure
+```
+
+processPrintElement calls outdata->back() before its existing null-token check.
+The actual input begins measure six with print new-system=yes, before any
+musical slices have been appended. The patch now sets gs to null for an empty
+measure; the existing addGlobalComment path explicitly supports an empty list
+and retains the layout marker. No note or timing data is changed.
+
+tools/patches/verovio-import.patch contains this empty-list check and the two
+negative-voice checks. The final normalized-LF source SHA-256 is
+dcdb9e08af2c01198a20b3180705230de560e4b8bbd890fb9a4144f3f297b4cc.
+The prior two-guard hash above remains the receipt for the earlier patch.
+The actual-output regression and UI test remain required; the new source fix
+is not a native-runtime pass until rerun evidence proves it.
