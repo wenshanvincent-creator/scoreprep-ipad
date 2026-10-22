@@ -81,4 +81,8 @@ editions remain readable locally; conversion is a separate network operation.
 
 ## License
 
-MIT. Apple SDKs are provided by the development environment.
+ScorePrep's original code is MIT. Dependencies retain their own licenses.
+Verovio's LGPL/GPL license texts are retained under backend/notices; oemer code,
+model provenance and distribution questions are documented in
+[the dependency notes](backend/notices/PROVENANCE.md).
+Apple SDKs are provided by the development environment.

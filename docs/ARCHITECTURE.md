@@ -51,6 +51,9 @@ The project stores only the relative source filename.
   RecognizedSourcePage records. Each record keeps its zero-based source page,
   app-generated local MusicXML filename and unreviewed/accepted/rejected state.
   These records never replace the original source filename, crops or timing.
+- PendingRecognition retains a remote job ID, worker URL and original checksum
+  so polling can resume. Worker credentials stay in Keychain, outside project
+  JSON. Results must match the pending job and original bytes before saving.
 
 The first app edits timing for one source system at a time. The continuous
 transport will derive visual focus and audio events from one clock, preserving
