@@ -18,6 +18,10 @@ PDF export are subsequent implementation tasks. The roadmap distinguishes
 these planned features from the initial code. This is not an App Store or
 TestFlight release.
 
+The [first macOS/iPad simulator build passed](docs/BUILD_STATUS.md):
+ten core tests and one native UI smoke test. Physical-device and audio
+validation remain separate.
+
 ## Build on macOS
 
 Requirements: a recent Xcode with the iOS 18 SDK or newer, its command-line

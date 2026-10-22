@@ -4,6 +4,14 @@
   notation, source coordinates and user markings.
 - Read docs/ARCHITECTURE.md and docs/WORKSTREAMS.md before changing shared
   models or working in parallel.
+- Before building or changing UI, read docs/UI_SKILLS.md, docs/DESIGN.md,
+  .agents/skills/mobile-ios-design/SKILL.md and
+  .agents/skills/swiftui-expert-skill/SKILL.md. Write a brief view/interaction
+  plan, then inspect actual simulator screenshots before claiming UI completion.
+- Keep the iPadOS 18 deployment target and the verified build toolchain.
+  Skill examples do not authorize newer SDK requirements, decorative effects or
+  an unrelated state-management rewrite. UIKit bridges for PDF/Pencil remain
+  intentional. Fetch current Apple documentation for APIs the feature needs.
 - Packages/ScoreCore is plain Swift. Do not import UIKit, SwiftUI, PDFKit or
   AVFoundation there.
 - Keep one musical timing convention: quarter-note beats. Tempo pulse units
