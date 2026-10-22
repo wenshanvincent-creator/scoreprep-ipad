@@ -195,6 +195,13 @@ It captures all three current/upcoming compositions and attaches measured
 timing JSON. This verifies automatic visible focus independently of the manual
 Next/end test; exact transport/audio timing remains covered by their own tests.
 
+The existing repeat-loop test additionally selects 200% through the actual
+speed menu, chooses Silent, and resumes the manually paused A occurrence.
+Without intermediate controls it observes Pass 2 areas 4 → 5 → 6 → 4 while
+Playing, checks the wrapped upcoming area 5, captures the automatic loop wrap,
+then explicitly pauses. The owned 5/4/4-second areas make this a 6.5-second
+cycle at 200%; the focused test extension awaits composed native execution.
+
 First composed native candidate bc3c8b1 (run 39788035850) compiled and passed
 34 Core, 13 native and the existing 7 UI tests. The six new practice UI tests
 failed before their intended assertions: collapsed portrait sidebar, ambiguous
