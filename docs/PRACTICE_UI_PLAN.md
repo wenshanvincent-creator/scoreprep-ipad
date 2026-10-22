@@ -1,8 +1,10 @@
 # Reader / Practice UI plan
 
-Plan only, 22 October 2026. Baseline: Reader a5c2aa8 and the integration
-MVP_PLAN.md practice requirements read at 5b26b7b. Implementation awaits integration's explicit
-confirmation that the combined V1 gate passed; phase ordering stays unchanged.
+Updated 22 October 2026. The original plan used Reader a5c2aa8 and integration
+MVP_PLAN.md at 5b26b7b. Independent practice implementation is now authorized on
+the shared practice foundation; integration retains the final V1 capture/merge
+gate. Preparation and controller wiring below are implemented checkpoints,
+with native interaction and layout acceptance still pending.
 
 ## Ownership and direction
 
@@ -34,8 +36,8 @@ normalized top-left bounds and optional confirmed timing for additional areas.
   area when appropriate; do not retain a duplicate full-page practice entry.
   Full-original reading remains independently available and bytes stay intact.
 - Add a Reading order list using existing sections/system IDs, labeled by page
-  and area. Root must reconcile page-area order and section membership in the
-  same mutation; sorting rectangles by y must not silently rearrange custom
+  and area. Save page catalog and explicit section membership in the
+  same mutation; catalog moves preserve every existing section sequence; sorting rectangles by y must not silently rearrange custom
   sections/repeats. Removing an area shows route impact and removes references
   atomically rather than leaving dangling IDs.
 - Preparation edits pause practice before committing and invalidate the compiled
@@ -99,10 +101,10 @@ nor automatic navigation. Voice/following code remains outside this UI work.
 
 ## Remaining gaps and later acceptance
 
-- Combined V1 approval is pending for this workstream. Multi-area mutation/UI,
-  reading-order editing, pickup/beat editing, current/upcoming composition and
-  continuous transport/count-in/loop controls are absent. TempoPreview remains
-  the existing one-bar spike.
+- Combined V1 approval remains integration's gate. Preparation, reading order,
+  fractional multi-segment timing and the first current/upcoming controller
+  wiring are implemented on the independent practice branch. Authoritative
+  pulse display awaits Audio's shared property; native UI acceptance is pending.
 - Clean-system/source/beat mapping and Verovio layout invalidation need a shared
   contract; page-level MusicXML alone does not provide them. Extreme compact
   layouts and spoken accessibility behavior remain unverified.
@@ -113,20 +115,21 @@ nor automatic navigation. Voice/following code remains outside this UI work.
   pause/resume, A-B wrapping and the final boundary against root's transport.
 - Inspect composed native portrait/landscape, narrow and large-text captures
   with current/upcoming notation and crop controls. Distinguish simulator audio
-  evidence from a real iPad/musician demonstration. This prose-only plan needs
-  no new cloud test run.
+  evidence from a real iPad/musician demonstration. Root coordinates the next
+  native run; do not trigger duplicate builds for intermediate checkpoints.
 
 ## Preparation / timing implementation slice
 
 Authorized independent practice work now starts at shared commit 2242efb,
 while integration retains the final V1 capture/merge gate. This first slice
-implements preparation and timing only; current/upcoming practice composition
-waits for the audio controller contract.
+implemented preparation and timing first. Current/upcoming practice composition
+now uses the subsequently supplied audio controller contract below.
 
 Concrete interfaces: seed a local ScorePreparation(project:) draft, mutate its
 systems/sections/readingOrder explicitly, then call the existing
 ScoreLibrary.savePreparation(projectID:draft:) once. Keep source-area and repeat
-occurrence UUIDs; reorder area membership together with the area list. Root's
+occurrence UUIDs. Catalog moves affect manual browsing only; section membership
+and musical order change explicitly in Reading order and save in the same draft. Root's
 applying(to:) preserves latest recognition/source data and unchanged-area timing.
 Save timing through updateTiming(projectID:systemID:segments:) with the entire
 array, never a rounded bar count or only its first segment.
@@ -136,8 +139,9 @@ Keep an outlined full-page preview beside controls in wide layouts and pinned
 above a scrolling list in narrow/large-text layouts. Explicit Add, move up/down,
 remove and section membership controls work without spatial order inference.
 Source review and original-page access remain in the reader. A separate timing
-sheet edits a stable-identity list of segments: performed fractional quarter
-beats, starting bar phase, numerator/denominator, BPM and explicit pulse unit.
+sheet edits a stable-identity list of segments: duration in fractional quarter-note beats, a one-based starting beat using the
+written denominator, numerator/denominator, BPM and explicit pulse unit. Convert
+that beat to Core quarter-beat phase internally; retain untouched phase exactly.
 Numeric input is validated on save; invalid text never silently keeps an old
 number. Preserve all untouched segment values and show actual validation errors.
 
@@ -155,3 +159,34 @@ behavior on exit or backgrounding; restore the visible-view policy on foreground
 return. This belongs to view/composition lifecycle, independent of audio or
 playing state, with no new settings screen. API checked against
 [Apple UIApplication.isIdleTimerDisabled](https://developer.apple.com/documentation/uikit/uiapplication/isidletimerdisabled).
+
+## Concrete practice controller wiring
+
+The preparation/timing slice is committed separately (7c60689; exercise wiring
+at aad5851). PracticeView now targets controller interface 98c6c55, constructing
+one StateObject per confirmed compiled route and observing its exact current /
+upcoming spans. Play/pause/resume/stop, manual seek, speed, audible/silent mode,
+count-in seconds and occurrence-qualified A-B selection call the controller.
+No view timer, counter, audio scheduler or duplicate pulse/meter arithmetic is
+added. The authoritative pulse display property is pending from Audio.
+
+Focused UI checks now cover count-in and running manual interruption, explicit
+resume, end/stop, repeat-occurrence loop endpoints and wrapping, original-page
+access, fresh-controller reopening, large-text transport reachability, and
+unconfirmed-source rejection with manual reading retained. They export native
+portrait/landscape/large-text and repeat-loop captures when root runs the suite.
+These checks have been authored, not yet executed on this practice UI head.
+
+A full-screen practice presentation pauses on disappearance. Preparation/timing
+changes invalidate it; reopening compiles a fresh controller. Invalid timing
+keeps the original reader available with the actual preparation error. Original
+pages remain reachable from both reader and practice. Foreground-visible practice
+keeps the idle timer disabled even while paused; exit/background restores normal
+idle behavior. This lifecycle policy is separate from controller scheduling.
+
+Catalog-order correction: moveArea changes systems on that source page only.
+A custom C,A,B section or repeated A,B,A membership sequence is preserved along
+with occurrence UUIDs; the section editor is the authority for musical order.
+Starting beat in bar is one-based: 4/4 beat 4 maps to Core phase 3, and 6/8 beat 4
+to phase 1.5. Untouched values retain the original Core phase exactly even when
+one-based floating-point display conversion would otherwise introduce rounding.
