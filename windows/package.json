@@ -1,0 +1,66 @@
+{
+  "name": "scoreprep-windows",
+  "version": "0.2.0",
+  "private": true,
+  "description": "ScorePrep for Windows — score reading, practice and instrument tuning",
+  "author": "ScorePrep contributors",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/main.cjs",
+  "scripts": {
+    "build": "tsc --noEmit && node scripts/build.mjs",
+    "start": "electron .",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "test:desktop": "playwright test",
+    "package": "node -e \"require('electron')\" && npm run build && electron-builder --win nsis --x64 --publish never"
+  },
+  "dependencies": {
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.4.299",
+    "pitchy": "4.1.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "verovio": "6.3.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/node": "26.6.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "electron": "45.0.0",
+    "electron-builder": "26.15.3",
+    "esbuild": "0.28.2",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vite": "8.3.5"
+  },
+  "build": {
+    "appId": "org.scoreprep.windows",
+    "productName": "ScorePrep",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "package.json",
+      "!node_modules/**"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "ScorePrep-${version}-Windows-x64.${ext}",
+      "icon": "../ScoreApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    },
+    "electronDist": "node_modules/electron/dist",
+    "npmRebuild": false
+  }
+}

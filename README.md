@@ -7,6 +7,11 @@ prepare complete musical systems, and keep current and upcoming music visible
 while the metronome advances the score at your chosen practice tempo. Your
 original notation and existing markings stay intact.
 
+An additional [Windows desktop client](windows/README.md) provides original-score
+reading, preparation, timed practice and local instrument tuning, including cello.
+See its [Windows verification](windows/VERIFICATION.md) for tested behavior and
+the remaining physical-microphone/cello check.
+
 ![Native iPad practice: current and upcoming music](docs/assets/practice-automatic-area-2.png)
 
 This is an actual simulator capture from the verified automatic-advancement

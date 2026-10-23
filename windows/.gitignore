@@ -1,0 +1,9 @@
+node_modules/
+dist/
+release/
+test-results/
+playwright-report/
+.test-data/
+public/exercise.png
+public/recognition-study.musicxml
+public/app-icon.png
