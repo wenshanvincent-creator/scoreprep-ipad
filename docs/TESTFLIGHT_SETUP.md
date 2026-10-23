@@ -62,6 +62,11 @@ It runs only by manual dispatch on main, inside the environment. Signing assets
 use a temporary keychain and directory cleaned on exit. The preparation lane
 has no signing secrets and saves an explicitly unsigned archive for inspection.
 
+The privacy manifest declares app-local preferences (CA92.1), elapsed musical
+timing (35F9.1), and app-local file metadata (C617.1). Verovio's bundled glyph
+and font XML loader uses pugixml's `fstat` file-size path. Apple's required-reason
+list includes this API even though the parser reads file size, not timestamps.
+
 ## Build, upload and install
 
 1. Review the iPhone simulator gate and unsigned release-archive gate first.

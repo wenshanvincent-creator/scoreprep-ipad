@@ -140,6 +140,7 @@ private struct PracticeMusicSurface: View, Equatable {
             }
             if let page = document.page(at: value.area.pageIndex) {
                 SourcePageSurface(page: page, crop: value.area.bounds)
+                    .accessibilityIdentifier(active ? "practice-current-notation" : "practice-upcoming-notation")
             }
         }
         .padding(.leading, active ? 10 : 0)
@@ -159,16 +160,19 @@ private struct PracticeStatusView: View {
     @ObservedObject var controller: PracticeController
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            let layout = dynamicTypeSize.isAccessibilitySize || horizontalSizeClass == .compact
+            let stacked = dynamicTypeSize.isAccessibilitySize ||
+                (horizontalSizeClass == .compact && verticalSizeClass != .compact)
+            let layout = stacked
                 ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout())
             layout {
                 Text(phaseLabel).font(.subheadline).monospacedDigit()
                     .accessibilityIdentifier("practice-phase")
                 PracticePulseIndicator(display: controller.currentPulse)
-                if !dynamicTypeSize.isAccessibilitySize && horizontalSizeClass != .compact { Spacer() }
+                if !stacked { Spacer() }
                 Text(controller.isAudible ? "Original · Sound on" : "Original · Silent")
                     .font(.caption).foregroundStyle(.secondary)
                 if controller.loop != nil {

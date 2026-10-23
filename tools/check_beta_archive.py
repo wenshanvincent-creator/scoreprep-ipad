@@ -19,6 +19,7 @@ reasons = {item["NSPrivacyAccessedAPIType"]: item["NSPrivacyAccessedAPITypeReaso
            for item in privacy["NSPrivacyAccessedAPITypes"]}
 assert "35F9.1" in reasons["NSPrivacyAccessedAPICategorySystemBootTime"]
 assert "CA92.1" in reasons["NSPrivacyAccessedAPICategoryUserDefaults"]
+assert "C617.1" in reasons["NSPrivacyAccessedAPICategoryFileTimestamp"]
 receipt = {key: info[key] for key in ["CFBundleIdentifier", "CFBundleShortVersionString",
     "CFBundleVersion", "UIDeviceFamily", "MinimumOSVersion", "DTSDKName"]}
 receipt["distributionStatus"] = ("signed archive; upload and processing not verified"

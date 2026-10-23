@@ -34,6 +34,12 @@ final class IPhoneCompatibilityTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["practice-phase"].label.contains("Paused"))
         PracticeUITestActions.landscape(app)
         assertTransport(app)
+        let notation = app.otherElements["practice-current-notation"]
+        XCTAssertTrue(notation.waitForExistence(timeout: 5))
+        let musicViewport = app.scrollViews["practice-music"].frame
+        XCTAssertGreaterThan(notation.frame.height, 0)
+        XCTAssertTrue(musicViewport.contains(notation.frame),
+            "The complete current staff must fit above the landscape transport")
         capture("iphone-practice-landscape")
         app.buttons["practice-next"].tap()
         XCTAssertTrue(app.staticTexts["practice-current"].label.contains("Bar 2"))
