@@ -1,0 +1,12 @@
+{
+  "CFBundleIdentifier": "org.scoreprep.ScorePrep",
+  "CFBundleShortVersionString": "0.1.0",
+  "CFBundleVersion": "3",
+  "UIDeviceFamily": [
+    1,
+    2
+  ],
+  "MinimumOSVersion": "18.0",
+  "DTSDKName": "iphoneos26.0",
+  "distributionStatus": "unsigned archive; not installable and not uploaded"
+}

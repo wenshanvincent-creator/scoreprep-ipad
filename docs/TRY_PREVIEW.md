@@ -1,10 +1,14 @@
 # Try the native preview
 
-This is a source-build preview for an iPad simulator or a signed iPad build.
-It is not an installable App Store release. Use the ScorePrep scheme with
-Xcode 16.4, an iOS 18.5 iPad simulator, and the project generated from project.yml.
+This is a source-build preview for iPhone and iPad. There is no TestFlight
+invitation yet. Use the ScorePrep scheme with Xcode 26.0.1 for iPhone/release
+preparation, or Xcode 16.4 and an iOS 18.5 iPad simulator for the existing iPad
+regression setup, with the project generated from project.yml.
 See the repository README for the build steps, including the pinned Verovio
 source preparation before generating the Xcode project.
+
+For a signed beta, follow [TestFlight setup](TESTFLIGHT_SETUP.md). Developer
+enrollment and signing are pending; an unsigned archive cannot be installed.
 
 ## Local original reading
 

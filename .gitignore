@@ -8,6 +8,8 @@ xcuserdata/
 *.xcuserstate
 *.xcresult/
 *.p12
+*.p8
+*.key
 *.mobileprovision
 *.provisionprofile
 .env

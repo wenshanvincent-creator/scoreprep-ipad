@@ -141,10 +141,12 @@ final class PracticePlaybackUITests: XCTestCase {
         app.buttons["practice-play-pause"].tap()
         let phase = app.staticTexts["practice-phase"]
         wait(phase, contains: "Playing")
-        wait(current, contains: "Pass 2, area 4 of 6")
 
         // Resume the paused A occurrence: no count-in or navigation commands
         // intervene while the 6.5-second loop advances and wraps at 200%.
+        // A was asserted immediately before Resume. Waiting for Playing can
+        // consume its short 2.5-second display window; observe B next instead
+        // of requiring a second observation of A after that synchronization.
         wait(current, contains: "Current: Bar 2, Pass 2, area 5 of 6", timeout: 5)
         XCTAssertEqual(phase.label, "Playing")
         wait(current, contains: "Current: Bars 3–4 · 6/8, Pass 2, area 6 of 6", timeout: 4)

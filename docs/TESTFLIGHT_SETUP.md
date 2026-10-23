@@ -1,7 +1,8 @@
 # First TestFlight beta
 
 Status: iPhone support and distribution preparation are being validated.
-No signed IPA, Apple membership or TestFlight invitation has been created.
+No signed IPA or TestFlight invitation has been created. Developer enrollment
+and signing configuration are pending.
 The generated exercise works offline without an OMR worker. Recognition still
 requires your own authenticated remote worker; no production endpoint is bundled.
 
