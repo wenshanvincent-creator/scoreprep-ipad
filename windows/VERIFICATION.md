@@ -34,6 +34,15 @@ shared workflow files are untouched. This is an additional Electron client.
 - Real window screenshots were inspected at default and 800px window widths.
   Practice controls, current music and upcoming context fit in the same viewport.
   PDF preparation and original/recognized notation comparison were inspected.
+- The final NSIS installer completed a real per-user installation with exit code
+  0 and created the desktop shortcut. Both the packaged executable and installed
+  `ScorePrep.exe` were launched: original-source rendering, cello tuner, count-in,
+  practice and pause worked with no renderer exceptions. These smoke checks did
+  not request a physical microphone.
+
+Runtime source commit: `76b7937d215121f627b835aeb1b8d53fbfd3a99b`.
+Installer: `ScorePrep-0.2.0-Windows-x64.exe`, 116,169,151 bytes.
+SHA-256: `11fc5ff00907ffa77e39468a0efaf7221448ec9bd63a16884468974aa78f0748`.
 
 Commands: `npm run build`, `npm test`, `npm run test:desktop`. Checks were rerun
 only for changed behavior or a diagnosed failure. Screenshot examples are under
