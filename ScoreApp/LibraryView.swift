@@ -11,7 +11,7 @@ struct LibraryView: View {
     @State private var renaming: ScoreProject?
     @State private var deleting: ScoreProject?
     @State private var title = ""
-    @State private var compactColumn: NavigationSplitViewColumn = .detail
+    @State private var compactColumn: NavigationSplitViewColumn = .sidebar
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
     @State private var reviewRequest: SourceReviewRequest?
 

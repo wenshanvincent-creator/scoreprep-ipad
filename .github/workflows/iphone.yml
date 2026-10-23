@@ -1,0 +1,33 @@
+name: iPhone compatibility
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: iphone-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  iphone:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Select release-compatible SDK
+        run: sudo xcode-select -s /Applications/Xcode_26.0.1.app/Contents/Developer
+      - run: brew install xcodegen
+      - name: Test iPhone 13 navigation and practice
+        run: bash tools/iphone_ci.sh
+      - name: Save native phone evidence
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: scoreprep-iphone-evidence
+          path: |
+            build/iphone-*.log
+            build/iphone-*.txt
+            build/iphone-attachments/
+            build/IPhone.xcresult/
+          retention-days: 7

@@ -130,12 +130,13 @@ private struct PracticeMusicSurface: View, Equatable {
 
     private func area(_ value: PracticeAreaPresentation, heading: String, active: Bool) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("\(heading): \(value.area.label)").font(.headline)
-                    .accessibilityIdentifier(active ? "practice-current" : "practice-upcoming")
-                    .accessibilityLabel("\(heading): \(value.area.label), \(value.occurrence)")
-                Spacer(minLength: 8)
-                Text(value.occurrence).font(.caption).foregroundStyle(.secondary).accessibilityHidden(true)
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .firstTextBaseline) {
+                    areaHeading(value, heading: heading, active: active)
+                    Spacer(minLength: 8)
+                    Text(value.occurrence).font(.caption).foregroundStyle(.secondary).accessibilityHidden(true)
+                }
+                areaHeading(value, heading: heading, active: active)
             }
             if let page = document.page(at: value.area.pageIndex) {
                 SourcePageSurface(page: page, crop: value.area.bounds)
@@ -146,21 +147,28 @@ private struct PracticeMusicSurface: View, Equatable {
             if active { Rectangle().fill(Color(red: 0.835, green: 0.608, blue: 0.176)).frame(width: 3) }
         }
     }
+
+    private func areaHeading(_ value: PracticeAreaPresentation, heading: String, active: Bool) -> some View {
+        Text("\(heading): \(value.area.label)").font(.headline)
+            .accessibilityIdentifier(active ? "practice-current" : "practice-upcoming")
+            .accessibilityLabel("\(heading): \(value.area.label), \(value.occurrence)")
+    }
 }
 
 private struct PracticeStatusView: View {
     @ObservedObject var controller: PracticeController
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            let layout = dynamicTypeSize.isAccessibilitySize
+            let layout = dynamicTypeSize.isAccessibilitySize || horizontalSizeClass == .compact
                 ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout())
             layout {
                 Text(phaseLabel).font(.subheadline).monospacedDigit()
                     .accessibilityIdentifier("practice-phase")
                 PracticePulseIndicator(display: controller.currentPulse)
-                if !dynamicTypeSize.isAccessibilitySize { Spacer() }
+                if !dynamicTypeSize.isAccessibilitySize && horizontalSizeClass != .compact { Spacer() }
                 Text(controller.isAudible ? "Original · Sound on" : "Original · Silent")
                     .font(.caption).foregroundStyle(.secondary)
                 if controller.loop != nil {
@@ -200,7 +208,6 @@ private struct PracticeControls: View {
     let previousAvailable: Bool
     @State private var choosingSpeed = false
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
         Group {
@@ -210,12 +217,16 @@ private struct PracticeControls: View {
                     GridRow { stopButton; nextButton }
                 }.frame(maxWidth: .infinity)
             } else {
-                let stacked = horizontalSizeClass == .compact || dynamicTypeSize > .large
-                let layout = stacked ? AnyLayout(VStackLayout(spacing: 8)) : AnyLayout(HStackLayout())
-                layout {
-                    navigation
-                    if !stacked { Spacer() }
-                    HStack { speedButton; soundButton }
+                ViewThatFits(in: .horizontal) {
+                    HStack {
+                        navigation
+                        Spacer(minLength: 12)
+                        HStack { speedButton; soundButton }
+                    }
+                    VStack(spacing: 8) {
+                        navigation
+                        HStack { speedButton; soundButton }
+                    }
                 }
             }
         }
