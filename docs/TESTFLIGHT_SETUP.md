@@ -1,6 +1,7 @@
 # First TestFlight beta
 
-Status: iPhone support and distribution preparation are being validated.
+Status: native iPhone/iPad checks and the unsigned release archive passed.
+See [verification evidence](IPHONE_VERIFICATION.md).
 No signed IPA or TestFlight invitation has been created. Developer enrollment
 and signing configuration are pending.
 The generated exercise works offline without an OMR worker. Recognition still
