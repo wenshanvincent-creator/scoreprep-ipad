@@ -2,6 +2,8 @@
 import base64
 import io
 import json
+import struct
+import zlib
 import tempfile
 from pathlib import Path
 import unittest
@@ -47,6 +49,60 @@ class WorkerContractTests(unittest.TestCase):
             job = response.json()
             self.assertEqual(job["pages"], [dict(sourcePageIndex=0, state="queued")])
             self.assertEqual((worker.ROOT / job["id"] / "original").read_bytes(), data)
+
+    def testTwentyMiBSlashRichPNGIsAcceptedWithoutJSONSlashEscaping(self):
+        # A valid private ancillary PNG chunk makes an exact-size, slash-rich
+        # fixture without a large checked-in binary or expensive model execution.
+        buffer = io.BytesIO()
+        Image.new("RGB", (64, 64), "white").save(buffer, format="PNG")
+        png = buffer.getvalue()
+        padding = b"\xff" * (worker.MAX_BYTES - len(png) - 12)
+        chunk = b"vpAg" + padding
+        document = (png[:-12] + struct.pack(">I", len(padding)) + chunk
+                    + struct.pack(">I", zlib.crc32(chunk)) + png[-12:])
+        self.assertEqual(len(document), worker.MAX_BYTES)
+        Image.open(io.BytesIO(document)).verify()
+        body = json.dumps(dict(mediaType="image/png", contentBase64=base64.b64encode(
+            document).decode()), separators=(",", ":")).encode()
+        self.assertLessEqual(len(body), worker.MAX_BYTES * 4 // 3 + 4096)
+        with TestClient(worker.app) as client, patch.object(worker.POOL, "submit") as engine:
+            response = client.post("/v1/jobs", headers=self.headers, content=body)
+            self.assertEqual(response.status_code, 202)
+            self.assertEqual((worker.ROOT / response.json()["id"] / "original").read_bytes(), document)
+            engine.assert_called_once()
+            engine.reset_mock()
+            # Default Swift JSONEncoder used to expand these slashes. Keep the
+            # worker's bounded request guard; the client must use compact encoding.
+            escaped = body.replace(b"/", b"\\/")
+            self.assertGreater(len(escaped), 28 * 1024 * 1024)
+            response = client.post("/v1/jobs", headers=self.headers, content=escaped)
+            self.assertEqual(response.status_code, 413)
+            engine.assert_not_called()
+
+    def testDecodedDocumentAboveTwentyMiBIsRejectedBeforeRasterization(self):
+        document = b"a" * (worker.MAX_BYTES + 1)
+        body = json.dumps(dict(mediaType="image/png", contentBase64=base64.b64encode(
+            document).decode()), separators=(",", ":")).encode()
+        self.assertLessEqual(len(body), worker.MAX_BYTES * 4 // 3 + 4096)
+        with TestClient(worker.app) as client, patch.object(worker.POOL, "submit") as engine, \
+                patch.object(worker, "rasterize") as rasterize:
+            response = client.post("/v1/jobs", headers=self.headers, content=body)
+            self.assertEqual(response.status_code, 422)
+            self.assertIn("20 MiB", response.json()["detail"])
+            rasterize.assert_not_called()
+            engine.assert_not_called()
+
+    def testRawRequestLimitRemainsBounded(self):
+        limit = worker.MAX_BYTES * 4 // 3 + 4096
+        # Valid JSON but missing required keys distinguishes reaching the decoder
+        # (422) from failing the raw streaming guard (413).
+        body = b"{}" + b" " * (limit - 2)
+        with TestClient(worker.app) as client, patch.object(worker.POOL, "submit") as engine:
+            self.assertEqual(client.post("/v1/jobs", headers=self.headers,
+                                         content=body).status_code, 422)
+            self.assertEqual(client.post("/v1/jobs", headers=self.headers,
+                                         content=body + b" ").status_code, 413)
+            engine.assert_not_called()
 
     def testSourceOrderAndPartialFailureAreRetained(self):
         folder = worker.ROOT / "ordered-job"
