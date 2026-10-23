@@ -64,13 +64,22 @@ public struct RecognitionClient: Sendable {
     }
 
     public func submit(document: Data, mediaType: String) async throws -> RecognitionJob {
+        return try await send(makeSubmissionRequest(document: document, mediaType: mediaType))
+    }
+
+    // Internal so native tests exercise the same encoder and request used by submit.
+    func makeSubmissionRequest(document: Data, mediaType: String) throws -> URLRequest {
         struct Submission: Encodable { let mediaType: String; let contentBase64: String }
         var request = makeRequest(path: "v1/jobs")
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(Submission(mediaType: mediaType,
-                                                              contentBase64: document.base64EncodedString()))
-        return try await send(request)
+        // This JSON is sent to an API, not embedded in HTML. Escaping Base64 slashes
+        // can nearly double the body and reject documents within the 20 MiB limit.
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.withoutEscapingSlashes]
+        request.httpBody = try encoder.encode(Submission(mediaType: mediaType,
+                                                         contentBase64: document.base64EncodedString()))
+        return request
     }
 
     public func job(id: String) async throws -> RecognitionJob {
