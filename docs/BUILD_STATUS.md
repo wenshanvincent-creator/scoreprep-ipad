@@ -1,5 +1,9 @@
 # Native build evidence
 
+iPhone compatibility and unsigned TestFlight preparation are recorded
+separately in [IPHONE_VERIFICATION.md](IPHONE_VERIFICATION.md). These do not
+confirm Apple signing, TestFlight processing or a physical-device installation.
+
 The v0.1 tempo-guided practice preview passed its integrated native gate at
 a60b347c834572c2d82ea34a91630517509b9f7d: 35 Core, 13 native and all 13 UI
 tests passed, including live mixer capture, automatic line changes, the 200%

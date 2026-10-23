@@ -2,7 +2,7 @@
 
 Your score. Your practice tempo. Hands-free line changes.
 
-ScorePrep is a native iPad reader and practice app. Import a PDF, JPEG or PNG,
+ScorePrep is a native iPhone and iPad reader and practice app. Import a PDF, JPEG or PNG,
 prepare complete musical systems, and keep current and upcoming music visible
 while the metronome advances the score at your chosen practice tempo. Your
 original notation and existing markings stay intact.
@@ -44,23 +44,29 @@ follows**. Voice and classical chroma/online-DTW following are later phases.
 The current mode follows confirmed timing, not live microphone input. Read
 the [implementation plan](docs/MVP_PLAN.md),
 [roadmap](docs/ROADMAP.md) and [promotion brief](docs/PROMOTION_BRIEF.md).
-Physical-iPad rehearsal, Apple signing, TestFlight and App Store distribution
+Physical-device rehearsal, Apple signing, TestFlight and App Store distribution
 remain separate gates. The [first foundation build](docs/BUILD_STATUS.md)
 records the earlier starting point.
 
 ## Build on macOS
 
-Verified toolchain: Xcode 16.4 with its command-line tools and XcodeGen.
-The deployment target is iPadOS 18; CI uses an iOS 18.5 iPad simulator.
+Use XcodeGen with Xcode 26.0.1 for the iPhone and release preparation lanes.
+The existing iPad regression lane keeps Xcode 16.4 and its iOS 18.5 simulator.
+The minimum deployment target is iOS/iPadOS 18. Current App Store Connect
+uploads require the iOS 26 SDK or later.
 
     brew install xcodegen
     python3 tools/prepare_verovio.py
     xcodegen generate
     open ScorePrep.xcodeproj
 
-Choose an iPad simulator and run the ScorePrep scheme. Simulator builds do not
+Choose an iPhone or iPad simulator and run the ScorePrep scheme. Simulator builds do not
 need an Apple Developer membership. Signing and device distribution are
-separate setup steps.
+separate setup steps. There is no TestFlight invitation yet. Follow the
+[enrollment and beta setup guide](docs/TESTFLIGHT_SETUP.md) when the account
+holder is ready; [draft beta notes](docs/BETA_TEST_NOTES.md) are included.
+Native phone screenshots and distribution boundaries are recorded in
+[iPhone verification](docs/IPHONE_VERIFICATION.md).
 
 GitHub Actions generates the project, runs Core checks, builds the native app,
 and runs persistence, audio and UI checks. It exports logs, native screenshots,

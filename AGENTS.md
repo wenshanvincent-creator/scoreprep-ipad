@@ -1,6 +1,6 @@
 # Working on ScorePrep
 
-- Build a native iPad app. Keep musical content readable and preserve original
+- Build a native iPhone and iPad app. Keep musical content readable and preserve original
   notation, source coordinates and user markings.
 - The v0.1 practice preview passed its native engineering gate; see
   docs/PRACTICE_VERIFICATION.md. V1 recognition evidence is recorded in
@@ -15,6 +15,8 @@
   .agents/skills/swiftui-expert-skill/SKILL.md. Write a brief view/interaction
   plan, then inspect actual simulator screenshots before claiming UI completion.
 - Keep the iPadOS 18 deployment target and the verified build toolchain.
+  iPhone and TestFlight preparation additionally use Xcode 26.0.1, required for
+  current App Store Connect uploads. Keep the Xcode 16.4 iPad regression lane.
   Skill examples do not authorize newer SDK requirements, decorative effects or
   an unrelated state-management rewrite. UIKit bridges for PDF/Pencil remain
   intentional. Fetch current Apple documentation for APIs the feature needs.

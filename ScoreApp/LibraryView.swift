@@ -11,9 +11,10 @@ struct LibraryView: View {
     @State private var renaming: ScoreProject?
     @State private var deleting: ScoreProject?
     @State private var title = ""
-    @State private var compactColumn: NavigationSplitViewColumn = .detail
+    @State private var compactColumn: NavigationSplitViewColumn = .sidebar
     @State private var columnVisibility: NavigationSplitViewVisibility = .automatic
     @State private var reviewRequest: SourceReviewRequest?
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private var selection: Binding<UUID?> {
         Binding(get: { UUID(uuidString: selectedProject) }, set: {
@@ -97,7 +98,9 @@ struct LibraryView: View {
         }
         .onChange(of: library.projects.map(\.id), initial: true) { _, ids in
             if selection.wrappedValue.map({ ids.contains($0) }) != true {
-                selection.wrappedValue = ids.first
+                // Selecting the sample on compact screens pushes its reader
+                // before the musician can reach import or the practice exercise.
+                selection.wrappedValue = horizontalSizeClass == .compact ? nil : ids.first
             }
         }
         .fullScreenCover(item: $reviewRequest) { request in
