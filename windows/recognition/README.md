@@ -44,6 +44,15 @@ Original owned MusicXML, independently rendered source positions and actual
 Audiveris/OCR observations verify recovery of a deliberately introduced four-note
 3:2 error while preserving real triplets, quintuplets and nine source fingerings.
 
+`src/core/source-accidentals.ts` recovers an accidental anticipated from the next
+occurrence of a pitch. It requires two literal source signs linked to distinct
+heads, the preceding model pitch agreeing with its printed sign, exactly three
+source occurrences between the signs, and a shared physical source measure.
+An existing explicit accidental, tie, missing sign or unresolved source symbol
+prevents this correction. The controlled owned reference covers carried naturals,
+octave-specific alterations and a bar reset. This fixes the verified early-flat
+error on the private page without changing any note's timing.
+
 The existing `src/core/layout-evidence.ts` reconciles a model clef using detected
 source clefs and spatially matched independent noteheads. It does not use a chosen
 instrument, expected note count or hardcoded measures. At least six distinct
@@ -81,7 +90,7 @@ verification remain required before distribution.
 Developer checks from `windows/`:
 
 ```powershell
-node --import tsx --test tests/layout-evidence.test.ts tests/source-marks.test.ts tests/source-rhythm.test.ts
+node --import tsx --test tests/layout-evidence.test.ts tests/source-marks.test.ts tests/source-rhythm.test.ts tests/source-accidentals.test.ts
 node --import tsx scripts/inspect-recognition.ts INPUT NEW_OUTPUT --layout PAGE.omr --source-size WIDTHxHEIGHT --glyphs OBSERVATIONS.json
 # In the pinned evaluation environment; runs the real glyph model on owned data:
 python recognition/test_glyph_reader.py

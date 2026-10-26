@@ -60,3 +60,18 @@ reference while leaving both genuine tuplets intact. This controlled corruption
 tests the recovery decision; it does not claim homr produced that error on this
 owned image. Additional checks preserve unexplained numerals and reject an
 incomplete physical beam group.
+
+`accidental-carry-study.musicxml` and its PNG are an original 16-eighth-note
+exercise in two 4/4 bars. They cover sharp-to-natural carry, the same written
+pitch in different octaves and accidental reset at the next bar. The source
+positions again come from the original Verovio 6.3.0 renderer, before recognition
+(`pageWidth=2400`, `scale=100`, encoded breaks, full last-system justification).
+
+`accidental-carry-layout.xml` extracts the actual Audiveris 5.11.0 CPU result on
+that PNG: physical bar bounds, staff/clef geometry, all 16 heads, seven accidental
+glyphs and their original head links. The tests deliberately anticipate the later
+sharp on the fifth note, then require exact recovery to the source's pitch,
+onset and duration sequence. Explicit contrary accidentals, missing source-sign
+evidence and a controlled source bar split must prevent the change. This is a
+controlled decision regression, not a claim that this owned PNG triggered the
+private-page model error.

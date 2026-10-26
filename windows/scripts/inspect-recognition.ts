@@ -16,6 +16,7 @@ import {
 import { recoverClefInterpretation } from '../src/core/layout-evidence';
 import { recoverSourceFingerings } from '../src/core/source-marks';
 import { recoverMalformedTuplets } from '../src/core/source-rhythm';
+import { recoverAnticipatedAccidentals } from '../src/core/source-accidentals';
 
 const { positionals, values } = parseArgs({
   allowPositionals: true,
@@ -55,7 +56,12 @@ try {
     });
     report.layoutSHA256 = createHash('sha256').update(layoutBytes).digest('hex');
     report.clefRecovery = { corrections: recovered.corrections, unresolved: recovered.unresolved };
-    xml = recovered.xml;
+    const accidentals = recoverAnticipatedAccidentals(recovered.xml, strFromU8(files[sheets[0]]), {
+      width: Number(size[1]),
+      height: Number(size[2]),
+    });
+    report.sourceAccidentalRecovery = accidentals.corrections;
+    xml = accidentals.xml;
     if (values.glyphs) {
       const observations = JSON.parse(await readFile(values.glyphs, 'utf8'));
       const fingerings = recoverSourceFingerings(

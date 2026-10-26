@@ -122,3 +122,22 @@ The 11 targeted layout/association/rhythm checks, two real glyph OCR checks and
 Windows build pass. Full private-page reference comparison, accidental and
 ornament recovery, packaged worker integration and installed replacement remain
 unfinished. This is development evidence, not an installed-app acceptance result.
+
+The first measure's known anticipated-flat error is now recovered from its two
+literal surrounding signs and three matched source heads within the same physical
+bar. A new original 16-note chromatic reference and actual Audiveris geometry
+check carried naturals, octave-specific state and bar resets. The recovery leaves
+explicit conflicting signs and missing/broken source evidence untouched. The
+three new checks and the 11 existing related checks pass, as does the Windows
+build. On the private source, the manually transcribed first-bar reference now
+matches all 16 pitch/onset/duration events, four fingerings and 16 staccato marks;
+the actual rendered first system was inspected. This comparison covers that bar,
+not the whole page.
+
+A further comparison view masked only five recognized fingering glyphs at the
+five false trill locations, preserving the imported source. Actual pinned CPU
+inference took 48.75 seconds: all five trills disappeared while all 400 pitched
+note/type-duration events were identical to the unmasked baseline. The same three
+raw malformed tuplets remained. This is causal evidence for the observed glyph
+confusion; it has not been integrated as an ornament correction. An owned case
+containing a real trill alongside a fingering remains necessary before adoption.

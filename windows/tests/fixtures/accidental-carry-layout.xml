@@ -1,0 +1,171 @@
+<sheet>
+  <picture width="2400" height="577" />
+  <system id="1" indented="true">
+    <stack id="1" left="174" right="2348" expected="1" duration="1" />
+    <part id="1">
+      <staff id="1" left="174" right="2348">
+        <lines>
+          <line thickness="2" glyph="5">
+            <point x="174" y="186" />
+            <point x="2348" y="186" />
+          </line>
+          <line thickness="2" glyph="6">
+            <point x="174" y="204" />
+            <point x="2348" y="204" />
+          </line>
+          <line thickness="2" glyph="7">
+            <point x="174" y="222" />
+            <point x="2348" y="222" />
+          </line>
+          <line thickness="2" glyph="8">
+            <point x="174" y="240" />
+            <point x="2348" y="240" />
+          </line>
+          <line thickness="2" glyph="9">
+            <point x="174" y="258" />
+            <point x="2348" y="258" />
+          </line>
+        </lines>
+        <header start="174" stop="280">
+          <clef>24</clef>
+          <time>31</time>
+        </header>
+        <barlines>15 2</barlines>
+        <ledgers>
+          <ledgers-entry index="-1">154 156</ledgers-entry>
+        </ledgers>
+        <notes>172 176 182 190 192 198 202 206</notes>
+      </staff>
+    </part>
+  </system>
+  <system id="2">
+    <stack id="2" left="50" right="2348" expected="1" duration="1" />
+    <part id="1">
+      <staff id="2" left="50" right="2348">
+        <lines>
+          <line thickness="2" glyph="10">
+            <point x="50" y="402" />
+            <point x="2348" y="402" />
+          </line>
+          <line thickness="2" glyph="11">
+            <point x="50" y="420" />
+            <point x="2348" y="420" />
+          </line>
+          <line thickness="2" glyph="12">
+            <point x="50" y="438" />
+            <point x="2348" y="438" />
+          </line>
+          <line thickness="2" glyph="13">
+            <point x="50" y="456" />
+            <point x="2348" y="456" />
+          </line>
+          <line thickness="2" glyph="14">
+            <point x="50" y="474" />
+            <point x="2348" y="474" />
+          </line>
+        </lines>
+        <header start="50" stop="108">
+          <clef>39</clef>
+        </header>
+        <barlines>32 4</barlines>
+        <notes>214 218 222 230 234 238 244 246</notes>
+      </staff>
+    </part>
+  </system>
+  <clef kind="BASS" pitch="-2" shape="F_CLEF" glyph="22" grade="0.78" ctx-grade="0.78" frozen="true" staff="1" id="24">
+    <bounds x="183" y="183" w="50" h="65" />
+  </clef>
+  <clef kind="BASS" pitch="-2" shape="F_CLEF" glyph="37" grade="0.78" ctx-grade="0.78" frozen="true" staff="2" id="39">
+    <bounds x="59" y="399" w="50" h="65" />
+  </clef>
+  <head pitch="-1" shape="NOTEHEAD_BLACK" glyph="171" grade="0.753" ctx-grade="0.942" staff="1" id="172">
+    <bounds x="1150" y="204" w="21" h="18" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="175" grade="0.729" ctx-grade="0.933" staff="1" id="176">
+    <bounds x="693" y="213" w="21" h="18" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="181" grade="0.745" ctx-grade="0.947" staff="1" id="182">
+    <bounds x="471" y="221" w="21" h="18" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="189" grade="0.76" ctx-grade="0.949" staff="1" id="190">
+    <bounds x="927" y="222" w="21" h="18" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="191" grade="0.709" ctx-grade="0.947" staff="1" id="192">
+    <bounds x="1373" y="221" w="20" h="18" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="197" grade="0.76" ctx-grade="0.958" staff="1" id="198">
+    <bounds x="1620" y="222" w="21" h="18" />
+  </head>
+  <head pitch="-6" shape="NOTEHEAD_BLACK" glyph="201" grade="0.715" ctx-grade="0.888" staff="1" id="202">
+    <bounds x="1881" y="158" w="21" h="18" />
+  </head>
+  <head pitch="-6" shape="NOTEHEAD_BLACK" glyph="205" grade="0.714" ctx-grade="0.918" staff="1" id="206">
+    <bounds x="2128" y="158" w="21" h="18" />
+  </head>
+  <head pitch="-4" shape="NOTEHEAD_BLACK" glyph="213" grade="0.728" ctx-grade="0.923" staff="2" id="214">
+    <bounds x="2090" y="393" w="21" h="18" />
+  </head>
+  <head pitch="-3" shape="NOTEHEAD_BLACK" glyph="217" grade="0.759" ctx-grade="0.924" staff="2" id="218">
+    <bounds x="1830" y="402" w="21" h="18" />
+  </head>
+  <head pitch="-2" shape="NOTEHEAD_BLACK" glyph="221" grade="0.729" ctx-grade="0.917" staff="2" id="222">
+    <bounds x="1570" y="411" w="21" h="18" />
+  </head>
+  <head pitch="-1" shape="NOTEHEAD_BLACK" glyph="229" grade="0.76" ctx-grade="0.943" staff="2" id="230">
+    <bounds x="1309" y="420" w="21" h="18" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="233" grade="0.703" ctx-grade="0.915" staff="2" id="234">
+    <bounds x="515" y="429" w="21" h="18" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="237" grade="0.729" ctx-grade="0.926" staff="2" id="238">
+    <bounds x="775" y="429" w="21" h="18" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="243" grade="0.73" ctx-grade="0.936" staff="2" id="244">
+    <bounds x="1049" y="429" w="21" h="18" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="245" grade="0.709" ctx-grade="0.935" staff="2" id="246">
+    <bounds x="225" y="437" w="20" h="18" />
+  </head>
+  <alter pitch="1" shape="SHARP" glyph="402" grade="0.727" ctx-grade="0.89" staff="1" id="410">
+    <bounds x="450" y="203" w="15" h="53" />
+  </alter>
+  <alter pitch="1" shape="NATURAL" glyph="404" grade="0.799" ctx-grade="0.928" staff="1" id="411">
+    <bounds x="909" y="203" w="12" h="56" />
+  </alter>
+  <alter pitch="1" shape="SHARP" glyph="406" grade="0.779" ctx-grade="0.911" staff="1" id="412">
+    <bounds x="1599" y="203" w="15" h="53" />
+  </alter>
+  <alter pitch="-6" shape="SHARP" glyph="407" grade="0.757" ctx-grade="0.906" staff="1" id="413">
+    <bounds x="1858" y="142" w="15" h="51" />
+  </alter>
+  <alter pitch="-6" shape="NATURAL" glyph="408" grade="0.799" ctx-grade="0.921" staff="1" id="414">
+    <bounds x="2108" y="142" w="12" h="52" />
+  </alter>
+  <alter pitch="0" shape="SHARP" glyph="403" grade="0.706" ctx-grade="0.874" staff="2" id="417">
+    <bounds x="494" y="412" w="14" h="51" />
+  </alter>
+  <alter pitch="0" shape="NATURAL" glyph="405" grade="0.799" ctx-grade="0.926" staff="2" id="418">
+    <bounds x="1031" y="412" w="12" h="52" />
+  </alter>
+  <relation source="410" target="182">
+    <alter-head dx="0.333" dy="0.056" grade="0.904" />
+  </relation>
+  <relation source="411" target="190">
+    <alter-head dx="0.333" dy="0" grade="0.977" />
+  </relation>
+  <relation source="412" target="198">
+    <alter-head dx="0.333" dy="0.111" grade="0.829" />
+  </relation>
+  <relation source="413" target="202">
+    <alter-head dx="0.444" dy="0" grade="0.968" />
+  </relation>
+  <relation source="414" target="206">
+    <alter-head dx="0.444" dy="0.056" grade="0.896" />
+  </relation>
+  <relation source="417" target="234">
+    <alter-head dx="0.389" dy="0.056" grade="0.9" />
+  </relation>
+  <relation source="418" target="244">
+    <alter-head dx="0.333" dy="0" grade="0.977" />
+  </relation>
+</sheet>

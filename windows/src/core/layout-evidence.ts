@@ -160,6 +160,40 @@ export function readSourceLayout(layoutXML: string, sourceSize: { width: number;
         y: (Number(bounds.getAttribute('y')) + Number(bounds.getAttribute('h')) / 2) / sy,
       };
     });
+  const bars = Array.from(layout.getElementsByTagName('system')).flatMap((system) => {
+    const staffIds = Array.from(system.getElementsByTagName('staff'))
+      .filter((s) => child(s, 'lines'))
+      .map((s) => s.getAttribute('id')!);
+    return children(system, 'stack').map((stack) => ({
+      id: `${system.getAttribute('id')}/${stack.getAttribute('id')}`,
+      left: Number(stack.getAttribute('left')) / sx,
+      right: Number(stack.getAttribute('right')) / sx,
+      staffIds,
+    }));
+  });
+  const accidentalValues: Record<string, number | undefined> = { SHARP: 1, FLAT: -1, NATURAL: 0 };
+  const accidentals = Array.from(layout.getElementsByTagName('alter')).flatMap((a) => {
+    const bounds = child(a, 'bounds');
+    if (!bounds) return [];
+    const id = a.getAttribute('id')!;
+    const links = Array.from(layout.getElementsByTagName('relation')).filter(
+      (r) => r.getAttribute('source') === id && child(r, 'alter-head'),
+    );
+    return [
+      {
+        id,
+        staff: a.getAttribute('staff')!,
+        position: Number(a.getAttribute('pitch')),
+        value: accidentalValues[a.getAttribute('shape')!],
+        grade: Number(a.getAttribute('ctx-grade') || a.getAttribute('grade')),
+        x: Number(bounds.getAttribute('x')) / sx,
+        headIds: links.map((r) => r.getAttribute('target')!),
+        linkGrade: links.length
+          ? Math.min(...links.map((r) => Number(child(r, 'alter-head')!.getAttribute('grade'))))
+          : 0,
+      },
+    ];
+  });
   const locate = (point: Point) => {
     const staff = staves
       .filter((s) => point.x >= s.left && point.x <= s.right)
@@ -176,7 +210,7 @@ export function readSourceLayout(layoutXML: string, sourceSize: { width: number;
     const spacing = (lineY(staff.lines[4], point.x) - lineY(staff.lines[0], point.x)) / 4;
     return { staff, clef, spacing, middleY: lineY(staff.lines[2], point.x) };
   };
-  return { staves, clefs, heads, locate, document: layout, sx, sy };
+  return { staves, clefs, heads, bars, accidentals, locate, document: layout, sx, sy };
 }
 
 /** Reconcile a model clef using source glyphs and spatially matched noteheads.
