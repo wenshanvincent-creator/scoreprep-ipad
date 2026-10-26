@@ -1,5 +1,6 @@
 import { DOMParser, XMLSerializer, type Element as XmlElement } from '@xmldom/xmldom';
 import { instrumentFor, type Instrument } from './instruments';
+import { completeEngraving } from './engraving';
 export interface NotatedNote {
   id: string;
   measureId: string;
@@ -431,6 +432,7 @@ export function prepareMusic(
     }
   for (const print of Array.from(doc.getElementsByTagName('print')))
     print.parentNode?.removeChild(print);
+  completeEngraving(doc, notes, measures);
   return {
     xml: new XMLSerializer().serializeToString(doc),
     title,

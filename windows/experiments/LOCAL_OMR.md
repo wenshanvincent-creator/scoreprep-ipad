@@ -47,6 +47,13 @@ therefore omitted chromatic signs and left sixteenth notes individually flagged.
 Reordering pitch children to the MusicXML schema did not change that behavior.
 Successful MusicXML parsing and playback compilation are insufficient acceptance.
 
+Subsequent Windows core work completed the missing accidental and beam display
+without rewriting the candidate's pitch or duration events; see
+[the engraving verification](../VERIFICATION.md#engraving-completion-during-recognition-optimization).
+The clearer rendering also exposed a wrong treble-clef interpretation in bars
+21–22, confirmed against the source image and the other engine's staff geometry.
+Recognition accuracy and source-fingering retention remain unfinished.
+
 Before integrating a complementary engine, the unresolved work is: image-backed
 accidental decisions, retaining printed fingerings, distinguishing fingering
 numerals from actual tuplets, and exporting explicit readable notation. Neither

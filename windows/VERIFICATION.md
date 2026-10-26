@@ -88,3 +88,20 @@ The subsequent [local engine comparison](experiments/LOCAL_OMR.md) records the
 dense-page Audiveris threshold and homr CPU trials, raw-versus-postprocessed
 tuplet behavior, owned-score event/fingering comparison and actual SVG inspection.
 The alternate engine remains experimental and is not installed in the client.
+
+## Engraving completion during recognition optimization
+
+Pitch-only chromatic MusicXML now receives missing visible accidentals, respecting
+key signatures, octaves, chronological voices, separate staves, existing signs and
+cross-bar ties. Unbeamed instrumental passages receive metrical beam groups;
+explicit source beams, true tuplets and original fingerings remain intact.
+No note pitches or durations are rewritten by this display step.
+
+Four targeted engraving checks passed, including actual Verovio glyphs and beam
+groups, alongside the five existing music/following checks and the Windows build.
+Re-rendering the private dense candidate produced 121 visible accidentals and
+100 beam groups, replacing its 400 isolated flags. All 400 pitch/duration/type
+events were unchanged. This proves a display improvement, not full recognition
+accuracy: the subsequent source comparison exposed an incorrect treble-clef
+interpretation in candidate bars 21–22. The installed version is unchanged while
+the broader recognition goal continues.
