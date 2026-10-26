@@ -39,4 +39,16 @@ rules and do not establish professional fingering quality.
 
 A physical cello/microphone rehearsal still requires Vincent's test. Synthetic
 PCM acceptance is not evidence of acoustic room, bow-noise or hardware behavior.
-The current installer verification receipt is added after the final packaged run.
+Final installer: 229,188,149 bytes, SHA-256
+`ca3ce70a35187c5d70060d580a2f307fe6f3b355bd85c19ed9cd47fba051686d`.
+The silent per-user installation returned exit 0. Its app.asar SHA-256 matched the
+audited packaged archive (`69fb48f5b2b6fddeeaf06eb2d4eb0fd77e7932bf06c1a96649108e8507eadc8a`).
+
+A new profile in the installed 0.3.0 application then completed actual CPU
+recognition of its built-in cello image, produced all 16 expected pitches,
+durations and final fingerings, rendered every clef as bass, preserved exact
+source bytes, opened the cello tuner and exercised demonstration controls.
+Closing and reopening with HTTP/HTTPS renderer requests blocked loaded the saved
+edition without another recognition run. This complete installed check took
+32.35 seconds. The local receipt and native screenshots are in `.test-data/`.
+No external Java, Python, server URL or key was used by the installed program.
