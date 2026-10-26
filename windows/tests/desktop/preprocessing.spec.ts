@@ -1,4 +1,5 @@
-import { test, expect, _electron as electron, type ElectronApplication } from '@playwright/test';
+import { test, expect, type ElectronApplication } from '@playwright/test';
+import { launchDesktop } from './launch';
 import { mkdtemp, readFile, writeFile, readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -12,20 +13,7 @@ test('small but legible owned score automatically rescales after measured reject
   test.setTimeout(240000);
   const data = await mkdtemp(path.join(tmpdir(), 'scoreprep-preprocess-')),
     file = path.join(data, 'small-cello.png');
-  const executablePath = process.env.SCOREPREP_VERIFY_EXE;
-  app = await electron.launch({
-    ...(executablePath ? { executablePath } : {}),
-    args: executablePath ? [`--user-data-dir=${data}`] : [path.resolve('.')],
-    env: { ...process.env, SCOREPREP_TEST_DATA: data },
-  });
-  if (executablePath)
-    expect(
-      await app.evaluate(({ app }) => ({
-        version: app.getVersion(),
-        data: app.getPath('userData'),
-        packaged: app.isPackaged,
-      })),
-    ).toEqual({ version: '0.3.1', data, packaged: true });
+  app = await launchDesktop(data);
   const source = await readFile('tests/fixtures/cello-study.png');
   const base64 = await app.evaluate(
     ({ nativeImage }, bytes) =>
@@ -42,6 +30,8 @@ test('small but legible owned score automatically rescales after measured reject
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [file] });
   }, file);
   const page = await app.firstWindow();
+  await page.route('https://**', (route) => route.abort());
+  await page.route('http://**', (route) => route.abort());
   await page.getByRole('button', { name: '＋ 导入乐谱' }).click();
   await expect
     .poll(
@@ -61,8 +51,8 @@ test('small but legible owned score automatically rescales after measured reject
       'cello',
       false,
     );
-  expect(music.notes.map((n) => [n.midi, n.quarter, n.duration])).toEqual(
-    expected.notes.map((n) => [n.midi, n.quarter, n.duration]),
+  expect(music.notes.map((n) => [n.midi, n.quarter, n.duration, n.sourceFingering])).toEqual(
+    expected.notes.map((n) => [n.midi, n.quarter, n.duration, n.sourceFingering]),
   );
   expect(
     Buffer.compare(await readFile(path.join(data, 'library', p.id, 'original')), original),
@@ -71,12 +61,17 @@ test('small but legible owned score automatically rescales after measured reject
     attempts = await readdir(jobs);
   expect(attempts).toHaveLength(1);
   const recipe = JSON.parse(
-    await readFile(path.join(jobs, attempts[0], 'preprocessing.json'), 'utf8'),
+    await readFile(path.join(jobs, attempts[0], 'page-1', 'preprocessing.json'), 'utf8'),
   );
   expect(recipe.measuredInterline).toBeLessThan(11);
   expect(recipe.scale).toBeGreaterThan(1);
   await expect(page.locator('.notation-page svg').first()).toBeVisible();
-  await app.evaluate(({BrowserWindow})=>{const win=BrowserWindow.getAllWindows()[0];win.restore();win.show();win.focus();});
+  await app.evaluate(({ BrowserWindow }) => {
+    const win = BrowserWindow.getAllWindows()[0];
+    win.restore();
+    win.show();
+    win.focus();
+  });
   await page.bringToFront();
   await page.screenshot({ path: info.outputPath('recovered-small-score.png') });
 });

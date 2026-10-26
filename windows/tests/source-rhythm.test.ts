@@ -73,6 +73,7 @@ test('an unexplained source tuplet numeral prevents repair even with a neighbori
     marks.fingerings,
   );
   assert.deepEqual(recovered.corrections, []);
+  assert.equal(recovered.unresolved.length, 1);
   assert.equal(recovered.xml, marks.xml);
 });
 

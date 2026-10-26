@@ -72,6 +72,15 @@
         "filter": [
           "**/*"
         ]
+      },
+      {
+        "from": ".runtime/neural",
+        "to": "neural",
+        "filter": [
+          "**/*",
+          "!**/__pycache__/**",
+          "!**/*.pyc"
+        ]
       }
     ]
   }

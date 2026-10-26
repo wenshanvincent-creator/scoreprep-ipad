@@ -1,0 +1,16 @@
+{
+  "sourceSHA256": "00d8e29d00302738bb8500679447deada3771ce52a86c1dd07ac94e737103527",
+  "revision": "ab369ac54277afab582afa4725441f7cbba76593",
+  "models": {
+    "segmentation/segnet_308-3296ccd40960f90ca6ab9c035cca945675d30a0f.onnx": "6ed36640db4ef5d223098b6d5efe4eda97c66b24a2c72faab8a018c749003a8d",
+    "transformer/encoder_pytorch_model_465-597144cab54c8f6d0f6c9619df5c5312694eadd6.onnx": "92bd18338dc8da3c9b00185008ab14719ff9f912efe785ca42d7b623e06e0c6b",
+    "transformer/decoder_pytorch_model_465-597144cab54c8f6d0f6c9619df5c5312694eadd6.onnx": "18801c1e3657bdea1b031db90b10d66e15accfc1d607780f09a9e059133e886a"
+  },
+  "width": 2400,
+  "height": 604,
+  "layoutSHA256": "78c07b5d52a24d4321ed3ad5dc111bdb1a99644a1896492a4b9c6e081dae0869",
+  "baselineSeconds": 19.31,
+  "comparisonSeconds": 12.67,
+  "comparisonSHA256": "b647ef2bc11bf2a0566a69b6d2ee9e880251ed9a709386abb247964596be77ef",
+  "sourceUnchanged": true
+}

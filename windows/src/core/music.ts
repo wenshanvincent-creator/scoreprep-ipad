@@ -1,6 +1,7 @@
 import { DOMParser, XMLSerializer, type Element as XmlElement } from '@xmldom/xmldom';
 import { instrumentFor, type Instrument } from './instruments';
 import { completeEngraving } from './engraving';
+import { normalizeVoiceOrder } from './voices';
 export interface NotatedNote {
   id: string;
   measureId: string;
@@ -294,6 +295,7 @@ export function prepareMusic(
   const profile = instrumentFor(instrumentId),
     parts = elements(root, 'part');
   if (parts.length !== 1) throw new Error('这份识别结果包含多个乐器声部，请导入对应乐器的分谱。');
+  normalizeVoiceOrder(doc);
   const part = parts[0],
     notes: NotatedNote[] = [],
     measures: NotatedMeasure[] = [];

@@ -84,6 +84,7 @@ try {
         fingerings.fingerings,
       );
       report.sourceRhythmRecovery = rhythm.corrections;
+      report.unresolvedSourceRhythm = rhythm.unresolved;
       xml = rhythm.xml;
     }
     await writeFile(path.join(output, 'reconciled.musicxml'), xml);

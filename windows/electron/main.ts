@@ -17,6 +17,7 @@ import { validateProject, type Project } from '../src/core/model';
 import { LocalRecognizer } from './recognizer';
 import { prepareMusic } from '../src/core/music';
 import { instrumentFor } from '../src/core/instruments';
+import { atomicJSON } from './atomic-json';
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'scoreprep',
@@ -40,11 +41,6 @@ const validID = (id: unknown): string => {
 };
 const folder = (id: unknown) => path.join(root(), validID(id));
 const sha = (bytes: Uint8Array | string) => createHash('sha256').update(bytes).digest('hex');
-async function atomicJSON(file: string, value: unknown) {
-  const temp = file + '.' + randomUUID() + '.tmp';
-  await writeFile(temp, JSON.stringify(value, null, 2));
-  await rename(temp, file);
-}
 async function load(id: unknown): Promise<Project> {
   return JSON.parse(await readFile(path.join(folder(id), 'project.json'), 'utf8'));
 }
@@ -113,9 +109,24 @@ app.whenReady().then(async () => {
   const runtime = app.isPackaged
     ? path.join(process.resourcesPath, 'recognizer')
     : path.resolve(__dirname, '../.runtime/extracted/Audiveris');
-  recognizer = new LocalRecognizer(runtime, root(), load, store, (p, xml) => {
-    prepareMusic(xml, p.instrument ?? 'cello', false);
-  });
+  const neural = app.isPackaged
+    ? path.join(process.resourcesPath, 'neural')
+    : path.resolve(__dirname, '../.runtime/neural');
+  recognizer = new LocalRecognizer(
+    runtime,
+    {
+      python: path.join(neural, 'python', 'python.exe'),
+      worker: app.isPackaged
+        ? path.join(neural, 'worker.py')
+        : path.resolve(__dirname, '../recognition/worker.py'),
+    },
+    root(),
+    load,
+    store,
+    (p, xml) => {
+      prepareMusic(xml, p.instrument ?? 'cello', false);
+    },
+  );
   protocol.handle('scoreprep', async (request) => {
     try {
       const url = new URL(request.url);

@@ -1,9 +1,23 @@
-import { test, expect, _electron as electron, type ElectronApplication } from '@playwright/test';
+import { test, expect, type ElectronApplication } from '@playwright/test';
+import { launchDesktop } from './launch';
 import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { PDFDocument } from 'pdf-lib';
+import { prepareMusic, type NotatedNote } from '../../src/core/music';
+const signature = (notes: NotatedNote[], measureOffset = 0, quarterOffset = 0) =>
+  notes.map((n) =>
+    JSON.stringify([
+      n.measureIndex + measureOffset,
+      n.staff,
+      n.writtenMidi,
+      n.quarter + quarterOffset,
+      n.duration,
+      n.rest,
+      n.grace,
+    ]),
+  );
 let app: ElectronApplication;
 test.afterEach(async () => {
   await app?.close();
@@ -11,16 +25,15 @@ test.afterEach(async () => {
 test('actual bundled CPU recognizer: image import opens playable reflow, tuning, demo and offline restart', async ({}, info) => {
   test.setTimeout(180000);
   const data = await mkdtemp(path.join(tmpdir(), 'scoreprep-local-'));
-  app = await electron.launch({
-    args: [path.resolve('.')],
-    env: { ...process.env, SCOREPREP_TEST_DATA: data },
-  });
+  app = await launchDesktop(data);
   const source = path.resolve('../Fixtures/RecognitionReplay/original.png');
   await app.evaluate(({ dialog }, source) => {
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [source] });
   }, source);
   const page = await app.firstWindow(),
     errors: string[] = [];
+  await page.route('https://**', (route) => route.abort());
+  await page.route('http://**', (route) => route.abort());
   page.on('pageerror', (e) => errors.push(e.message));
   await page.getByLabel('导入乐器').selectOption('piano');
   await page.getByRole('button', { name: '＋ 导入乐谱' }).click();
@@ -33,8 +46,15 @@ test('actual bundled CPU recognizer: image import opens playable reflow, tuning,
   const p = (await page.evaluate(() => window.desktop.list()))[0];
   const original = await readFile(path.join(data, 'library', p.id, 'original'));
   expect(createHash('sha256').update(original).digest('hex')).toBe(p.originalSHA256);
-  expect(p.localEdition?.engine).toBe('Audiveris');
+  expect(p.localEdition?.engine).toBe('homr + Audiveris');
   expect(p.localRecognition?.state).toBe('ready');
+  const expected = prepareMusic(
+    await readFile('../backend/fixtures/recognition-study.musicxml', 'utf8'),
+    'piano',
+    false,
+  );
+  const actual = prepareMusic(p.localEdition!.musicXML, 'piano', false);
+  expect(signature(actual.notes).sort()).toEqual(signature(expected.notes).sort());
   await page.screenshot({ path: info.outputPath('02-reflow.png'), fullPage: true });
   await page.locator('[id="measure-4"]').click();
   await expect(page.locator('.following-status')).toContainText('第 5 小节');
@@ -52,10 +72,7 @@ test('actual bundled CPU recognizer: image import opens playable reflow, tuning,
   );
   expect(errors).toEqual([]);
   await app.close();
-  app = await electron.launch({
-    args: [path.resolve('.')],
-    env: { ...process.env, SCOREPREP_TEST_DATA: data },
-  });
+  app = await launchDesktop(data);
   const reopened = await app.firstWindow();
   await reopened.route('https://**', (route) => route.abort());
   await reopened.route('http://**', (route) => route.abort());
@@ -64,7 +81,7 @@ test('actual bundled CPU recognizer: image import opens playable reflow, tuning,
   await expect(reopened.getByRole('button', { name: '合成试听' })).toBeEnabled();
 });
 test('two-page PDF auto-recognizes every page and preserves exact source bytes', async ({}, info) => {
-  test.setTimeout(180000);
+  test.setTimeout(300000);
   const data = await mkdtemp(path.join(tmpdir(), 'scoreprep-local-pdf-')),
     file = path.join(data, 'two-page.pdf');
   const pdf = await PDFDocument.create(),
@@ -75,20 +92,32 @@ test('two-page PDF auto-recognizes every page and preserves exact source bytes',
   }
   const bytes = await pdf.save();
   await writeFile(file, bytes);
-  app = await electron.launch({
-    args: [path.resolve('.')],
-    env: { ...process.env, SCOREPREP_TEST_DATA: data },
-  });
+  app = await launchDesktop(data);
   await app.evaluate(({ dialog }, file) => {
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [file] });
   }, file);
   const page = await app.firstWindow();
+  await page.route('https://**', (route) => route.abort());
+  await page.route('http://**', (route) => route.abort());
   await page.getByLabel('导入乐器').selectOption('piano');
   await page.getByRole('button', { name: '＋ 导入乐谱' }).click();
-  await expect(page.locator('.notation-page svg').first()).toBeVisible({ timeout: 150000 });
+  await expect(page.locator('.notation-page svg').first()).toBeVisible({ timeout: 240000 });
   await expect(page.locator('.notation-page .measure')).toHaveCount(16);
   const p = (await page.evaluate(() => window.desktop.list()))[0];
   expect(p.pageCount).toBe(2);
+  const expected = prepareMusic(
+    await readFile('../backend/fixtures/recognition-study.musicxml', 'utf8'),
+    'piano',
+    false,
+  );
+  const actual = prepareMusic(p.localEdition!.musicXML, 'piano', false);
+  const length = expected.measures.reduce((sum, m) => sum + m.duration, 0);
+  expect(signature(actual.notes).sort()).toEqual(
+    [
+      ...signature(expected.notes),
+      ...signature(expected.notes, expected.measures.length, length),
+    ].sort(),
+  );
   expect(
     Buffer.compare(
       Buffer.from(bytes),
@@ -96,4 +125,6 @@ test('two-page PDF auto-recognizes every page and preserves exact source bytes',
     ),
   ).toBe(0);
   await page.screenshot({ path: info.outputPath('04-pdf-digital-score.png'), fullPage: true });
+  await page.locator('.notation-page .measure').last().scrollIntoViewIfNeeded();
+  await page.screenshot({ path: info.outputPath('05-pdf-last-measures.png'), fullPage: true });
 });

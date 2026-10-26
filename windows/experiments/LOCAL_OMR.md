@@ -141,3 +141,46 @@ note/type-duration events were identical to the unmasked baseline. The same thre
 raw malformed tuplets remained. This is causal evidence for the observed glyph
 confusion; it has not been integrated as an ornament correction. An owned case
 containing a real trill alongside a fingering remains necessary before adoption.
+
+## Automatic desktop candidate
+
+The owned real-trill control is now implemented: eight quarter notes with three
+printed finger-4 marks, two sharing genuine trills. Actual inference invents one
+extra trill; a copy masking only those digits preserves both genuine trills,
+removes the extra and retains every musical event. Source-head/context matching
+permits only that occurrence's correction, followed by original fingering recovery.
+Three decision regressions cover the real results and rejection of changed
+pitches, weak glyph evidence or missing physical ownership. The same policy
+resolves the five private-page false trills without changing its 400 core events.
+
+The desktop now runs the complementary pipeline automatically on every canonical
+page. Its portable Python 3.12.14 runtime, exact dependencies and CPU models are
+bundled alongside Audiveris; no developer interpreter or network service is used.
+Each page's source geometry, original glyphs and corrections are reconciled
+before multi-page joining. A known unresolved source-backed final-bar tuplet is
+rejected explicitly, despite the general parser allowing legitimate final pickups.
+The private dense page still has the old-font 3/8 ambiguity and final timing issue;
+full independent transcription and installation acceptance remain unfinished.
+
+Actual screenshot inspection exposed a separate piano defect that parsed event
+comparison missed: the direct engraver mishandled interleaved short backups.
+Normalizing explicit note times into contiguous voice/staff lanes restores all
+64 rendered onsets/ends and the independent reference's 32 attack groups/quarters.
+True chord membership and printed fingerings are retained. These two renderer
+regressions pass alongside the existing 31 checks; the Windows build passes.
+
+The first repackaged image/reopen and ornament imports passed, but a two-page PDF
+hit the test's 150-second limit near its second-page completion, and small-image
+import exposed a transient Windows EPERM while replacing project metadata.
+The PDF allowance is now 240 seconds. Metadata replacement now waits a bounded
+1.575 seconds for this specific Windows error, preserving old JSON and propagating
+failure if the lock persists. A real Windows file-handle regression passes.
+These findings prompted another complete packaged import run before acceptance.
+
+That four-case packaged run now passes (6.2 minutes total), including both PDF
+pages, automatic small-image recovery and real trill/fingering reconciliation.
+The actual saved piano editions also match all independently rendered start/end
+times: image 64 events/32 attack groups/32 quarters; PDF 128/64/64. The small
+cello result matches all 16 original note events and fingerings. Source bytes
+remain unchanged and screenshots show the corrected voice alignment. This
+does not resolve the private dense page or replace the installed application.

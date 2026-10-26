@@ -1,12 +1,18 @@
 # Windows dependencies and corresponding sources
 
-ScorePrep's source is MIT licensed. The recognizer is a separate local CLI
-program. Its license and the licenses of its bundled dependencies remain their
-own. No model training is performed.
+ScorePrep's Electron client is MIT licensed. The separate local recognition
+workers and bundled dependencies retain their own licenses, listed below.
+No model training is performed.
 
 | Component | Version | License and upstream |
 | --- | --- | --- |
 | Audiveris | 5.11.0 | AGPL-3.0-or-later; https://github.com/Audiveris/audiveris/tree/5.11.0 |
+| homr CPU worker and ONNX weights | ab369ac54277afab582afa4725441f7cbba76593 | AGPL-3.0; full source/license/FAQ in `resources/neural/sources` and `resources/neural/notices` |
+| Python recognition wrapper | source in this repository | AGPL-3.0-only; editable engine.py and worker.py in `resources/neural` |
+| CPython | 3.12.14 | PSF and bundled third-party notices in `resources/neural/python/LICENSE.txt` |
+| ONNX Runtime | 1.29.0 | MIT; upstream license/third-party notices retained in the installed distribution |
+| RapidOCR / PaddleOCR recognition model | 3.7.0 / PP-OCRv4 | Apache-2.0; upstream distribution notices retained |
+| NumPy / headless OpenCV / Pillow / PDFium | exact versions in recognition/requirements.txt | Individual upstream licenses retained in installed distributions under `resources/neural/python/Lib/site-packages` |
 | Audiveris Java runtime | Azul Zulu25.34+17 CRaC CA / OpenJDK 25.0.3+9 LTS | GPL-2.0 with Classpath and Assembly exceptions; full notices in `recognizer/runtime/legal` |
 | English OCR data | tessdata 4.1.0 | Apache-2.0; https://github.com/tesseract-ocr/tessdata/tree/4.1.0 |
 | Electron | 45.0.0 | MIT and Chromium notices; https://github.com/electron/electron/tree/v45.0.0 |
@@ -41,3 +47,9 @@ upstream Audiveris distribution's unchanged runtime, with their legal files.
 Other package license files are retained under `dist/notices`; Electron also
 includes `LICENSE` and `LICENSES.chromium.html` in the installation directory.
 The app icon and included practice artwork are original repository assets.
+
+The separate Python worker includes its pinned upstream source, our complete
+wrapper/build source, the AGPL text and homr's license FAQ. The FAQ records
+unresolved training-data permission questions for commercial use; this prototype
+does not claim those questions have been cleared. It performs local inference
+with existing published weights and does not train a model.

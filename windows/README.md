@@ -1,7 +1,10 @@
 # ScorePrep Windows 0.3.1
 
-Windows 10/11 x64 desktop application. The installer includes the CPU optical
-music recognition engine, Java runtime, English OCR data and score renderer.
+Windows 10/11 x64 desktop application. This branch integrates complementary
+homr and Audiveris CPU recognition, source-glyph recovery and a portable Python
+runtime. It is a development candidate; the installed 0.3.1 and published 0.3.0
+preview have not yet been replaced. The package includes the optical music
+recognition engines, Java/Python runtimes, OCR data and score renderer.
 Users need no server, API key, Python, Java installation or account. Import,
 reading, tuning, synthesis and microphone following work locally and offline.
 
@@ -54,6 +57,7 @@ From `windows/` with Node.js 24, npm and Windows x64:
 
 ```powershell
 npm ci
+# Prepare the isolated neural runtime first; see recognition/README.md.
 npm run runtime
 npm run build
 npm test
@@ -63,10 +67,13 @@ npm run package
 
 Runtime preparation downloads the pinned official Audiveris MSI and OCR data,
 checks SHA-256 and administratively extracts into `.runtime/`; it does not run
-inference or install a shared application. Recognition launches on import.
+inference or install a shared application. It also verifies the separately
+prepared neural inventory and synchronizes its worker source and notices.
+Recognition launches on import.
 Packaging copies the complete runtime outside ASAR and retains its legal files.
 One recognition process tree runs at a time, with 2 active processors and a 3 GiB
-Java heap ceiling. Jobs resume after application restart. Each attempt has its
+Java heap ceiling. Neural inference uses CPU-only ONNX sessions with two threads
+and one staff batch. Jobs resume after application restart. Each attempt has its
 own output folder, so a failed retry cannot reuse an earlier successful export.
 
 Main-process IPC owns files and the recognizer; the renderer has sandboxing,
@@ -79,10 +86,12 @@ See [verification](VERIFICATION.md) and [licenses and sources](THIRD_PARTY.md).
 ## Small image adaptation
 
 When the engine reports a measured staff spacing below its 11-pixel entrance
-threshold, image input is automatically resized once to a useful staff scale,
+threshold, its layout view is automatically resized once to a useful staff scale,
 with a 3x enlargement cap. The original file is unchanged. The derived PNG and
-processing recipe are stored with that attempt. PDF input continues through the
-engine's PDF renderer. Very small, undersampled notation still gets a specific
+processing recipe are stored with that attempt. Images and every PDF page share
+an EXIF-normalized/300-DPI PNG coordinate frame; the neural input retains that
+frame while the adapted Audiveris view is mapped back to it. Very small,
+undersampled notation still gets a specific
 resolution error. Other engine and musical validation failures remain distinct.
 
 Moderate sharpening was compared on a real dense score and reduced structural

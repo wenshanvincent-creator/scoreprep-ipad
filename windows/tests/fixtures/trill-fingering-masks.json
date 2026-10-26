@@ -1,0 +1,41 @@
+{
+  "sourceSHA256": "00d8e29d00302738bb8500679447deada3771ce52a86c1dd07ac94e737103527",
+  "fingerings": [
+    {
+      "measure": "1",
+      "note": 1,
+      "digit": "4",
+      "score": 0.99979,
+      "glyph": {
+        "x": 417.75,
+        "y": 123,
+        "width": 13.5,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "1",
+      "note": 4,
+      "digit": "4",
+      "score": 0.99988,
+      "glyph": {
+        "x": 1869.75,
+        "y": 153.75,
+        "width": 13.5,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "2",
+      "note": 2,
+      "digit": "4",
+      "score": 0.99978,
+      "glyph": {
+        "x": 782.25,
+        "y": 346.5,
+        "width": 13.5,
+        "height": 20.25
+      }
+    }
+  ]
+}

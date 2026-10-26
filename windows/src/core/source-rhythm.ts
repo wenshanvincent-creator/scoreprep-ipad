@@ -33,9 +33,11 @@ export function recoverMalformedTuplets(
       normal: number;
       sourceBeams: string[];
     }[],
+    unresolved: [] as { measure: string; firstNote: number; reason: string }[],
   };
   let divisions = 1;
-  for (const measure of Array.from(doc.getElementsByTagName('measure'))) {
+  const measures = Array.from(doc.getElementsByTagName('measure'));
+  for (const [measureIndex, measure] of measures.entries()) {
     for (const attr of children(measure, 'attributes'))
       divisions = Number(text(attr, 'divisions') || divisions);
     const all = children(measure, 'note');
@@ -72,6 +74,25 @@ export function recoverMalformedTuplets(
         unit = beats[type],
         duration = unit * divisions,
         level = unit ? Math.log2(1 / unit) : 0;
+      const continues = (node: Element | undefined) => {
+        const m = node && child(node, 'time-modification');
+        return (
+          m &&
+          Number(text(m, 'actual-notes')) === actual &&
+          Number(text(m, 'normal-notes')) === normal &&
+          (text(node!, 'voice') || '1') === (text(group[0], 'voice') || '1') &&
+          (text(node!, 'staff') || '1') === (text(group[0], 'staff') || '1')
+        );
+      };
+      if (
+        (start === 0 &&
+          continues(
+            measures[measureIndex - 1] && children(measures[measureIndex - 1], 'note').at(-1),
+          )) ||
+        (end === all.length &&
+          continues(measures[measureIndex + 1] && children(measures[measureIndex + 1], 'note')[0]))
+      )
+        continue;
       if (
         !(actual > 1 && normal > 0) ||
         group.length % actual === 0 ||
@@ -131,8 +152,14 @@ export function recoverMalformedTuplets(
                   Math.abs(f.glyph.y - g.y) < 1e-6,
               )),
         )
-      )
+      ) {
+        result.unresolved.push({
+          measure: measure.getAttribute('number')!,
+          firstNote: start + 1,
+          reason: '原图数字与不完整连音组的关系未能确定。',
+        });
         continue;
+      }
       const sourceTuplet = Array.from(layout.document.getElementsByTagName('tuplet')).some((t) => {
         const b = child(t, 'bounds');
         if (!b || t.getAttribute('staff') !== source.staff.id) return false;
@@ -148,7 +175,14 @@ export function recoverMalformedTuplets(
           f.note <= end &&
           ['0', '1'].includes(f.digit),
       );
-      if (sourceTuplet || !mark) continue;
+      if (sourceTuplet || !mark) {
+        result.unresolved.push({
+          measure: label,
+          firstNote: start + 1,
+          reason: '源符梁组与连音数量不一致，证据不足以修改时值。',
+        });
+        continue;
+      }
       for (const node of group) {
         child(node, 'duration')!.textContent = String(duration);
         node.removeChild(child(node, 'time-modification')!);

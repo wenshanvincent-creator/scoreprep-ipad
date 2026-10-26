@@ -75,3 +75,18 @@ onset and duration sequence. Explicit contrary accidentals, missing source-sign
 evidence and a controlled source bar split must prevent the change. This is a
 controlled decision regression, not a claim that this owned PNG triggered the
 private-page model error.
+
+`trill-fingering-study.musicxml` and PNG are an original two-bar, eight-quarter-note
+cello exercise. Two genuine trills share their notes with printed finger 4; a
+third finger 4 has no trill. Its note positions come from the original Verovio
+renderer, independently of recognition. The extracted actual Audiveris layout,
+actual glyph observations and confirmed masks retain this source coordinate frame.
+
+`trill-fingering-homr.musicxml` and `trill-fingering-comparison.musicxml` are actual
+pinned CPU worker results before/after masking only those three source digits in
+a copy. The baseline invents one extra trill. The comparison retains both real
+trills, removes that false trill and leaves all eight pitch/onset/duration events
+unchanged. The receipt records source/comparison hashes and inference times.
+The recovery test must also retain all three printed fingerings and abstain if
+a pitch changes or a source-head association is missing. No private score is
+included.

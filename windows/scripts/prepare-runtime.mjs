@@ -130,3 +130,4 @@ await writeFile(
     2,
   ),
 );
+await import('./sync-neural-runtime.mjs');

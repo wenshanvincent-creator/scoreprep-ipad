@@ -127,3 +127,38 @@ increased from three to five, so that preprocessing is not enabled. Originals
 remained unchanged. The separate glyph reader correctly read all 16 printed
 digits in the owned fixture; association with note heads and dense-page 3/8
 ambiguities remain work in progress. No installed application upgrade has occurred.
+
+## Complementary desktop candidate
+
+The development client now automatically combines per-page homr recognition and
+Audiveris source geometry with glyph/fingering, clef, accidental, ornament and
+source-supported rhythm recovery. Python 3.12.14, the exact inference dependencies,
+models and full source/license notices are bundled. A 2468-file neural inventory
+matched after packaging. Isolated interpreter launches use bundled imports, and
+the worker disables Python network access; packaged tests also removed external
+Python/Java from PATH and blocked renderer HTTP/HTTPS and Java download proxies.
+
+The final private unpacked candidate passed four actual Electron import checks
+in 6.2 minutes total: an owned piano image, an owned two-page PDF, the 800-pixel
+owned cello image and the owned trill/fingering reference. The image opens tuning,
+demo controls and manual measure return, then reopens its saved edition offline.
+The PDF opens all 16 measures automatically. Original bytes remain unchanged.
+Both piano results match independent source events and actual rendered note
+onsets/ends: 64 events/32 groups/32 quarters and 128/64/64 respectively. The small
+cello result preserves all 16 notes and their exact original fingerings. The
+ornament result preserves two genuine trills and three printed finger-4 marks,
+removing only the false extra trill. Actual score screenshots were inspected.
+
+Screenshot inspection during the preceding candidate run had exposed incorrect
+piano engraving/timing from interleaved short MusicXML backups. Voice/staff
+serialization fixes this without changing pitches, durations or genuine chords;
+two actual-renderer regressions cover the independent reference and added true
+chord/source fingerings. A real transient Windows file lock also exposed EPERM
+during metadata replacement. Bounded waiting for this specific error now passes
+a real file-handle check, while persistent failures still propagate. The 33 music,
+engraving/audio/source-evidence checks, this lock check and the Windows build pass.
+
+This is candidate evidence. The reported dense page's old-font numeral ambiguity,
+remaining malformed final tuplet and complete independent reference comparison
+remain unfinished. The installed 0.3.1 and published 0.3.0 preview remain unchanged;
+no upgrade or real cello rehearsal acceptance is claimed here.

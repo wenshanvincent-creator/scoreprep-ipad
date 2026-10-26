@@ -1,0 +1,132 @@
+<sheet>
+  <picture width="2400" height="604" />
+  <staff id="1" left="174" right="2348">
+    <lines>
+      <line thickness="2" glyph="11">
+        <point x="174" y="185" />
+        <point x="2348" y="185" />
+      </line>
+      <line thickness="2" glyph="12">
+        <point x="174" y="203" />
+        <point x="2348" y="203" />
+      </line>
+      <line thickness="2" glyph="13">
+        <point x="174" y="221" />
+        <point x="2348" y="221" />
+      </line>
+      <line thickness="2" glyph="14">
+        <point x="174" y="239" />
+        <point x="2348" y="239" />
+      </line>
+      <line thickness="2" glyph="15">
+        <point x="174" y="257" />
+        <point x="2348" y="257" />
+      </line>
+    </lines>
+    <header start="174" stop="280">
+      <clef>30</clef>
+      <time>37</time>
+    </header>
+    <barlines>21 6</barlines>
+    <notes>97 101 105 109</notes>
+  </staff>
+  <staff id="2" left="50" right="2348">
+    <lines>
+      <line thickness="2" glyph="16">
+        <point x="50" y="428" />
+        <point x="2348" y="428" />
+      </line>
+      <line thickness="2" glyph="17">
+        <point x="50" y="446" />
+        <point x="2348" y="446" />
+      </line>
+      <line thickness="2" glyph="18">
+        <point x="50" y="464" />
+        <point x="2348" y="464" />
+      </line>
+      <line thickness="2" glyph="19">
+        <point x="50" y="482" />
+        <point x="2348" y="482" />
+      </line>
+      <line thickness="2" glyph="20">
+        <point x="50" y="500" />
+        <point x="2348" y="500" />
+      </line>
+    </lines>
+    <header start="50" stop="108">
+      <clef>45</clef>
+    </header>
+    <barlines>38 10</barlines>
+    <notes>113 117 121 125</notes>
+  </staff>
+  <clef kind="BASS" pitch="-2" shape="F_CLEF" glyph="28" grade="0.774" ctx-grade="0.774" frozen="true" staff="1" id="30">
+    <bounds x="183" y="182" w="50" h="65" />
+  </clef>
+  <clef kind="BASS" pitch="-2" shape="F_CLEF" glyph="43" grade="0.774" ctx-grade="0.774" frozen="true" staff="2" id="45">
+    <bounds x="59" y="425" w="50" h="65" />
+  </clef>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="96" grade="0.779" ctx-grade="0.914" staff="1" id="97">
+    <bounds x="1865" y="221" w="21" h="18" />
+  </head>
+  <head pitch="2" shape="NOTEHEAD_BLACK" glyph="100" grade="0.744" ctx-grade="0.88" staff="1" id="101">
+    <bounds x="1381" y="230" w="21" h="18" />
+  </head>
+  <head pitch="3" shape="NOTEHEAD_BLACK" glyph="104" grade="0.772" ctx-grade="0.911" staff="1" id="105">
+    <bounds x="898" y="239" w="21" h="18" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="108" grade="0.745" ctx-grade="0.897" staff="1" id="109">
+    <bounds x="414" y="248" w="21" h="18" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="112" grade="0.74" ctx-grade="0.903" staff="2" id="113">
+    <bounds x="255" y="455" w="21" h="18" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="116" grade="0.774" ctx-grade="0.896" staff="2" id="117">
+    <bounds x="778" y="464" w="21" h="18" />
+  </head>
+  <head pitch="2" shape="NOTEHEAD_BLACK" glyph="120" grade="0.738" ctx-grade="0.894" staff="2" id="121">
+    <bounds x="1302" y="473" w="21" h="18" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="124" grade="0.742" ctx-grade="0.878" staff="2" id="125">
+    <bounds x="1825" y="491" w="21" h="18" />
+  </head>
+  <relation source="97" target="157">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="0.166" dy="0" grade="0.485">
+      <extension-point x="1886" y="238" />
+    </head-stem>
+  </relation>
+  <relation source="105" target="158">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="0.165" dy="0" grade="0.486">
+      <extension-point x="919" y="256" />
+    </head-stem>
+  </relation>
+  <relation source="109" target="159">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="0.166" dy="0" grade="0.483">
+      <extension-point x="435" y="265" />
+    </head-stem>
+  </relation>
+  <relation source="101" target="160">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="0.194" dy="0" grade="0.369">
+      <extension-point x="1402.5" y="247" />
+    </head-stem>
+  </relation>
+  <relation source="117" target="188">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="0.194" dy="0" grade="0.369">
+      <extension-point x="799.5" y="481" />
+    </head-stem>
+  </relation>
+  <relation source="125" target="189">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="0.194" dy="0" grade="0.368">
+      <extension-point x="1846.5" y="508" />
+    </head-stem>
+  </relation>
+  <relation source="113" target="190">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="0.139" dy="0" grade="0.582">
+      <extension-point x="275.5" y="472" />
+    </head-stem>
+  </relation>
+  <relation source="121" target="191">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="0.165" dy="0" grade="0.486">
+      <extension-point x="1323" y="490" />
+    </head-stem>
+  </relation>
+</sheet>

@@ -1,8 +1,25 @@
 # Complementary recognition components
 
-These components are under development. They are not yet part of the installed
-Windows application. The release goal includes full recognition and installed
-application verification; these modules alone do not satisfy it.
+The development desktop now runs this worker automatically during PDF/image
+import. The installed application has not yet been replaced: full source-score
+accuracy and packaged/installed acceptance remain required.
+
+`electron/recognition-pipeline.ts` rasterizes every page into a common PNG frame,
+runs Audiveris for independent source geometry, and runs the bounded homr worker
+for note recognition. Measured small-staff rejection triggers the validated
+resize/contrast view for source geometry. The neural model continues to see the
+canonical page, not that contrast view. Source/model hashes are checked before
+combining observations. Per-page editions are reconciled before MusicXML pages
+are joined; a structurally permitted partial final bar cannot hide an unresolved
+source-backed tuplet conflict.
+
+`worker.py` is a separate CLI with `pages`, `binarize`, `recognize` and `compare`
+operations. It writes atomic result JSON plus local logs, preserves input bytes,
+loads only verified CPU assets, disables Python network connections and records
+attempts. The desktop invokes the bundled interpreter in isolated UTF-8 mode
+without writing bytecode. No interpreter, Java installation, server or key is
+required from the end user. The source app's queue owns and cancels each child
+process tree; incomplete work is requeued after restart.
 
 `glyphs.py` reads isolated printed components with the RapidOCR 3.7.0 PaddleOCR
 recognition model. It verifies model SHA-256 before loading, uses two CPU threads,
@@ -25,6 +42,14 @@ ambiguous ownership are reported. A numeral supporting an existing tuplet is
 protected. Actual owned homr output plus glyph observations restores all 16
 original printed fingerings on their correct notes without changing musical
 events or generating recommendations.
+
+`src/core/source-ornaments.ts` checks a second actual inference in which only
+confirmed source fingering glyphs were removed. It accepts trill removal only at
+those masked occurrences, with unchanged musical events/context and the same
+independently detected source head in both results. An owned reference with two
+genuine trills plus fingerings and one fingering alone preserves both real trills,
+removes only the false extra trill and restores all three source fingerings.
+Changed pitches/rhythm or ambiguous physical ownership cause abstention.
 
 An optional `top_staff_lines` argument to `GlyphReader.read` accepts source-scale
 polylines as `{"points": [[x, y], ...], "thickness": pixels}`. A separate OCR copy
@@ -84,8 +109,31 @@ The glyph model is distributed in the pinned RapidOCR wheel as
 RapidOCR uses [Apache-2.0](https://github.com/RapidAI/RapidOCR/blob/main/LICENSE).
 Homr and its three model assets retain the provenance recorded in
 [`backend/notices/PROVENANCE.md`](../../backend/notices/PROVENANCE.md).
-Bundled runtime, complete source/license notices and offline installation
-verification remain required before distribution.
+The private desktop candidate now bundles the runtime and complete source/license
+notices. Final quality gates and installed replacement remain required.
+
+## Portable build runtime
+
+The developer prepares an isolated Python **3.12.14** environment with the exact
+requirements above (`uv venv --python 3.12.14` and `uv pip install --no-deps -r
+recognition/requirements.txt`). In that environment, `python -m homr.main --gpu
+no --no-title --init` downloads the three CPU assets. This is a build step; the
+desktop worker never downloads them. The packager verifies the Git revision,
+dependency versions and final asset hashes.
+
+Run `python recognition/package_runtime.py --python-home PYTHON_BASE
+--site-packages VERIFIED_SITE_PACKAGES .runtime/neural` with that environment's
+interpreter. `PYTHON_BASE` is its `sys.base_prefix`. This makes a fresh portable
+runtime from an allowlist, omitting virtual-environment launchers/configuration,
+bytecode, tests and developer caches. Its receipt contains relative file paths
+and hashes. It does not copy a development checkout or any score/library data.
+
+`npm run runtime` verifies the portable files, synchronizes the worker source and
+includes the pinned upstream source archive and full license/FAQ/build notices.
+The archive SHA-256 is
+`23c81d6783c995866c256dba403bfa374639aeb20df64b738a0fc0034d160315`.
+`npm run package` bundles this runtime alongside Audiveris. See NOTICE.md for the
+worker's AGPL scope and the upstream model-permission caveat.
 
 Developer checks from `windows/`:
 
@@ -97,7 +145,15 @@ python recognition/test_glyph_reader.py
 ```
 
 The supplied dimensions are those of the source raster used by homr. This
-developer interface is not an application setup screen. The final import flow
-must derive dimensions and enforce common source provenance automatically.
+developer interface is not an application setup screen. The desktop import flow
+derives these dimensions and verifies common source provenance automatically.
 The inspection report lists partial measures separately: a permitted pickup or
 partial final measure is a structural allowance, not evidence of correct rhythm.
+
+`src/core/voices.ts` serializes eligible interleaved MusicXML voice/staff lanes
+before direct engraving. The engraver otherwise misinterpreted the piano model's
+short backups, despite the explicit input note times being correct. Actual model
+output now matches the independently authored reference's 64 rendered note
+onsets/ends, 32 attack groups and 32 quarters. A genuine chord and printed
+fingerings also survive serialization. Timed mid-bar controls and cross-staff
+voices retain their input order; no pitches, durations or missing beats are added.
