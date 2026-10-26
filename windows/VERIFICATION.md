@@ -105,3 +105,25 @@ events were unchanged. This proves a display improvement, not full recognition
 accuracy: the subsequent source comparison exposed an incorrect treble-clef
 interpretation in candidate bars 21–22. The installed version is unchanged while
 the broader recognition goal continues.
+
+## Independent layout recovery
+
+The new layout reader recovered the private dense candidate's incorrect G2 clef
+interpretation as F4, with the corresponding diatonic displacement in 32 notes.
+Twenty-one distinct matched source heads supported that displacement; it was not
+inferred from the selected cello profile. The recovered SVG was visually checked.
+Four layout tests pass against owned actual homr output and extracted Audiveris
+geometry, retaining the legitimate tenor-to-bass change, recovering an introduced
+treble error, preserving already correct pitches and abstaining with weak anchors.
+
+The raw dense candidate still fails bar 8 after this repair: note-duration
+validation has not been relaxed. An explicit inspection option records source
+layout hashes, corrections and unresolved conflicts before the usual checks.
+
+An isolated Python 3.12.14 environment with exact dependency pins reproduced the
+owned 16-event result and the dense raw baseline. A controlled experiment masked
+40 nearby high-score digit-0/1 glyphs in a derived image; raw timing failures
+increased from three to five, so that preprocessing is not enabled. Originals
+remained unchanged. The separate glyph reader correctly read all 16 printed
+digits in the owned fixture; association with note heads and dense-page 3/8
+ambiguities remain work in progress. No installed application upgrade has occurred.

@@ -3,6 +3,8 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import { parseArgs } from 'node:util';
+import { unzipSync, strFromU8 } from 'fflate';
 import createModule from 'verovio/wasm-hum';
 import { VerovioToolkit } from 'verovio/esm';
 import {
@@ -11,11 +13,19 @@ import {
   type NotatedNote,
   type TimePoint,
 } from '../src/core/music';
+import { recoverClefInterpretation } from '../src/core/layout-evidence';
 
-const [input, output, reference] = process.argv.slice(2);
+const { positionals, values } = parseArgs({
+  allowPositionals: true,
+  options: {
+    layout: { type: 'string' },
+    'source-size': { type: 'string' },
+  },
+});
+const [input, output, reference] = positionals;
 if (!input || !output)
   throw new Error(
-    'Usage: node --import tsx scripts/inspect-recognition.ts INPUT NEW_OUTPUT [REFERENCE]',
+    'Usage: node --import tsx scripts/inspect-recognition.ts INPUT NEW_OUTPUT [REFERENCE] [--layout AUDIVERIS.omr --source-size WIDTHxHEIGHT]',
   );
 const bytes = await readFile(input);
 await mkdir(output);
@@ -26,8 +36,27 @@ const report: Record<string, unknown> = {
 };
 let toolkit: VerovioToolkit | undefined;
 try {
+  let xml = bytes.toString('utf8');
+  if (values.layout) {
+    const size = values['source-size']?.match(/^([1-9]\d*)x([1-9]\d*)$/);
+    if (!size)
+      throw new Error('--layout requires the source raster size: --source-size WIDTHxHEIGHT');
+    const layoutBytes = await readFile(values.layout),
+      files = unzipSync(layoutBytes);
+    const sheets = Object.keys(files).filter((name) => /^sheet#\d+\/sheet#\d+\.xml$/.test(name));
+    if (sheets.length !== 1)
+      throw new Error('Inspect one source page and its one-sheet layout at a time.');
+    const recovered = recoverClefInterpretation(xml, strFromU8(files[sheets[0]]), {
+      width: Number(size[1]),
+      height: Number(size[2]),
+    });
+    report.layoutSHA256 = createHash('sha256').update(layoutBytes).digest('hex');
+    report.clefRecovery = { corrections: recovered.corrections, unresolved: recovered.unresolved };
+    xml = recovered.xml;
+    await writeFile(path.join(output, 'reconciled.musicxml'), xml);
+  }
   // No recommended fingerings: inspection must expose marks the engine retained.
-  const music = prepareMusic(bytes.toString('utf8'), 'cello', false);
+  const music = prepareMusic(xml, 'cello', false);
   report.structuralValidation = 'passed';
   report.measures = music.measures.length;
   report.pitchedNotes = music.notes.filter((n) => !n.rest).length;
