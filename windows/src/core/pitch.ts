@@ -1,38 +1,22 @@
 import { PitchDetector } from 'pitchy';
+import { instrumentProfiles } from './instruments';
 export const instruments = [
-  {
-    id: 'cello',
-    name: '大提琴',
-    notes: [36, 43, 50, 57],
-    hint: 'C2 · G2 · D3 · A3，先选一根空弦，再平稳拉奏。',
-  },
-  { id: 'violin', name: '小提琴', notes: [55, 62, 69, 76], hint: 'G3 · D4 · A4 · E5，空弦调音。' },
-  { id: 'viola', name: '中提琴', notes: [48, 55, 62, 69], hint: 'C3 · G3 · D4 · A4，空弦调音。' },
-  {
-    id: 'bass',
-    name: '低音提琴',
-    notes: [28, 33, 38, 43],
-    hint: 'E1 · A1 · D2 · G2，以下均显示实际发声音高。',
-  },
-  {
-    id: 'guitar',
-    name: '吉他',
-    notes: [40, 45, 50, 55, 59, 64],
-    hint: '标准定弦：E2 · A2 · D3 · G3 · B3 · E4。',
-  },
+  ...instrumentProfiles.map((i) => ({
+    id: i.id,
+    name: i.name,
+    notes: i.strings,
+    hint: i.strings.length
+      ? '按空弦实际音高调音。'
+      : '使用音乐会音高调音，吹奏或弹奏一个持续单音。',
+  })),
   {
     id: 'ukulele',
     name: '尤克里里',
     notes: [67, 60, 64, 69],
-    hint: '高 G 标准定弦：G4 · C4 · E4 · A4。低 G 请用半音模式。',
+    hint: '高 G 标准定弦：G4 · C4 · E4 · A4。',
   },
-  {
-    id: 'chromatic',
-    name: '通用半音 / 管乐',
-    notes: [],
-    hint: '显示实际发声音高（音乐会音高）；移调乐器请按实际音高对照。',
-  },
-] as const;
+  { id: 'chromatic', name: '通用半音', notes: [], hint: '显示实际发声音高。' },
+];
 export const noteName = (midi: number) =>
   ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'][((midi % 12) + 12) % 12] +
   (Math.floor(midi / 12) - 1);

@@ -1,8 +1,8 @@
 {
   "name": "scoreprep-windows",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "ScorePrep for Windows — score reading, practice and instrument tuning",
+  "description": "ScorePrep for Windows \u2014 score reading, practice and instrument tuning",
   "author": "ScorePrep contributors",
   "license": "MIT",
   "type": "module",
@@ -12,11 +12,14 @@
     "start": "electron .",
     "test": "node --import tsx --test tests/*.test.ts",
     "test:desktop": "playwright test",
-    "package": "node -e \"require('electron')\" && npm run build && electron-builder --win nsis --x64 --publish never"
+    "package": "npm run runtime && npm run build && electron-builder --win nsis --x64 --publish never",
+    "runtime": "node scripts/prepare-runtime.mjs"
   },
   "dependencies": {
+    "@xmldom/xmldom": "0.9.12",
+    "fflate": "0.8.3",
+    "fft.js": "4.0.4",
     "pdf-lib": "1.17.1",
-    "pdfjs-dist": "6.4.299",
     "pitchy": "4.1.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
@@ -61,6 +64,15 @@
       "createDesktopShortcut": true
     },
     "electronDist": "node_modules/electron/dist",
-    "npmRebuild": false
+    "npmRebuild": false,
+    "extraResources": [
+      {
+        "from": ".runtime/extracted/Audiveris",
+        "to": "recognizer",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
   }
 }

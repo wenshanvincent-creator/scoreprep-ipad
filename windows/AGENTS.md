@@ -7,8 +7,16 @@
 - Use the AudioContext clock for practice audio and focus. Tuner input is local
   DSP only; request audio permission after Start listening and release input
   before reference playback, leaving tuning, starting practice or hiding the app.
-- No local OMR/model execution. The existing authenticated remote worker stays
-  the only recognition service. Never save credentials in project JSON.
+- Vincent explicitly authorized local OMR/model inference on this development PC
+  on 26 October 2026 for this Windows upgrade. Prefer local CPU recognition and
+  bundle the inference runtime; no training. This supersedes the old remote-only
+  rule for Windows. Keep the Apple app and existing remote worker unchanged.
+- Import automatically recognizes and opens reflowed playable notation. Remove
+  manual crop/timing/review gates and server/token configuration from Windows UI.
+- Follow the actual performance, including slower playing and pauses; never label
+  timer-based advancement as listening. Manual measure clicks reset following.
+- Preserve original fingering. Recommendations favor low positions/fewer shifts;
+  cello uses bass clef throughout without changing sounding pitch.
 - Build: npm run build. Targeted checks: npm test; npm run test:desktop.
 - Inspect real packaged Windows UI and state the boundary between synthetic
   audio checks, OS microphone acquisition and Vincent's cello field test.

@@ -1,8 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Microphone } from './audio';
 import { frequencyFor, instruments, noteName, reading } from './core/pitch';
-export function Tuner({ onClose, onContinue }: { onClose: () => void; onContinue?: () => void }) {
-  const [instrument, setInstrument] = useState(() => localStorage.getItem('instrument') ?? 'cello');
+export function Tuner({
+  onClose,
+  onContinue,
+  initialInstrument,
+}: {
+  onClose: () => void;
+  onContinue?: () => void;
+  initialInstrument?: string;
+}) {
+  const [instrument, setInstrument] = useState(
+    () => initialInstrument ?? localStorage.getItem('instrument') ?? 'cello',
+  );
   const [a4, setA4] = useState(() => Number(localStorage.getItem('a4') ?? 440));
   const [a4Text, setA4Text] = useState(String(a4));
   const [manual, setManual] = useState<number | null>(null),
@@ -159,9 +169,8 @@ export function Tuner({ onClose, onContinue }: { onClose: () => void; onContinue
       >
         <div className="modal-top">
           <div>
-            <span className="eyebrow">练习前 · 调音</span>
             <h2 id="tuner-title" data-tuner-heading tabIndex={-1}>
-              {preset.notes.length ? '先让每根弦就位' : '确认练习音高'}
+              调音器
             </h2>
           </div>
           <button aria-label="关闭调音器" onClick={() => void leave(false)}>
@@ -310,7 +319,6 @@ export function Tuner({ onClose, onContinue }: { onClose: () => void; onContinue
             <button disabled={busy} onClick={() => void playReference()}>
               {reference ? '停止参考音' : `参考音 ${noteName(target)}`}
             </button>
-            <span className="muted">本机分析，不上传录音</span>
           </div>
           {reference && (
             <p className="hint">正在播放参考音。播放结束后点击「开始监听」继续调音。</p>

@@ -6,7 +6,6 @@ import {
   nativeImage,
   powerMonitor,
   protocol,
-  safeStorage,
   session,
 } from 'electron';
 import { readFile, writeFile, mkdir, readdir, rename } from 'node:fs/promises';
@@ -14,7 +13,10 @@ import path from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { PDFDocument } from 'pdf-lib';
-import { validateProject, validateJob, type Project, type RecognitionJob } from '../src/core/model';
+import { validateProject, type Project } from '../src/core/model';
+import { LocalRecognizer } from './recognizer';
+import { prepareMusic } from '../src/core/music';
+import { instrumentFor } from '../src/core/instruments';
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'scoreprep',
@@ -26,6 +28,7 @@ if (!app.isPackaged && process.env.SCOREPREP_TEST_DATA)
   app.setPath('userData', path.resolve(process.env.SCOREPREP_TEST_DATA));
 let win: BrowserWindow;
 let microphoneArmed = false;
+let recognizer: LocalRecognizer;
 const root = () => path.join(app.getPath('userData'), 'library');
 const validID = (id: unknown): string => {
   if (
@@ -51,7 +54,7 @@ async function store(p: Project) {
   await atomicJSON(path.join(folder(p.id), 'project.json'), p);
   return p;
 }
-async function create(bytes: Buffer, filename: string, exercise = false) {
+async function create(bytes: Buffer, filename: string, exercise = false, instrument = 'cello') {
   const ext = path.extname(filename).toLowerCase();
   const mediaType =
     ext === '.pdf'
@@ -79,60 +82,11 @@ async function create(bytes: Buffer, filename: string, exercise = false) {
     readingOrder: [],
     updatedAt: new Date().toISOString(),
   };
-  if (exercise) {
-    for (const [i, [y, height, quarterBeats, phase]] of [
-      [0.1, 0.25, 5, 3],
-      [0.38, 0.26, 4, 0],
-      [0.66, 0.27, 6, 0],
-    ].entries()) {
-      const areaID = randomUUID(),
-        sectionID = randomUUID();
-      p.systems.push({
-        id: areaID,
-        pageIndex: 0,
-        bounds: { x: 0.02, y, width: 0.96, height },
-        label: ['弱起与第 1 小节', '第 2 小节', '第 3–4 小节 · 6/8'][i],
-        timing: [
-          {
-            quarterBeats,
-            meter: { numerator: i === 2 ? 6 : 4, denominator: i === 2 ? 8 : 4 },
-            tempo: { bpm: 60, pulse: i === 2 ? 'dottedQuarter' : 'quarter' },
-            startingBarPhase: phase,
-          },
-        ],
-      });
-      p.sections.push({ id: sectionID, name: `段落 ${i + 1}`, systemIDs: [areaID] });
-      p.readingOrder.push({ id: randomUUID(), sectionID });
-    }
-  }
+  p.instrument = instrumentFor(instrument).id;
   await mkdir(folder(id), { recursive: true });
   await writeFile(path.join(folder(id), 'original'), bytes);
-  return store(p);
-}
-interface PrivateSettings {
-  url: string;
-  encryptedToken: string;
-}
-async function privateSettings(): Promise<PrivateSettings> {
-  try {
-    return JSON.parse(await readFile(path.join(app.getPath('userData'), 'worker.json'), 'utf8'));
-  } catch (e) {
-    if ((e as NodeJS.ErrnoException).code === 'ENOENT') return { url: '', encryptedToken: '' };
-    throw e;
-  }
-}
-function workerURL(value: string) {
-  const u = new URL(value);
-  if (
-    u.username ||
-    u.password ||
-    u.search ||
-    u.hash ||
-    (u.protocol !== 'https:' &&
-      !(u.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(u.hostname)))
-  )
-    throw new Error('云端识别地址需为 HTTPS；本机测试可使用 localhost。');
-  return u.toString().replace(/\/$/, '');
+  await store(p);
+  return recognizer.enqueue(id);
 }
 function handle(name: string, fn: (...args: any[]) => unknown) {
   ipcMain.handle(name, (event, ...args) => {
@@ -149,6 +103,12 @@ function handle(name: string, fn: (...args: any[]) => unknown) {
 }
 app.whenReady().then(async () => {
   await mkdir(root(), { recursive: true });
+  const runtime = app.isPackaged
+    ? path.join(process.resourcesPath, 'recognizer')
+    : path.resolve(__dirname, '../.runtime/extracted/Audiveris');
+  recognizer = new LocalRecognizer(runtime, root(), load, store, (p, xml) => {
+    prepareMusic(xml, p.instrument ?? 'cello', false);
+  });
   protocol.handle('scoreprep', async (request) => {
     try {
       const url = new URL(request.url);
@@ -222,7 +182,7 @@ app.whenReady().then(async () => {
     );
     return projects.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   });
-  handle('library:import', async () => {
+  handle('library:import', async (instrument: string) => {
     const choice = await dialog.showOpenDialog(win, {
       title: '导入原谱',
       properties: ['openFile'],
@@ -230,91 +190,32 @@ app.whenReady().then(async () => {
     });
     if (choice.canceled) return null;
     const file = choice.filePaths[0];
-    return create(await readFile(file), path.basename(file));
+    return create(await readFile(file), path.basename(file), false, instrument);
   });
-  handle('library:exercise', async () =>
+  handle('library:exercise', async (instrument: string) =>
     create(
       await readFile(path.join(__dirname, 'renderer', 'exercise.png')),
       'practice-exercise.png',
       true,
+      instrument,
     ),
   );
   handle('library:save', async (incoming: Project) => {
     const current = await load(incoming.id);
-    return store({
-      ...current,
-      title: incoming.title,
-      systems: incoming.systems,
-      sections: incoming.sections,
-      readingOrder: incoming.readingOrder,
-    });
+    return store({ ...current, instrument: instrumentFor(incoming.instrument ?? 'cello').id });
   });
-  handle('worker:settings', async () => {
-    const s = await privateSettings();
-    return { url: s.url, hasToken: !!s.encryptedToken };
-  });
-  handle('worker:settings-save', async (url: string, token: string) => {
-    const current = await privateSettings();
-    const parsed = workerURL(url);
-    if (typeof token !== 'string' || token.length > 8192) throw new Error('凭据格式无效。');
-    if (current.url !== parsed && !token.trim()) throw new Error('更换地址时请重新输入访问凭据。');
-    let encryptedToken = current.encryptedToken;
-    if (token.trim()) {
-      if (!(await safeStorage.isAsyncEncryptionAvailable()))
-        throw new Error('Windows 凭据加密不可用，未保存。');
-      encryptedToken = (await safeStorage.encryptStringAsync(token.trim())).toString('base64');
+  handle('library:recognize', (id: string) => recognizer.enqueue(validID(id)));
+  for (const entry of await readdir(root(), { withFileTypes: true }))
+    if (entry.isDirectory()) {
+      const p = await load(entry.name);
+      if (p.localRecognition?.state === 'queued' || p.localRecognition?.state === 'running') {
+        p.localRecognition = { state: 'queued', phase: '等待识别' };
+        await store(p);
+        await recognizer.enqueue(p.id);
+      }
     }
-    await atomicJSON(path.join(app.getPath('userData'), 'worker.json'), {
-      url: parsed,
-      encryptedToken,
-    });
-    return { url: parsed, hasToken: !!encryptedToken };
-  });
-  handle('worker:recognize', async (id: string, submit: boolean) => {
-    const p = await load(id),
-      settings = await privateSettings();
-    if (!settings.url || !settings.encryptedToken)
-      throw new Error('请先在设置中填写云端识别地址和凭据。');
-    const bytes = await readFile(path.join(folder(id), 'original'));
-    if (bytes.length > 20 * 1024 * 1024 || p.pageCount > 8)
-      throw new Error('云端识别最多 8 页、20 MiB；原谱仍可正常阅读和手工准备。');
-    const { result: token } = await safeStorage.decryptStringAsync(
-      Buffer.from(settings.encryptedToken, 'base64'),
-    );
-    if (!submit && !p.pendingRecognition) throw new Error('没有可继续查询的识别任务。');
-    const response = await fetch(
-      `${workerURL(settings.url)}/v1/jobs${submit ? '' : '/' + validID(p.pendingRecognition!.id)}`,
-      {
-        method: submit ? 'POST' : 'GET',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: submit
-          ? JSON.stringify({ mediaType: p.mediaType, contentBase64: bytes.toString('base64') })
-          : undefined,
-        signal: AbortSignal.timeout(120000),
-        redirect: 'error',
-      },
-    );
-    if (!response.ok)
-      throw new Error(`识别服务 ${response.status}：${(await response.text()).slice(0, 500)}`);
-    const job = validateJob((await response.json()) as RecognitionJob, p);
-    for (const page of job.pages)
-      if (page.musicXML && page.musicXMLSHA256 && sha(page.musicXML) !== page.musicXMLSHA256)
-        throw new Error('识别页面内容校验失败。');
-    const current = await load(id);
-    // A query already in flight must not restore a result the musician discarded.
-    if (!submit && current.pendingRecognition?.id !== job.id) return current;
-    return store({ ...current, pendingRecognition: job });
-  });
-  handle('worker:review', async (id: string, accept: boolean) => {
-    const p = await load(id);
-    if (accept) {
-      if (p.pendingRecognition?.state !== 'succeeded') throw new Error('识别尚未完成。');
-      p.recognizedEdition = p.pendingRecognition;
-    }
-    delete p.pendingRecognition;
-    return store(p);
-  });
   await win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
   win.show();
 });
+app.on('before-quit', () => recognizer?.close());
 app.on('window-all-closed', () => app.quit());

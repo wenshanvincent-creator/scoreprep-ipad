@@ -7,3 +7,4 @@ playwright-report/
 public/exercise.png
 public/recognition-study.musicxml
 public/app-icon.png
+.runtime/

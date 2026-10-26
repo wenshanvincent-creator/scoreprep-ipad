@@ -8,62 +8,6 @@ let app: ElectronApplication;
 test.afterEach(async () => {
   await app?.close();
 });
-test('real Windows window: source, preparation, cello tuner, transport and saved restart', async ({}, testInfo) => {
-  const data = await mkdtemp(path.join(tmpdir(), 'scoreprep-desktop-'));
-  app = await electron.launch({
-    args: [appPath],
-    env: { ...process.env, SCOREPREP_TEST_DATA: data },
-  });
-  const page = await app.firstWindow();
-  const errors: string[] = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  await expect(page.getByRole('heading', { name: '让注意力留在乐谱上' })).toBeVisible();
-  await page.getByRole('button', { name: '打开示例练习 →' }).click();
-  await expect(page.locator('canvas')).toHaveJSProperty('width', 2100);
-  await page.screenshot({ path: testInfo.outputPath('01-reader.png'), fullPage: true });
-  const p = (await page.evaluate(() => window.desktop.list()))[0];
-  const bytes = await readFile(path.join(data, 'library', p.id, 'original'));
-  expect(createHash('sha256').update(bytes).digest('hex')).toBe(p.originalSHA256);
-  await page.getByRole('button', { name: '准备练习', exact: true }).click();
-  await expect(page.getByRole('button', { name: '保存设置', exact: true })).toBeVisible();
-  await page.getByLabel('乐谱名称').fill('大提琴 Windows 验证');
-  await page.getByRole('button', { name: '保存设置', exact: true }).click();
-  await expect(page.getByText('已保存', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: '← 原谱', exact: true }).click();
-  await page.getByRole('button', { name: '开始练习 →' }).click();
-  await expect(page.getByRole('dialog')).toBeVisible();
-  await expect(page.getByLabel('乐器', { exact: true })).toHaveValue('cello');
-  await expect(page.getByRole('button', { name: /^C2/ })).toBeVisible();
-  // The tuner remains idle until the explicit listening action.
-  expect(await page.evaluate(() => document.querySelector('.pitch-hz')?.textContent)).toBe(
-    '点击开始监听',
-  );
-  await page.screenshot({ path: testInfo.outputPath('02-cello-tuner.png'), fullPage: true });
-  await page.getByRole('button', { name: '跳过调音' }).click();
-  await expect(page.getByText('预备拍 ·', { exact: false })).toBeVisible();
-  await page.getByRole('button', { name: 'Ⅱ 暂停' }).click();
-  const paused = await page.locator('.beat-strip').innerText();
-  await page.waitForTimeout(250);
-  expect(await page.locator('.beat-strip').innerText()).toBe(paused);
-  await page.getByLabel('速度', { exact: true }).selectOption('2');
-  await page.getByRole('button', { name: '▶ 继续' }).click();
-  await expect(page.getByText('正在练习', { exact: true })).toBeVisible({ timeout: 6000 });
-  await page.screenshot({ path: testInfo.outputPath('03-practice.png'), fullPage: true });
-  await page.getByRole('button', { name: 'Ⅱ 暂停' }).click();
-  await page.getByLabel('跳至', { exact: true }).selectOption('2');
-  await expect(page.locator('.current-line')).toContainText('第 3–4 小节');
-  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setSize(800, 900));
-  await page.screenshot({ path: testInfo.outputPath('04-narrow-practice.png'), fullPage: true });
-  expect(errors).toEqual([]);
-  await app.close();
-  app = await electron.launch({
-    args: [appPath],
-    env: { ...process.env, SCOREPREP_TEST_DATA: data },
-  });
-  const reopened = await app.firstWindow();
-  await reopened.getByRole('button', { name: /大提琴 Windows 验证/ }).click();
-  await expect(reopened.getByRole('heading', { name: '大提琴 Windows 验证' })).toBeVisible();
-});
 test('synthetic cello C2 passes the desktop capture path; reference, hide and exit release input', async ({}, testInfo) => {
   const data = await mkdtemp(path.join(tmpdir(), 'scoreprep-mic-')),
     wave = path.join(data, 'cello-C2.wav'),
@@ -103,7 +47,7 @@ test('synthetic cello C2 passes the desktop capture path; reference, hide and ex
     env: { ...process.env, SCOREPREP_TEST_DATA: data },
   });
   const page = await app.firstWindow();
-  await expect(page.getByRole('button', { name: '♮ 调音器' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '调音器' })).toBeVisible();
   await page.evaluate(() => {
     const original = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     (window as any).capturedTracks = [];
@@ -113,11 +57,12 @@ test('synthetic cello C2 passes the desktop capture path; reference, hide and ex
       return stream;
     };
   });
-  await page.getByRole('button', { name: '♮ 调音器' }).click();
+  await page.evaluate(()=>{(window as any).interruptions=[];document.addEventListener('visibilitychange',()=>{(window as any).interruptions.push({type:'visibility',hidden:document.hidden,time:Date.now()});});window.desktop.onAudioInterrupted(()=>{(window as any).interruptions.push({type:'main',time:Date.now()});});});
+  await page.getByRole('button', { name: '调音器' }).click();
   expect(await page.evaluate(() => (window as any).capturedTracks.length)).toBe(0);
   await page.getByRole('button', { name: /^C2/ }).click();
   await page.getByRole('button', { name: '开始监听', exact: true }).click();
-  await expect(page.getByRole('button', { name: '停止监听' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '停止监听' })).toBeVisible().catch(async e=>{console.log(await page.evaluate(()=>({interruptions:(window as any).interruptions,visibility:document.visibilityState,tracks:(window as any).capturedTracks.map((t:MediaStreamTrack)=>t.readyState)})));throw e;});
   await expect(page.locator('.note')).toHaveText('C2');
   await expect(page.locator('.tuning-status')).toHaveText(/偏低 1[45] 音分/);
   await page.screenshot({ path: testInfo.outputPath('05-cello-low-C-input.png'), fullPage: true });
@@ -149,7 +94,7 @@ test('synthetic cello C2 passes the desktop capture path; reference, hide and ex
       ),
     )
     .toBe(true);
-  await page.getByRole('button', { name: '♮ 调音器' }).click();
+  await page.getByRole('button', { name: '调音器' }).click();
   await page.getByRole('button', { name: '开始监听', exact: true }).click();
   await expect(page.getByRole('button', { name: '停止监听' })).toBeVisible();
   await page.evaluate(() =>
@@ -157,7 +102,7 @@ test('synthetic cello C2 passes the desktop capture path; reference, hide and ex
   );
   await expect(page.getByRole('alert')).toContainText('麦克风已断开');
   await page.getByRole('button', { name: '关闭调音器' }).click();
-  await page.getByRole('button', { name: '♮ 调音器' }).click();
+  await page.getByRole('button', { name: '调音器' }).click();
   await page.evaluate(() => {
     const original = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
     (window as any).originalCapture = original;
@@ -185,21 +130,7 @@ test('synthetic cello C2 passes the desktop capture path; reference, hide and ex
       ),
     )
     .toBe(true);
-  await page.getByRole('button', { name: '打开示例练习 →' }).click();
-  await page.getByRole('button', { name: '开始练习 →' }).click();
-  await page.getByRole('button', { name: '开始监听', exact: true }).click();
-  await expect(page.getByRole('button', { name: '停止监听' })).toBeVisible();
-  await page.getByRole('button', { name: '调好，开始练习 →' }).click();
-  await expect(page.getByRole('button', { name: 'Ⅱ 暂停' })).toBeVisible();
-  await expect
-    .poll(() =>
-      page.evaluate(() =>
-        (window as any).capturedTracks.every((t: MediaStreamTrack) => t.readyState === 'ended'),
-      ),
-    )
-    .toBe(true);
-  await page.getByRole('button', { name: '← 原谱' }).click();
-  await page.getByRole('button', { name: '♮ 调音器' }).click();
+  await page.getByRole('button', { name: '调音器', exact:true }).click();
   await app.evaluate(({ session }) => {
     session.defaultSession.setPermissionCheckHandler(() => false);
     session.defaultSession.setPermissionRequestHandler((_wc, _p, callback) => callback(false));

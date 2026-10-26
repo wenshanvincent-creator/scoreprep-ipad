@@ -1,63 +1,42 @@
-# Windows preview verification — 23 October 2026
+# Windows 0.3 verification
 
-Windows client branch: `feat/windows-tuner`, based on Apple main
-`4743f42046551495f3557acdd2f01bd8896025b6`. Apple sources, native project and
-shared workflow files are untouched. This is an additional Electron client.
+26 October 2026, Windows x64. This workstream changes Windows only; no native
+Apple or existing remote-worker inference code was changed.
 
-## Checks completed
+- TypeScript/build: passed with the sandboxed renderer and local workers.
+- Musical/audio checks: 8 focused cases across cello clef/pitch/source fingerings,
+  a real OMR fingering-3 regression, pickup/compound tempo/repeat expansion,
+  low cello harmonics, calibration, slow/paused/repeated input and piano chords.
+- Native Electron image import: actual bundled Audiveris CPU inference opened an
+  8-bar, 64-note owned piano score automatically. Source SHA-256 stayed identical.
+  The window's bar click, synthesis, tuner opening, 800px reflow and saved offline
+  restart passed. Network requests were blocked for the renderer restart check.
+- Native Electron two-page PDF: both pages recognized into 16 measures; exact PDF
+  bytes preserved. Multiple exported movements are joined automatically in order.
+- Synthetic cello PCM through desktop capture: low C2 cents, reference-tone input
+  release, minimize/resume, closed/late capture, device loss and denied permission
+  passed. One earlier run was interrupted immediately after capture; the targeted
+  diagnostic rerun passed. No product error was hidden or converted to success.
+- Synthetic performance through desktop capture: the saved owned two-staff score
+  followed the incoming notes, waited during a three-second silence and reset on
+  a measure click; stopping released the captured tracks.
+- Owned printed cello inference: actual CPU run exited 0 in 31.35s. 16 pitches and
+  tenor/bass clefs were correct; two source fingering 3s were confused with tuplets.
+  The constrained repair and recommendations now reproduce all 16 source pitches,
+  durations and final fingerings. See tests/fixtures/README.md and music.test.ts.
 
-- TypeScript check and Vite/esbuild production build pass with Node 24.19.0.
-- Ten targeted core checks pass: pickup/count-in and half-open line boundaries,
-  compound tempo pulses, nondividing pulse grids across A–B cycles, pause/resume,
-  speed changes, seek outside loops, terminal fractional pulse display, independent
-  repeated occurrences, unconfirmed timing rejection and worker result identity.
-- Tuning checks cover all four cello strings at 44.1 and 48 kHz, with offsets
-  −23/0/+19 cents and a second harmonic stronger than the fundamental. Error is
-  below 0.6 cents for these synthesized inputs. Silence, weak input and seeded
-  noise produce no success reading. Manual C2 target with C3 input reports +1200
-  cents. A4=442 calibrates A3 to 221 Hz.
-- Bundled Verovio 6.3.0 WASM `musicxml-hum` preserves all 64 pitch/onset/duration
-  events across both staves of the repository's untouched actual homr result.
-  This reuses recorded remote output; it does not run OMR locally.
-- Four real Electron/Windows UI checks pass: source exercise/save/cold reopen;
-  tuner and practice transport; two-page PDF import/second-page drag-crop and
-  confirmed timing; authenticated worker protocol/review with a local contract
-  replay server. That server checks bearer authentication and exact source bytes,
-  returns a real 503 before explicit resume, then replays actual saved homr XML.
-  DPAPI ciphertext is saved and subsequently decrypted for the request; project
-  JSON and renderer settings never contain the token.
-- The capture check sends harmonic-rich C2 at −15 cents through Chromium's fake
-  audio device and the actual getUserMedia → analyser → worker → UI path.
-  It checks no implicit capture, reference playback cleanup, minimize/restore,
-  closing the tuner, simulated input loss, late capture completion after close,
-  proceeding into practice, and permission denial. All acquired tracks end.
-- Real window screenshots were inspected at default and 800px window widths.
-  Practice controls, current music and upcoming context fit in the same viewport.
-  PDF preparation and original/recognized notation comparison were inspected.
-- The final NSIS installer completed a real per-user installation with exit code
-  0 and created the desktop shortcut. Both the packaged executable and installed
-  `ScorePrep.exe` were launched: original-source rendering, cello tuner, count-in,
-  practice and pause worked with no renderer exceptions. These smoke checks did
-  not request a physical microphone.
+Screenshots and traces are local generated artifacts under windows/test-results;
+they are excluded from source publication. The runtime preparation script records
+pinned MSI/OCR/source hashes and a per-JAR inventory. Private scores, worker keys,
+local inference state and local machine paths are excluded from the build inputs.
 
-Runtime source commit: `76b7937d215121f627b835aeb1b8d53fbfd3a99b`.
-Installer: `ScorePrep-0.2.0-Windows-x64.exe`, 116,169,151 bytes.
-SHA-256: `11fc5ff00907ffa77e39468a0efaf7221448ec9bd63a16884468974aa78f0748`.
+The recognizer is not guaranteed error-free on arbitrary printed music. Structural
+checks catch some failures, not every wrong pitch or missing symbol. The follower
+uses a short forward matching window and explicit clicked anchors; arbitrary
+backward recovery and ensemble source separation are not implemented. Recommended
+wind fingering diagrams are not implemented. Piano/string recommendations use
+rules and do not establish professional fingering quality.
 
-Commands: `npm run build`, `npm test`, `npm run test:desktop`. Checks were rerun
-only for changed behavior or a diagnosed failure. Screenshot examples are under
-`docs/screenshots/`; temporary traces and data stay ignored.
-
-## Evidence boundary
-
-The frequency measurements use synthesized audio, not Vincent's cello. Chromium's
-fake capture device does not establish a physical Windows microphone's sensitivity,
-driver behavior, bow noise or room-noise performance. Real cello/microphone rehearsal
-is Vincent's next acceptance check. Choose a string manually first, especially C2.
-New remote OMR needs the configured private service; the Windows protocol replay
-is not a new cloud inference run. Existing remote inference evidence remains in
-[the original homr receipt](../backend/fixtures/observed-homr/README.md).
-
-This preview has no code-signing certificate, auto-update or cross-device library
-sync. The installer is per-user and the same installed app works offline for
-original reading, saved recognized editions, practice and tuning.
+A physical cello/microphone rehearsal still requires Vincent's test. Synthetic
+PCM acceptance is not evidence of acoustic room, bow-noise or hardware behavior.
+The current installer verification receipt is added after the final packaged run.

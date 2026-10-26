@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 4.0.3 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
+<score-partwise version="4.0.3">
+  <identification>
+    <encoding>
+      <software>Audiveris 5.11.0</software>
+      <supports type="yes" element="print" attribute="new-system" value="yes"></supports>
+      <supports type="yes" element="print" attribute="new-page" value="yes"></supports>
+      <supports type="yes" element="accidental"></supports>
+      <supports type="yes" element="beam"></supports>
+      <supports type="yes" element="stem"></supports>
+      <software>ProxyMusic 4.0.3</software>
+      <encoding-date>2026-10-26</encoding-date>
+    </encoding>
+    <source>ScorePrep owned cello study</source>
+    <miscellaneous>
+
+      <miscellaneous-field name="source-sheet-1">1</miscellaneous-field>
+    </miscellaneous>
+  </identification>
+  <defaults>
+    <scaling>
+      <millimeters>9.1440</millimeters>
+      <tenths>40</tenths>
+    </scaling>
+    <page-layout>
+      <page-height>356</page-height>
+      <page-width>1049</page-width>
+      <page-margins type="both">
+        <left-margin>80</left-margin>
+        <right-margin>80</right-margin>
+        <top-margin>80</top-margin>
+        <bottom-margin>80</bottom-margin>
+      </page-margins>
+    </page-layout>
+    <lyric-font font-family="Sans Serif" font-size="10"></lyric-font>
+  </defaults>
+  <part-list>
+    <score-part id="P1">
+      <part-name>Cello</part-name>
+      <part-abbreviation>Cello</part-abbreviation>
+      <score-instrument id="P1-I1">
+        <instrument-name>Voice Oohs</instrument-name>
+      </score-instrument>
+      <midi-instrument id="P1-I1">
+        <midi-channel>1</midi-channel>
+        <midi-program>54</midi-program>
+        <volume>78</volume>
+      </midi-instrument>
+    </score-part>
+  </part-list>
+  <!--= = = = = = = = = = = = = = = = = = = = = = = = = = = = =-->
+  <part id="P1">
+    <!--=======================================================-->
+    <measure number="1" width="233">
+      <print>
+        <system-layout>
+          <system-margins>
+            <left-margin>97</left-margin>
+            <right-margin>28</right-margin>
+          </system-margins>
+          <top-system-distance>99</top-system-distance>
+        </system-layout>
+        <measure-numbering>system</measure-numbering>
+      </print>
+      <attributes>
+        <divisions>3</divisions>
+        <time>
+          <beats>4</beats>
+          <beat-type>4</beat-type>
+        </time>
+        <clef>
+          <sign>C</sign>
+          <line>4</line>
+        </clef>
+        <staff-details print-object="yes"></staff-details>
+      </attributes>
+      <note default-x="71">
+        <pitch>
+          <step>G</step>
+          <octave>3</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="10">up</stem>
+        <notations>
+          <technical>
+            <fingering placement="above" default-y="12">4</fingering>
+          </technical>
+        </notations>
+      </note>
+      <note default-x="111">
+        <pitch>
+          <step>A</step>
+          <octave>3</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-53">down</stem>
+      </note>
+      <direction placement="above">
+        <direction-type>
+          <words default-y="47" relative-x="-4" font-family="serif" font-size="22">Cello clef and ﬁngering study</words>
+        </direction-type>
+      </direction>
+      <note default-x="152">
+        <pitch>
+          <step>B</step>
+          <octave>3</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-50">down</stem>
+        <notations>
+          <technical>
+            <fingering placement="above" default-y="12">1</fingering>
+          </technical>
+        </notations>
+      </note>
+      <note default-x="193">
+        <pitch>
+          <step>C</step>
+          <octave>4</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-45">down</stem>
+        <notations>
+          <technical>
+            <fingering placement="above" default-y="12">2</fingering>
+          </technical>
+        </notations>
+      </note>
+    </measure>
+    <!--=======================================================-->
+    <measure number="2" width="184">
+      <note default-x="12">
+        <pitch>
+          <step>D</step>
+          <octave>4</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-40">down</stem>
+        <notations>
+          <technical>
+            <fingering placement="above" default-y="12">4</fingering>
+          </technical>
+        </notations>
+      </note>
+      <note default-x="53">
+        <pitch>
+          <step>C</step>
+          <octave>4</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-45">down</stem>
+        <notations>
+          <technical>
+            <fingering placement="above" default-y="12">2</fingering>
+          </technical>
+        </notations>
+      </note>
+      <note default-x="93">
+        <pitch>
+          <step>B</step>
+          <octave>3</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-50">down</stem>
+        <notations>
+          <technical>
+            <fingering placement="above" default-y="12">1</fingering>
+          </technical>
+        </notations>
+      </note>
+      <note default-x="134">
+        <pitch>
+          <step>A</step>
+          <octave>3</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-53">down</stem>
+      </note>
+      <attributes>
+        <clef>
+          <sign>F</sign>
+          <line>4</line>
+        </clef>
+      </attributes>
+    </measure>
+    <!--=======================================================-->
+    <measure number="3" width="174">
+      <note default-x="12">
+        <pitch>
+          <step>G</step>
+          <octave>2</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-5">up</stem>
+      </note>
+      <note default-x="52">
+        <pitch>
+          <step>A</step>
+          <octave>2</octave>
+        </pitch>
+        <duration>2</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <time-modification>
+          <actual-notes>3</actual-notes>
+          <normal-notes>2</normal-notes>
+        </time-modification>
+        <stem default-y="0">up</stem>
+        <notations>
+          <tuplet type="start" number="1" placement="above"></tuplet>
+          <technical>
+            <fingering placement="above" default-y="12">1</fingering>
+          </technical>
+        </notations>
+      </note>
+      <note default-x="93">
+        <pitch>
+          <step>B</step>
+          <octave>2</octave>
+        </pitch>
+        <duration>2</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <time-modification>
+          <actual-notes>3</actual-notes>
+          <normal-notes>2</normal-notes>
+        </time-modification>
+        <stem default-y="5">up</stem>
+      </note>
+      <note default-x="133">
+        <pitch>
+          <step>C</step>
+          <octave>3</octave>
+        </pitch>
+        <duration>2</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <time-modification>
+          <actual-notes>3</actual-notes>
+          <normal-notes>2</normal-notes>
+        </time-modification>
+        <stem default-y="10">up</stem>
+        <notations>
+          <tuplet type="stop" number="1"></tuplet>
+          <technical>
+            <fingering placement="above" default-y="12">4</fingering>
+          </technical>
+        </notations>
+      </note>
+    </measure>
+    <!--=======================================================-->
+    <measure number="4" width="174">
+      <note default-x="12">
+        <pitch>
+          <step>D</step>
+          <octave>3</octave>
+        </pitch>
+        <duration>3</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <stem default-y="-53">down</stem>
+      </note>
+      <note default-x="52">
+        <pitch>
+          <step>C</step>
+          <octave>3</octave>
+        </pitch>
+        <duration>2</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <time-modification>
+          <actual-notes>3</actual-notes>
+          <normal-notes>2</normal-notes>
+        </time-modification>
+        <stem default-y="10">up</stem>
+        <notations>
+          <tuplet type="start" number="1" placement="above"></tuplet>
+          <technical>
+            <fingering placement="above" default-y="12">4</fingering>
+          </technical>
+        </notations>
+      </note>
+      <note default-x="93">
+        <pitch>
+          <step>B</step>
+          <octave>2</octave>
+        </pitch>
+        <duration>2</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <time-modification>
+          <actual-notes>3</actual-notes>
+          <normal-notes>2</normal-notes>
+        </time-modification>
+        <stem default-y="5">up</stem>
+      </note>
+      <note default-x="134">
+        <pitch>
+          <step>G</step>
+          <octave>2</octave>
+        </pitch>
+        <duration>2</duration>
+        <voice>1</voice>
+        <type>quarter</type>
+        <time-modification>
+          <actual-notes>3</actual-notes>
+          <normal-notes>2</normal-notes>
+        </time-modification>
+        <stem default-y="-5">up</stem>
+        <notations>
+          <tuplet type="stop" number="1"></tuplet>
+        </notations>
+      </note>
+    </measure>
+  </part>
+</score-partwise>
