@@ -17,6 +17,33 @@ produced missed and incorrect assignments even when all owned glyph texts were
 correct. Association needs the source staff grid and pitch, and source head
 positions for horizontal alignment; it is not implemented by `GlyphReader`.
 
+`src/core/source-marks.ts` implements that association using the source clef and
+staff grid, with ordered one-to-one head registration for single melodic voices.
+Only a pairing shared by every optimal registration becomes source-head
+evidence. Existing printed fingerings are retained; competing digits and
+ambiguous ownership are reported. A numeral supporting an existing tuplet is
+protected. Actual owned homr output plus glyph observations restores all 16
+original printed fingerings on their correct notes without changing musical
+events or generating recommendations.
+
+An optional `top_staff_lines` argument to `GlyphReader.read` accepts source-scale
+polylines as `{"points": [[x, y], ...], "thickness": pixels}`. A separate OCR copy
+removes only this upper staff edge to uncover touching digits. New observations
+must end at that edge, pass a stricter score threshold and not overlap a glyph
+already read from the original. The music recognizer still receives its original
+input. Removing all five lines was rejected because it created stem fragments
+that looked like digits. An actual model test preserves all 16 original digits
+after synthetic contact on one printed 1, with no duplicate and unchanged input
+pixels.
+
+`src/core/source-rhythm.ts` resolves a malformed equal-note tuplet only when
+every note has a distinct source head and stem in the same complete physical
+beam group, the image supports an associated fingering 0 or 1, and no remaining
+numeral or detected tuplet contradicts it. It does not use meter fullness.
+Original owned MusicXML, independently rendered source positions and actual
+Audiveris/OCR observations verify recovery of a deliberately introduced four-note
+3:2 error while preserving real triplets, quintuplets and nine source fingerings.
+
 The existing `src/core/layout-evidence.ts` reconciles a model clef using detected
 source clefs and spatially matched independent noteheads. It does not use a chosen
 instrument, expected note count or hardcoded measures. At least six distinct
@@ -54,8 +81,8 @@ verification remain required before distribution.
 Developer checks from `windows/`:
 
 ```powershell
-node --import tsx --test tests/layout-evidence.test.ts
-node --import tsx scripts/inspect-recognition.ts INPUT NEW_OUTPUT --layout PAGE.omr --source-size WIDTHxHEIGHT
+node --import tsx --test tests/layout-evidence.test.ts tests/source-marks.test.ts tests/source-rhythm.test.ts
+node --import tsx scripts/inspect-recognition.ts INPUT NEW_OUTPUT --layout PAGE.omr --source-size WIDTHxHEIGHT --glyphs OBSERVATIONS.json
 # In the pinned evaluation environment; runs the real glyph model on owned data:
 python recognition/test_glyph_reader.py
 ```
@@ -63,3 +90,5 @@ python recognition/test_glyph_reader.py
 The supplied dimensions are those of the source raster used by homr. This
 developer interface is not an application setup screen. The final import flow
 must derive dimensions and enforce common source provenance automatically.
+The inspection report lists partial measures separately: a permitted pickup or
+partial final measure is a structural allowance, not evidence of correct rhythm.

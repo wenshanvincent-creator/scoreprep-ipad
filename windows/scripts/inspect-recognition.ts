@@ -14,12 +14,15 @@ import {
   type TimePoint,
 } from '../src/core/music';
 import { recoverClefInterpretation } from '../src/core/layout-evidence';
+import { recoverSourceFingerings } from '../src/core/source-marks';
+import { recoverMalformedTuplets } from '../src/core/source-rhythm';
 
 const { positionals, values } = parseArgs({
   allowPositionals: true,
   options: {
     layout: { type: 'string' },
     'source-size': { type: 'string' },
+    glyphs: { type: 'string' },
   },
 });
 const [input, output, reference] = positionals;
@@ -53,12 +56,39 @@ try {
     report.layoutSHA256 = createHash('sha256').update(layoutBytes).digest('hex');
     report.clefRecovery = { corrections: recovered.corrections, unresolved: recovered.unresolved };
     xml = recovered.xml;
+    if (values.glyphs) {
+      const observations = JSON.parse(await readFile(values.glyphs, 'utf8'));
+      const fingerings = recoverSourceFingerings(
+        xml,
+        strFromU8(files[sheets[0]]),
+        { width: Number(size[1]), height: Number(size[2]) },
+        observations.glyphs,
+      );
+      report.glyphSourceSHA256 = observations.sourceSHA256;
+      report.fingeringRecovery = {
+        fingerings: fingerings.fingerings,
+        conflicts: fingerings.conflicts,
+        protectedTupletNumerals: fingerings.protectedTupletNumerals,
+      };
+      const rhythm = recoverMalformedTuplets(
+        fingerings.xml,
+        strFromU8(files[sheets[0]]),
+        { width: Number(size[1]), height: Number(size[2]) },
+        observations.glyphs,
+        fingerings.fingerings,
+      );
+      report.sourceRhythmRecovery = rhythm.corrections;
+      xml = rhythm.xml;
+    }
     await writeFile(path.join(output, 'reconciled.musicxml'), xml);
   }
   // No recommended fingerings: inspection must expose marks the engine retained.
   const music = prepareMusic(xml, 'cello', false);
   report.structuralValidation = 'passed';
   report.measures = music.measures.length;
+  report.partialMeasures = music.measures
+    .filter((m) => Math.abs(m.duration - (m.beats * 4) / m.beatType) > 1e-6)
+    .map((m) => ({ measure: m.label, quarters: m.duration, full: (m.beats * 4) / m.beatType }));
   report.pitchedNotes = music.notes.filter((n) => !n.rest).length;
   report.sourceFingerings = music.notes.filter((n) => n.sourceFingering).length;
   if (reference) {

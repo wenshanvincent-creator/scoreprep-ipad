@@ -23,6 +23,8 @@ interface Head extends Point {
   staff: string;
   position: number;
   grade: number;
+  stemIds: string[];
+  beamIds: string[];
 }
 interface AnchoredNote {
   node: Element;
@@ -81,15 +83,10 @@ function modelClef(node: Element): Clef | undefined {
   return { sign, line, middle: ref[sign] + 2 * (3 - line), x: 0, staff: '', grade: 1 };
 }
 
-/** Reconcile a model clef with independently detected source glyphs and heads.
- * Image coordinates must refer to the same source raster, before Audiveris's
- * recorded resize. No instrument, expected notes, bar count or target key is used.
+/** Read independent staff, clef, head and beam geometry in source coordinates.
+ * Source dimensions refer to the raster before Audiveris's recorded resize.
  */
-export function recoverClefInterpretation(
-  xml: string,
-  layoutXML: string,
-  sourceSize: { width: number; height: number },
-): ClefRecovery {
+export function readSourceLayout(layoutXML: string, sourceSize: { width: number; height: number }) {
   const layout = parse(layoutXML),
     picture = layout.getElementsByTagName('picture')[0];
   if (!picture || !(sourceSize.width > 0 && sourceSize.height > 0))
@@ -130,6 +127,22 @@ export function recoverClefInterpretation(
         },
       ];
     });
+  const stems = new Map<string, string[]>(),
+    beams = new Map<string, string[]>();
+  for (const relation of Array.from(layout.getElementsByTagName('relation'))) {
+    if (child(relation, 'head-stem')) {
+      const id = relation.getAttribute('source')!,
+        list = stems.get(id) ?? [];
+      list.push(relation.getAttribute('target')!);
+      stems.set(id, list);
+    }
+    if (child(relation, 'beam-stem')) {
+      const id = relation.getAttribute('target')!,
+        list = beams.get(id) ?? [];
+      list.push(relation.getAttribute('source')!);
+      beams.set(id, list);
+    }
+  }
   const heads: Head[] = Array.from(layout.getElementsByTagName('head'))
     .filter((h) => child(h, 'bounds'))
     .map((h) => {
@@ -139,6 +152,10 @@ export function recoverClefInterpretation(
         staff: h.getAttribute('staff')!,
         position: Number(h.getAttribute('pitch')),
         grade: Number(h.getAttribute('ctx-grade') || h.getAttribute('grade')),
+        stemIds: stems.get(h.getAttribute('id')!) ?? [],
+        beamIds: [
+          ...new Set((stems.get(h.getAttribute('id')!) ?? []).flatMap((id) => beams.get(id) ?? [])),
+        ],
         x: (Number(bounds.getAttribute('x')) + Number(bounds.getAttribute('w')) / 2) / sx,
         y: (Number(bounds.getAttribute('y')) + Number(bounds.getAttribute('h')) / 2) / sy,
       };
@@ -157,8 +174,20 @@ export function recoverClefInterpretation(
       .sort((a, b) => b.x - a.x)[0];
     if (!clef) return;
     const spacing = (lineY(staff.lines[4], point.x) - lineY(staff.lines[0], point.x)) / 4;
-    return { staff, clef, spacing };
+    return { staff, clef, spacing, middleY: lineY(staff.lines[2], point.x) };
   };
+  return { staves, clefs, heads, locate, document: layout, sx, sy };
+}
+
+/** Reconcile a model clef using source glyphs and spatially matched noteheads.
+ * No instrument, expected notes, bar count or target key is used.
+ */
+export function recoverClefInterpretation(
+  xml: string,
+  layoutXML: string,
+  sourceSize: { width: number; height: number },
+): ClefRecovery {
+  const { heads, locate } = readSourceLayout(layoutXML, sourceSize);
   const doc = parse(xml),
     active = new Map<string, Segment>(),
     segments: Segment[] = [];

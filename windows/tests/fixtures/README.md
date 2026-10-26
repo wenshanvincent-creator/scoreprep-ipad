@@ -36,3 +36,27 @@ were read correctly after connected-component isolation, alongside other
 non-fingering text observations. The file retains source/model hashes and image
 coordinates so association checks can distinguish glyph recognition from correct
 note ownership. It is not an already accepted fingering list.
+
+`dense-tuplet-study.musicxml` is a second original exercise: sixteen beamed
+sixteenth notes, a true quarter-note triplet and an eighth-note quintuplet,
+28 pitched events and nine printed fingerings in three 4/4 bars. Its PNG was
+rendered with Verovio 6.3.0 (`pageWidth=2400`, `scale=100`, encoded system breaks,
+`minLastJustification=0`). The source XML's `imgpos` comments come directly from
+the original renderer's notehead bounding boxes in that PNG. They are independent
+source coordinates, **not** homr output. No candidate transcription supplied the
+reference notes or positions.
+
+`dense-tuplet-layout.xml` extracts actual Audiveris 5.11.0 CPU inference from this
+PNG: image dimensions, three staffs, 28 heads, clefs, detected tuplets and original
+head/stem/beam relations. `dense-tuplet-glyphs.json` is actual pinned glyph-reader
+output, including the nine fingerings, tuplet numerals and unrelated text. These
+were not filtered into an accepted answer. Private paths and unrelated project
+metadata were omitted from the layout extraction.
+
+The rhythm regression deliberately inserts a four-note 3:2 error into the first
+bar's source XML and removes printed fingerings to model their omission. Source
+geometry and actual OCR must restore every event and fingering to the independent
+reference while leaving both genuine tuplets intact. This controlled corruption
+tests the recovery decision; it does not claim homr produced that error on this
+owned image. Additional checks preserve unexplained numerals and reject an
+incomplete physical beam group.

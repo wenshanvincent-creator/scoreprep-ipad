@@ -85,3 +85,40 @@ Engine revision:
 The observed evaluation environment used Python 3.13.9, ONNX Runtime 1.29.0,
 NumPy 2.3.5 and OpenCV 4.13.0. Dependency/model packaging is not included in the
 Windows installer. The existing Apple application and remote worker are unchanged.
+
+## Source marks and malformed tuplets
+
+Source-note association now projects the head row from independent staff/clef
+geometry and registers single-voice note order against detected heads. Pairings
+must be shared by every optimal registration; ambiguous repetitions abstain.
+Actual homr output on the original owned 16-note exercise, combined with actual
+glyph observations, restores every printed fingering on its correct note without
+altering pitch/onset/duration. Existing fingerings remain authoritative.
+
+The new owned 28-note exercise independently covers dense sixteenth-note beams,
+real triplets and quintuplets. Its original MusicXML and renderer-supplied head
+positions are the reference; actual Audiveris/OCR outputs supply source evidence.
+Introducing a four-note 3:2 error and omitting its fingerings is fully recovered
+to that reference, including all nine original fingerings, while retaining both
+real tuplets. Unexplained numeral and incomplete-beam-group cases abstain.
+
+The recovery decision requires distinct source heads and stems, exactly the
+expected beam count in a complete shared physical group, and a supported
+fingering 0 or 1; source tuplet glyphs and unexplained numerals prevent changes.
+No target meter length enters this decision. On the private dense-page baseline,
+two of the three malformed groups are repaired. The last group remains unresolved
+because of the digit-font ambiguity. The inspector now explicitly lists partial
+measures: this known 3.8-quarter final bar remains visible even though the normal
+parser permits a partial first/final bar for legitimate incomplete measures.
+
+Glyph-only separation of the top staff edge uncovers a real touching fingering 1.
+It adds only that observation on the private page, unlike the rejected five-line
+removal experiment, and leaves the music-model input unchanged. A real CPU OCR
+regression retains all 16 owned digits after synthetic staff-line contact without
+duplicates or input changes. English OCR was evaluated but did not resolve the
+old-font 3/8 ambiguity, so it was not adopted.
+
+The 11 targeted layout/association/rhythm checks, two real glyph OCR checks and
+Windows build pass. Full private-page reference comparison, accidental and
+ornament recovery, packaged worker integration and installed replacement remain
+unfinished. This is development evidence, not an installed-app acceptance result.

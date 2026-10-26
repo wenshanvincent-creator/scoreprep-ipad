@@ -33,10 +33,8 @@ class GlyphReader:
         config.Rec.rec_batch_num = 8
         self.recognizer = TextRecognizer(config.Rec)
 
-    def read(self, image, staff_spacings):
+    def read(self, image, staff_spacings, top_staff_lines=()):
         import cv2
-        import numpy as np
-        from rapidocr.ch_ppocr_rec.typings import TextRecInput
         if not staff_spacings or min(staff_spacings) <= 0:
             raise ValueError("Glyph recognition needs measured source staff spacing")
         cv2.setNumThreads(2)
@@ -44,6 +42,56 @@ class GlyphReader:
         if scale > 1:
             image = cv2.resize(image, (round(image.shape[1] * scale), round(image.shape[0] * scale)),
                                interpolation=cv2.INTER_LANCZOS4)
+        observations = self._read_view(image, staff_spacings, scale)
+        if top_staff_lines:
+            import numpy as np
+            separated = image.copy()
+            for line in top_staff_lines:
+                points = np.rint(np.asarray(line["points"]) * scale).astype("int32")
+                cv2.polylines(separated, [points], False, (255, 255, 255),
+                              max(1, round(line["thickness"] * scale + 2)))
+            spacing = statistics.median(staff_spacings)
+            for candidate in self._read_view(separated, staff_spacings, scale):
+                if (len(candidate["text"]) != 1 or candidate["text"] not in "012345" or
+                        candidate["score"] < 0.95):
+                    continue
+                x = candidate["x"] + candidate["width"] / 2
+                bottom = candidate["y"] + candidate["height"]
+                # Only recover a glyph ending at the upper edge of a staff.
+                # Splitting all five lines creates stem fragments resembling 1s.
+                touching = False
+                for line in top_staff_lines:
+                    points = line["points"]
+                    if not points[0][0] <= x <= points[-1][0]:
+                        continue
+                    for a, b in zip(points, points[1:]):
+                        if a[0] <= x <= b[0]:
+                            y = a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0])
+                            touching = candidate["y"] < y and abs(bottom - y) <= spacing * 0.5
+                            break
+                    if touching:
+                        break
+                if not touching:
+                    continue
+
+                def same_component(original):
+                    right = min(original["x"] + original["width"],
+                                candidate["x"] + candidate["width"])
+                    low = min(original["y"] + original["height"], bottom)
+                    intersection = (max(0, right - max(original["x"], candidate["x"])) *
+                                    max(0, low - max(original["y"], candidate["y"])))
+                    smaller = min(original["width"] * original["height"],
+                                  candidate["width"] * candidate["height"])
+                    return intersection / smaller >= 0.5
+                if not any(same_component(original) for original in observations):
+                    candidate["view"] = "top-staff-line-separated"
+                    observations.append(candidate)
+        return dict(model=REC_MODEL, modelSHA256=REC_SHA256, resizeScale=scale, glyphs=observations)
+
+    def _read_view(self, image, staff_spacings, scale):
+        import cv2
+        import numpy as np
+        from rapidocr.ch_ppocr_rec.typings import TextRecInput
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         count, labels, stats, _ = cv2.connectedComponentsWithStats((gray < 160).astype("uint8"), 8)
         low, high = min(staff_spacings) * scale, max(staff_spacings) * scale
@@ -68,7 +116,7 @@ class GlyphReader:
             result = self.recognizer(TextRecInput(img=crops))
             for observation, text, score in zip(observations, result.txts, result.scores, strict=True):
                 observation.update(text=text, score=float(score))
-        return dict(model=REC_MODEL, modelSHA256=REC_SHA256, resizeScale=scale, glyphs=observations)
+        return observations
 
 
 if __name__ == "__main__":
