@@ -83,9 +83,16 @@ async function create(bytes: Buffer, filename: string, exercise = false, instrum
     updatedAt: new Date().toISOString(),
   };
   p.instrument = instrumentFor(instrument).id;
-  await mkdir(folder(id), { recursive: true });
-  await writeFile(path.join(folder(id), 'original'), bytes);
-  await store(p);
+  const imports = path.join(app.getPath('userData'), 'imports');
+  await mkdir(imports, { recursive: true });
+  const staging = path.join(imports, id);
+  await mkdir(staging);
+  await writeFile(path.join(staging, 'original'), bytes);
+  validateProject(p);
+  await atomicJSON(path.join(staging, 'project.json'), p);
+  // Publish the complete project at once; library polling must never see a
+  // directory before its source and metadata have both been written.
+  await rename(staging, folder(id));
   return recognizer.enqueue(id);
 }
 function handle(name: string, fn: (...args: any[]) => unknown) {

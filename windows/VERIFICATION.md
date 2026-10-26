@@ -52,3 +52,34 @@ Closing and reopening with HTTP/HTTPS renderer requests blocked loaded the saved
 edition without another recognition run. This complete installed check took
 32.35 seconds. The local receipt and native screenshots are in `.test-data/`.
 No external Java, Python, server URL or key was used by the installed program.
+
+
+## 0.3.1 image preprocessing work
+
+A reported 1000x1335 image was rejected at SCALE with measured staff spacing of
+8 px; the pinned engine threshold is 11 px. Four deterministic preparations were
+run locally: 2x smooth resize, 2x gray/unsharp, 3x smooth resize, 3x nearest neighbor.
+Each passed the scale gate, but none produced a reliably playable whole score.
+Sharpening reduced the number of full metrical bars. The smooth 3x version retained
+one part and 25 bars, while still failing note-duration validation. The supplied
+score and all derived music/image data remain local and are not repository assets.
+
+The client now automatically performs one bounded resize for this measured failure,
+keeps separate run output folders and the original bytes, and reports the actual
+failure stage. Closing the application cancels the active tree and prevents the
+recovery run from starting. Source and metadata are staged together before library
+publication so polling cannot observe an incomplete import directory.
+
+The automatic recovery flow passed an actual Windows Electron import test on an
+owned cello image reduced to 800 px width: measured low staff spacing triggered
+one resize, the 16 expected pitches/onsets/durations matched the original study,
+notation opened automatically and original input bytes were unchanged. The test
+also polls the library during import, covering the atomic publication regression.
+
+The same recovery test then passed against the installed packaged 0.3.1 executable,
+using an isolated profile and its bundled recognizer. Version, source preservation,
+16 musical events, preprocessing receipt and the actual displayed score were
+checked. An initial screenshot attempt timed out while the window was unfocused;
+focusing the window before capture resolved it. Existing user library data and
+the recognition runtime were retained during the local application-code update.
+The published 0.3.0 installer has not been replaced.

@@ -1,4 +1,4 @@
-# ScorePrep Windows 0.3
+# ScorePrep Windows 0.3.1
 
 Windows 10/11 x64 desktop application. The installer includes the CPU optical
 music recognition engine, Java runtime, English OCR data and score renderer.
@@ -75,3 +75,17 @@ and local musical/audio rules live in `src/core/`. The worker uses Verovio's
 performance timemap, including expanded repeat IDs, rather than image coordinates.
 
 See [verification](VERIFICATION.md) and [licenses and sources](THIRD_PARTY.md).
+
+## Small image adaptation
+
+When the engine reports a measured staff spacing below its 11-pixel entrance
+threshold, image input is automatically resized once to a useful staff scale,
+with a 3x enlargement cap. The original file is unchanged. The derived PNG and
+processing recipe are stored with that attempt. PDF input continues through the
+engine's PDF renderer. Very small, undersampled notation still gets a specific
+resolution error. Other engine and musical validation failures remain distinct.
+
+Moderate sharpening was compared on a real dense score and reduced structural
+quality, so it is not enabled by default. Upscaling passed the size gate but did
+not reliably restore the entire difficult score; it is not a guarantee of note,
+bar, articulation or fingering accuracy. Complete timing checks remain required.

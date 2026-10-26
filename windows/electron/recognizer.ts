@@ -7,6 +7,8 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 import type { Project } from '../src/core/model';
 import { resolveFingeringTuplets } from '../src/core/omr';
 import { instrumentFor } from '../src/core/instruments';
+import { recognitionError, lowInterline } from './recognition-error';
+import { prepareRecognitionImage } from './image-preprocess';
 export const recognizerVersion = '5.11.0';
 export class LocalRecognizer {
   private pending: string[] = [];
@@ -74,67 +76,40 @@ export class LocalRecognizer {
             ? 'source.jpg'
             : 'source.png',
       );
-      await writeFile(filename, await readFile(path.join(folder, 'original')));
+      const original = await readFile(path.join(folder, 'original'));
+      await writeFile(filename, original);
       p.localRecognition = { state: 'running', phase: '正在识别乐谱' };
       await this.store(p);
-      let log = '';
-      const code = await new Promise<number | null>((resolve, reject) => {
-        const proc = spawn(
-          path.join(this.runtime, 'Audiveris.exe'),
-          [
-            '-batch',
-            '-transcribe',
-            '-export',
-            '-swap',
-            '-constant',
-            'org.audiveris.omr.sheet.ProcessingSwitches.fingerings=true',
-            '-constant',
-            'org.audiveris.omr.sheet.ProcessingSwitches.pluckings=true',
-            '-output',
-            job,
-            filename,
-          ],
-          {
-            windowsHide: true,
-            env: {
-              ...process.env,
-              APPDATA: state,
-              LOCALAPPDATA: state,
-              'ProgramFiles(x86)': process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)',
-            },
-            stdio: ['ignore', 'pipe', 'pipe'],
-          },
-        );
-        this.process = proc;
-        const timer = setTimeout(
-          () => {
-            if (proc.pid)
-              spawn('taskkill.exe', ['/PID', String(proc.pid), '/T', '/F'], {
-                windowsHide: true,
-                stdio: 'ignore',
-              });
-            reject(new Error('本地识别超时。'));
-          },
-          20 * 60 * 1000,
-        );
-        const collect = (chunk: Buffer) => {
-          log += chunk.toString('utf8');
-        };
-        proc.stdout.on('data', collect);
-        proc.stderr.on('data', collect);
-        proc.once('error', (error) => {
-          clearTimeout(timer);
-          reject(error);
-        });
-        proc.once('exit', (value) => {
-          clearTimeout(timer);
-          this.process = null;
-          resolve(value);
-        });
-      });
-      await writeFile(path.join(job, 'recognizer.log'), log);
-      if (code !== 0) throw new Error(`本地识别程序未完成（${code ?? '已中断'}）。`);
-      const outputs = await this.findOutputs(job);
+      let output = job;
+      let result = await this.run(filename, output, state);
+      if (this.closed) return;
+      const spacing = lowInterline(result.log);
+      if (result.code !== 0 && p.mediaType !== 'application/pdf' && spacing !== null) {
+        const prepared = prepareRecognitionImage(original, spacing);
+        if (prepared) {
+          const current = await this.load(id);
+          current.localRecognition = { state: 'running', phase: '正在适配谱面尺寸并识别' };
+          await this.store(current);
+          const input = path.join(job, 'prepared.png');
+          await writeFile(input, prepared.png);
+          const { png, ...recipe } = prepared;
+          await writeFile(
+            path.join(job, 'preprocessing.json'),
+            JSON.stringify(
+              { originalSHA256: p.originalSHA256, measuredInterline: spacing, ...recipe },
+              null,
+              2,
+            ),
+          );
+          output = path.join(job, 'prepared');
+          await mkdir(output, { recursive: true });
+          if (this.closed) return;
+          result = await this.run(input, output, state);
+          if (this.closed) return;
+        }
+      }
+      if (result.code !== 0) throw new Error(recognitionError(result.code, result.log));
+      const outputs = await this.findOutputs(output);
       if (!outputs.length)
         throw new Error('没有生成可演奏乐谱。图片可能缺少完整谱表，或识别程序未能还原谱面。');
       outputs.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
@@ -198,6 +173,65 @@ export class LocalRecognizer {
       };
       await this.store(current);
     }
+  }
+  private async run(filename: string, job: string, state: string) {
+    let log = '';
+    const code = await new Promise<number | null>((resolve, reject) => {
+      const proc = spawn(
+        path.join(this.runtime, 'Audiveris.exe'),
+        [
+          '-batch',
+          '-transcribe',
+          '-export',
+          '-swap',
+          '-constant',
+          'org.audiveris.omr.sheet.ProcessingSwitches.fingerings=true',
+          '-constant',
+          'org.audiveris.omr.sheet.ProcessingSwitches.pluckings=true',
+          '-output',
+          job,
+          filename,
+        ],
+        {
+          windowsHide: true,
+          env: {
+            ...process.env,
+            APPDATA: state,
+            LOCALAPPDATA: state,
+            'ProgramFiles(x86)': process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)',
+          },
+          stdio: ['ignore', 'pipe', 'pipe'],
+        },
+      );
+      this.process = proc;
+      const timer = setTimeout(
+        () => {
+          if (proc.pid)
+            spawn('taskkill.exe', ['/PID', String(proc.pid), '/T', '/F'], {
+              windowsHide: true,
+              stdio: 'ignore',
+            });
+          reject(new Error('本地识别超时。'));
+        },
+        20 * 60 * 1000,
+      );
+      const collect = (chunk: Buffer) => {
+        log += chunk.toString('utf8');
+      };
+      proc.stdout.on('data', collect);
+      proc.stderr.on('data', collect);
+      proc.once('error', (error) => {
+        clearTimeout(timer);
+        reject(error);
+      });
+      proc.once('exit', (value) => {
+        clearTimeout(timer);
+        this.process = null;
+        resolve(value);
+      });
+    });
+    await writeFile(path.join(job, 'recognizer.log'), log);
+    return { code, log };
   }
   private async findOutputs(folder: string): Promise<string[]> {
     const result: string[] = [];
