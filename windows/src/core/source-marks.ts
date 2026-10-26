@@ -1,6 +1,18 @@
 import { DOMParser, XMLSerializer, type Element } from '@xmldom/xmldom';
 import { readSourceLayout } from './layout-evidence';
 
+export interface FingeringShapeEvidence {
+  method: 'same-page-shape';
+  text: string;
+  error: number;
+  nextError: number;
+  exemplars: {
+    digit: string;
+    score: number;
+    error: number;
+    glyph: { x: number; y: number; width: number; height: number };
+  }[];
+}
 export interface GlyphObservation {
   text: string;
   score: number;
@@ -8,6 +20,25 @@ export interface GlyphObservation {
   y: number;
   width: number;
   height: number;
+  fingeringEvidence?: FingeringShapeEvidence;
+}
+export function confirmedFingeringShape(e: FingeringShapeEvidence | undefined, digit: string) {
+  return (
+    !!e &&
+    e.method === 'same-page-shape' &&
+    e.text === digit &&
+    e.error <= 0.03 &&
+    e.nextError - e.error >= 0.01 &&
+    e.exemplars.length === 2 &&
+    e.exemplars.every((p) => p.digit === digit && p.score >= 0.85) &&
+    new Set(e.exemplars.map((p) => `${p.glyph.x},${p.glyph.y}`)).size === 2
+  );
+}
+export function confirmedFingeringGlyph(g: GlyphObservation) {
+  return (
+    /^[0-5]$/.test(g.text) &&
+    (g.score >= 0.85 || confirmedFingeringShape(g.fingeringEvidence, g.text))
+  );
 }
 type Layout = ReturnType<typeof readSourceLayout>;
 const children = (e: Element, tag?: string): Element[] =>
@@ -164,6 +195,7 @@ export function recoverSourceFingerings(
       digit: string;
       score: number;
       glyph: { x: number; y: number; width: number; height: number };
+      evidence?: FingeringShapeEvidence;
     }[],
     conflicts: [] as string[],
     protectedTupletNumerals: 0,
@@ -173,7 +205,7 @@ export function recoverSourceFingerings(
   for (const head of layout.heads.filter((h) => h.grade >= 0.85))
     lowerEdges.set(head.staff, Math.max(lowerEdges.get(head.staff) ?? -Infinity, head.y));
   for (const glyph of glyphs) {
-    if (!/^[0-5]$/.test(glyph.text) || glyph.score < 0.85) continue;
+    if (!confirmedFingeringGlyph(glyph)) continue;
     const x = glyph.x + glyph.width / 2,
       y = glyph.y + glyph.height / 2;
     const candidates = notes
@@ -250,6 +282,7 @@ export function recoverSourceFingerings(
       digit: glyph.text,
       score: glyph.score,
       glyph: { x: glyph.x, y: glyph.y, width: glyph.width, height: glyph.height },
+      ...(glyph.fingeringEvidence ? { evidence: glyph.fingeringEvidence } : {}),
     });
   }
   if (added) result.xml = new XMLSerializer().serializeToString(doc);

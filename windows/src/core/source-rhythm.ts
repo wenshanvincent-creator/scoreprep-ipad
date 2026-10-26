@@ -1,6 +1,11 @@
 import { DOMParser, XMLSerializer, type Element } from '@xmldom/xmldom';
 import { readSourceLayout } from './layout-evidence';
-import { sourceNotes, type GlyphObservation, recoverSourceFingerings } from './source-marks';
+import {
+  sourceNotes,
+  confirmedFingeringGlyph,
+  type GlyphObservation,
+  recoverSourceFingerings,
+} from './source-marks';
 const children = (e: Element, tag?: string): Element[] =>
   Array.from(e.childNodes).filter(
     (n): n is Element => n.nodeType === 1 && (!tag || n.nodeName === tag),
@@ -132,7 +137,7 @@ export function recoverMalformedTuplets(
         y1 = Math.max(...anchors.map((n) => n!.y)) + spacing * 6;
       const nearby = glyphs.filter(
         (g) =>
-          g.score >= 0.75 &&
+          (g.score >= 0.75 || confirmedFingeringGlyph(g)) &&
           g.x + g.width / 2 >= x0 - spacing / 2 &&
           g.x + g.width / 2 <= x1 + spacing / 2 &&
           g.y + g.height / 2 >= y0 &&

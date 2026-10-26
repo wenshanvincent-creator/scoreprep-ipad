@@ -119,12 +119,14 @@ def recognize_page(source, output, layout_path, masks_path):
         (output / "glyphs.json").write_text(json.dumps(observations, ensure_ascii=False), encoding="utf-8")
         result.update(glyphs="glyphs.json", layoutSHA256=digest(layout_path))
     if masks_path:
+        from glyphs import confirmed_shape_evidence
         mask_data = json.loads(masks_path.read_text(encoding="utf-8"))
         if mask_data["sourceSHA256"] != digest(source):
             raise ValueError("Fingering mask source does not match this page")
         masked = image.copy()
         for mark in mask_data["fingerings"]:
-            if mark["digit"] not in "012345" or len(mark["digit"]) != 1 or mark["score"] < 0.85:
+            if (mark["digit"] not in "012345" or len(mark["digit"]) != 1 or
+                    (mark["score"] < .85 and not confirmed_shape_evidence(mark.get("evidence"), mark["digit"]))):
                 raise ValueError("Mask needs a confirmed source fingering")
             g = mark["glyph"]
             if not (g["width"] > 0 and g["height"] > 0 and g["x"] >= 0 and g["y"] >= 0
@@ -172,14 +174,15 @@ def read_fingering_rows(source, request_file):
     image = cv2.imdecode(np.frombuffer(source.read_bytes(), dtype="uint8"), cv2.IMREAD_COLOR)
     if image is None:
         raise ValueError("Cannot decode the source page")
-    for row in requests["rows"]:
-        for mark in row["marks"]:
+    prototypes = requests.get("prototypes", [])
+    for marks in [row["marks"] for row in requests["rows"]] + [prototypes]:
+        for mark in marks:
             g = mark["glyph"]
             if not (g["width"] > 0 and g["height"] > 0 and g["x"] >= 0 and g["y"] >= 0
                     and g["x"] + g["width"] <= image.shape[1]
                     and g["y"] + g["height"] <= image.shape[0]):
                 raise ValueError("Source fingering glyph is outside the page raster")
-    readings = GlyphReader().read_fingering_rows(image, requests["rows"], scale)
+    readings = GlyphReader().read_fingering_rows(image, requests["rows"], scale, prototypes)
     return dict(readings=readings, requestSHA256=digest(request_file))
 
 

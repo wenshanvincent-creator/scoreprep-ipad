@@ -12,6 +12,15 @@ REC_MODEL = "ch_PP-OCRv4_rec_infer.onnx"
 REC_SHA256 = "48fc40f24f6d2a207a2b1091d3437eb3cc3eb6b676dc3ef9c37384005483683b"
 
 
+def confirmed_shape_evidence(evidence, digit):
+    if not evidence or evidence["method"] != "same-page-shape" or evidence["text"] != digit:
+        return False
+    examples = evidence["exemplars"]
+    return (evidence["error"] <= .03 and evidence["nextError"] - evidence["error"] >= .01 and
+            len(examples) == 2 and all(p["digit"] == digit and p["score"] >= .85 for p in examples) and
+            len({(p["glyph"]["x"], p["glyph"]["y"]) for p in examples}) == 2)
+
+
 class GlyphReader:
     def __init__(self):
         if importlib.metadata.version("rapidocr") != "3.7.0":
@@ -33,7 +42,7 @@ class GlyphReader:
         config.Rec.rec_batch_num = 8
         self.recognizer = TextRecognizer(config.Rec)
 
-    def read_fingering_rows(self, image, rows, scale):
+    def read_fingering_rows(self, image, rows, scale, prototypes=()):
         """CTC single-character likelihoods, conditioned on an established role.
 
         The caller must establish complete physical fingering rows first. Keep
@@ -49,6 +58,64 @@ class GlyphReader:
                                interpolation=cv2.INTER_LANCZOS4)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         _, labels = cv2.connectedComponents((gray < 160).astype("uint8"), 8)
+
+        def glyph_shape(g):
+            x, y, width, height = [round(g[k] * scale) for k in ("x", "y", "width", "height")]
+            component = labels[y:y + height, x:x + width]
+            counts = np.bincount(component.flatten())
+            if len(counts) <= 1:
+                return None
+            ink = (component == counts[1:].argmax() + 1).astype("uint8")
+            width = round(width * 40 / height)
+            if not 0 < width <= 64:
+                return None
+            ink = cv2.resize(ink, (width, 40), interpolation=cv2.INTER_NEAREST)
+            canvas = np.zeros((48, 64), dtype="float32")
+            left = (64 - width) // 2
+            canvas[4:44, left:left + width] = ink
+            return cv2.GaussianBlur(canvas, (5, 5), 1)
+
+        # Exemplars come only from independently assigned source fingerings on
+        # this page, before any of these readings are adopted. No weights or
+        # score-specific templates are trained, downloaded or retained.
+        shapes = []
+        seen = set()
+        for p in prototypes:
+            g = p["glyph"]
+            key = tuple(g[k] for k in ("x", "y", "width", "height"))
+            if p["digit"] not in "012345" or len(p["digit"]) != 1 or p["score"] < .85 or key in seen:
+                continue
+            shape = glyph_shape(g)
+            if shape is not None:
+                shapes.append((p, shape))
+                seen.add(key)
+
+        def compare_shape(g):
+            target = glyph_shape(g)
+            if target is None:
+                return None
+            by_digit = {}
+            for p, shape in shapes:
+                if p["glyph"] == {k: g[k] for k in ("x", "y", "width", "height")}:
+                    continue
+                if min(g["height"], p["glyph"]["height"]) / max(g["height"], p["glyph"]["height"]) < .75:
+                    continue
+                error = min(float(np.mean((target - np.roll(np.roll(shape, dy, 0), dx, 1)) ** 2))
+                            for dy in (-2, 0, 2) for dx in (-2, 0, 2))
+                by_digit.setdefault(p["digit"], []).append(dict(p, error=error))
+            classes = []
+            for digit, examples in by_digit.items():
+                if len(examples) < 2:
+                    continue
+                examples.sort(key=lambda p: p["error"])
+                classes.append((sum(p["error"] for p in examples[:2]) / 2, digit, examples[:2]))
+            if len(classes) < 3:
+                return None
+            classes.sort(key=lambda p: p[0])
+            error, digit, examples = classes[0]
+            return dict(method="same-page-shape", text=digit, error=error,
+                        nextError=classes[1][0], exemplars=examples)
+
         crops, requests = [], []
         for row_index, row in enumerate(rows):
             for mark_index, mark in enumerate(row["marks"]):
@@ -94,10 +161,14 @@ class GlyphReader:
                 normalizer = np.logaddexp.reduce(list(scores.values()))
                 best = max(scores, key=scores.get)
                 row, mark = requests[start + offset]
-                result.append(dict(row=row, mark=mark, text=best,
-                                   conditionalScore=float(np.exp(scores[best] - normalizer)),
-                                   likelihood=float(np.exp(scores[best])),
-                                   blankLikelihood=float(np.exp(blank))))
+                reading = dict(row=row, mark=mark, text=best,
+                               conditionalScore=float(np.exp(scores[best] - normalizer)),
+                               likelihood=float(np.exp(scores[best])),
+                               blankLikelihood=float(np.exp(blank)))
+                shape = compare_shape(rows[row]["marks"][mark]["glyph"])
+                if shape:
+                    reading["shape"] = shape
+                result.append(reading)
         return result
 
     def read(self, image, staff_spacings, top_staff_lines=()):

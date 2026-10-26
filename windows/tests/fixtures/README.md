@@ -103,6 +103,15 @@ omits source fingerings in the input XML, while keeping the original image intac
 `fingering-roles-readings.json` is the actual offline worker rereading on those
 pixels. It is not evidence that the model originally misread this owned 3.
 All 36 events, 12 printed fingerings and genuine 3/5/8 tuplets must survive.
+
+`fingering-roles-shape.json` records a real offline glyph-worker query on the
+same owned PNG. Its exemplars are the other eleven source-assigned fingerings;
+the controlled first 3 misread is excluded. Two independent 3 glyphs support
+the original first digit, while a deliberately queried genuine tuplet 8 fails
+the pixel-error bound. The decision test lowers only the CTC likelihood to
+exercise the separate shape-evidence path; these are not claimed as actual
+probability failures on this owned image. Duplicate or single exemplars must
+not authorize a correction.
 `fingering-roles-true-eight.json` contains a real pixel reading of the printed
 octuplet 8: conditioning on a hypothetical fingering role still gives negligible
 absolute likelihood for all allowed digits. Tests must abstain in that case.

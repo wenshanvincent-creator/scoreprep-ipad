@@ -134,6 +134,14 @@ vertical ink crossing that line, so a printed digit is not split into fragments.
 Only high-confidence digits at that staff edge are merged without duplicates;
 the original image and the music model's input remain unchanged. The real CPU
 regression covers both touching and crossing on an independently authored score.
+Within a source-confirmed complete fingering row, unresolved digits can also be
+compared with already assigned digits on the same page. This uses two distinct
+exemplar glyphs, preserved aspect ratios, bounded pixel error and separation
+from competing digits. Exemplars are chosen before adopting any new readings;
+no model is trained and no page templates are retained. Shape evidence keeps its
+own distances and source rectangles; it never substitutes a fabricated OCR
+probability. True tuplet numerals remain protected before this stage. The owned
+negative control also queries a genuine 8 directly and rejects its pixel match.
 Homr and its three model assets retain the provenance recorded in
 [`backend/notices/PROVENANCE.md`](../../backend/notices/PROVENANCE.md).
 The private desktop candidate now bundles the runtime and complete source/license

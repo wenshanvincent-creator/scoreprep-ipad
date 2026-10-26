@@ -1,6 +1,11 @@
 import { DOMParser } from '@xmldom/xmldom';
 import { readSourceLayout } from './layout-evidence';
-import { sourceNotes, type GlyphObservation } from './source-marks';
+import {
+  sourceNotes,
+  confirmedFingeringShape,
+  type GlyphObservation,
+  type FingeringShapeEvidence,
+} from './source-marks';
 
 export interface FingeringRow {
   heads: string[];
@@ -13,6 +18,7 @@ export interface FingeringReading {
   text: string;
   conditionalScore: number;
   likelihood: number;
+  shape?: FingeringShapeEvidence;
 }
 const key = (g: GlyphObservation) => [g.x, g.y, g.width, g.height].join(',');
 
@@ -105,21 +111,29 @@ export function applyFingeringReadings(
     adopted = [];
   for (const reading of readings) {
     const mark = rows[reading.row]?.marks[reading.mark];
+    if (!mark) continue;
+    if (/^[0-5]$/.test(mark.glyph.text) && mark.glyph.score >= 0.85) continue;
+    const ctc =
+      /^[0-5]$/.test(reading.text) && reading.conditionalScore >= 0.9 && reading.likelihood >= 0.01;
+    const shape = reading.shape;
     if (
-      !mark ||
-      !/^[0-5]$/.test(reading.text) ||
-      reading.conditionalScore < 0.9 ||
-      reading.likelihood < 0.01
+      !ctc &&
+      (!shape || !/^[0-5]$/.test(shape.text) || !confirmedFingeringShape(shape, shape.text))
     )
       continue;
-    if (/^[0-5]$/.test(mark.glyph.text) && mark.glyph.score >= 0.85) continue;
+    const digit = ctc ? reading.text : shape!.text;
     resolved.set(key(mark.glyph), {
       ...mark.glyph,
-      text: reading.text,
-      score: reading.conditionalScore,
+      text: digit,
+      // Shape error is not an OCR probability. Keep its separate evidence and
+      // require explicit verification instead of manufacturing a confidence.
+      score: ctc ? reading.conditionalScore : 0,
+      ...(!ctc ? { fingeringEvidence: shape } : {}),
     });
     adopted.push({
       ...reading,
+      adoptedText: digit,
+      method: ctc ? 'conditional-ctc' : 'same-page-shape',
       measure: mark.measure,
       note: mark.note,
       rawText: mark.glyph.text,

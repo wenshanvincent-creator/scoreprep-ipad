@@ -1,0 +1,226 @@
+{
+  "sourceSHA256": "178f4c59060d329a4ad48f3855a8a858f19c1738b2288e078e77db94ad353f43",
+  "sourceUnchanged": true,
+  "networkAttempts": 0,
+  "prototypes": [
+    {
+      "measure": "1",
+      "note": 2,
+      "digit": "2",
+      "score": 0.9997,
+      "glyph": {
+        "x": 486.75,
+        "y": 127.5,
+        "width": 13.5,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "1",
+      "note": 3,
+      "digit": "1",
+      "score": 0.99978,
+      "glyph": {
+        "x": 612,
+        "y": 134.25,
+        "width": 11.25,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "1",
+      "note": 4,
+      "digit": "0",
+      "score": 0.99413,
+      "glyph": {
+        "x": 735,
+        "y": 139.5,
+        "width": 13.5,
+        "height": 21
+      }
+    },
+    {
+      "measure": "4",
+      "note": 1,
+      "digit": "1",
+      "score": 0.99988,
+      "glyph": {
+        "x": 291.75,
+        "y": 802.5,
+        "width": 10.5,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "4",
+      "note": 2,
+      "digit": "2",
+      "score": 0.99967,
+      "glyph": {
+        "x": 548.25,
+        "y": 802.5,
+        "width": 12.75,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "4",
+      "note": 3,
+      "digit": "3",
+      "score": 0.99976,
+      "glyph": {
+        "x": 805.5,
+        "y": 802.5,
+        "width": 13.5,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "4",
+      "note": 4,
+      "digit": "4",
+      "score": 0.99985,
+      "glyph": {
+        "x": 1064.25,
+        "y": 802.5,
+        "width": 12.75,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "4",
+      "note": 5,
+      "digit": "1",
+      "score": 0.99991,
+      "glyph": {
+        "x": 1323,
+        "y": 802.5,
+        "width": 11.25,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "4",
+      "note": 6,
+      "digit": "2",
+      "score": 0.99974,
+      "glyph": {
+        "x": 1579.5,
+        "y": 802.5,
+        "width": 12.75,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "4",
+      "note": 7,
+      "digit": "3",
+      "score": 0.99974,
+      "glyph": {
+        "x": 1837.5,
+        "y": 802.5,
+        "width": 12.75,
+        "height": 20.25
+      }
+    },
+    {
+      "measure": "4",
+      "note": 8,
+      "digit": "4",
+      "score": 0.99977,
+      "glyph": {
+        "x": 2094.75,
+        "y": 802.5,
+        "width": 13.5,
+        "height": 20.25
+      }
+    }
+  ],
+  "readings": [
+    {
+      "row": 0,
+      "mark": 0,
+      "text": "3",
+      "conditionalScore": 0.9999775488087526,
+      "likelihood": 0.9976271605254773,
+      "blankLikelihood": 1.324629829468904e-05,
+      "shape": {
+        "method": "same-page-shape",
+        "text": "3",
+        "error": 0.005888238549232483,
+        "nextError": 0.054713401943445206,
+        "exemplars": [
+          {
+            "measure": "4",
+            "note": 7,
+            "digit": "3",
+            "score": 0.99974,
+            "glyph": {
+              "x": 1837.5,
+              "y": 802.5,
+              "width": 12.75,
+              "height": 20.25
+            },
+            "error": 0.005673953797668219
+          },
+          {
+            "measure": "4",
+            "note": 3,
+            "digit": "3",
+            "score": 0.99976,
+            "glyph": {
+              "x": 805.5,
+              "y": 802.5,
+              "width": 13.5,
+              "height": 20.25
+            },
+            "error": 0.006102523300796747
+          }
+        ]
+      }
+    },
+    {
+      "row": 1,
+      "mark": 0,
+      "text": "0",
+      "conditionalScore": 0.6472608341373081,
+      "likelihood": 2.0506849594116945e-05,
+      "blankLikelihood": 0.00026006088592112064,
+      "shape": {
+        "method": "same-page-shape",
+        "text": "3",
+        "error": 0.09199211001396179,
+        "nextError": 0.11323925107717514,
+        "exemplars": [
+          {
+            "measure": "4",
+            "note": 3,
+            "digit": "3",
+            "score": 0.99976,
+            "glyph": {
+              "x": 805.5,
+              "y": 802.5,
+              "width": 13.5,
+              "height": 20.25
+            },
+            "error": 0.09028985351324081
+          },
+          {
+            "measure": "4",
+            "note": 7,
+            "digit": "3",
+            "score": 0.99974,
+            "glyph": {
+              "x": 1837.5,
+              "y": 802.5,
+              "width": 12.75,
+              "height": 20.25
+            },
+            "error": 0.09369436651468277
+          }
+        ]
+      }
+    }
+  ],
+  "method": "Actual owned image: source-assigned prototypes exclude the controlled first 3 misread. Extra genuine 8 query deliberately bypasses role selection as a negative pixel control."
+}

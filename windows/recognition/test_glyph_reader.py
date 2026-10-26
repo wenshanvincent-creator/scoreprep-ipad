@@ -6,7 +6,7 @@ import json
 
 import cv2
 import numpy as np
-from glyphs import GlyphReader
+from glyphs import GlyphReader, confirmed_shape_evidence
 
 
 class PrintedGlyphTest(unittest.TestCase):
@@ -75,6 +75,23 @@ class PrintedGlyphTest(unittest.TestCase):
         restored = [g for g in row if g.get("view") == "top-staff-line-crossing-preserved"]
         self.assertEqual(len(restored), 1)
         self.assertEqual(restored[0]["text"], "1")
+        self.assertTrue(np.array_equal(image, original))
+
+    def test_same_page_shapes_exclude_the_target_and_reject_a_genuine_eight(self):
+        fixtures = Path(__file__).resolve().parents[1] / "tests" / "fixtures"
+        image = cv2.imread(str(fixtures / "fingering-roles-study.png"))
+        original = image.copy()
+        observed = json.loads((fixtures / "fingering-roles-glyphs.json").read_text(encoding="utf-8"))
+        evidence = json.loads((fixtures / "fingering-roles-shape.json").read_text(encoding="utf-8"))
+        three = next(g.copy() for g in observed["glyphs"] if g["text"] == "3" and g["y"] < 160)
+        three.update(text="8", score=.95)
+        eight = json.loads((fixtures / "fingering-roles-true-eight.json").read_text(encoding="utf-8"))["glyph"]
+        rows = [{"marks": [{"glyph": three}]}, {"marks": [{"glyph": eight}]}]
+        readings = self.reader.read_fingering_rows(image, rows, observed["resizeScale"], evidence["prototypes"])
+        self.assertEqual(readings[0]["shape"]["text"], "3")
+        self.assertTrue(confirmed_shape_evidence(readings[0]["shape"], "3"))
+        self.assertFalse(confirmed_shape_evidence(readings[1]["shape"], readings[1]["shape"]["text"]))
+        self.assertTrue(all(p["glyph"]["x"] != three["x"] for p in readings[0]["shape"]["exemplars"]))
         self.assertTrue(np.array_equal(image, original))
 
 

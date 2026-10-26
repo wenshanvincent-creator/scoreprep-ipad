@@ -102,3 +102,44 @@ test('conditional certainty with negligible absolute pixel evidence must abstain
   assert.deepEqual(result.glyphs, gs);
   assert.deepEqual(result.unresolved, [{ measure: '1', note: 1, rawText: '8' }]);
 });
+
+test('two independent same-page glyphs can support a weak reading without inventing an OCR probability', async () => {
+  const evidence = JSON.parse(await readFile('tests/fixtures/fingering-roles-shape.json', 'utf8'));
+  const gs = controlledMisread(),
+    rows = findFingeringRows(raw, layout, size, gs);
+  // Controlled probability failure exercises the shape branch. The shape
+  // distances and exemplar pixels are an actual separate worker receipt.
+  const reading = { ...evidence.readings[0], conditionalScore: 0.5, likelihood: 0.0001 };
+  const resolved = applyFingeringReadings(gs, rows, [reading]);
+  assert.deepEqual(resolved.unresolved, []);
+  assert.equal(resolved.adopted[0].method, 'same-page-shape');
+  const verified = resolved.glyphs.find((g) => g.fingeringEvidence)!;
+  assert.equal(verified.text, '3');
+  assert.equal(verified.score, 0);
+  const result = recoverSourceFingerings(raw, layout, size, resolved.glyphs);
+  assert.deepEqual(events(result.xml), events(reference));
+  assert.equal(
+    result.fingerings.find((f) => f.measure === '1' && f.note === 1)?.evidence?.method,
+    'same-page-shape',
+  );
+});
+
+test('a true eight or a single repeated exemplar cannot pass same-page shape verification', async () => {
+  const evidence = JSON.parse(await readFile('tests/fixtures/fingering-roles-shape.json', 'utf8'));
+  const gs = controlledMisread(),
+    rows = findFingeringRows(raw, layout, size, gs);
+  const genuine = { ...evidence.readings[1], row: 0, mark: 0 };
+  assert.ok(genuine.shape.error > 0.03);
+  for (const shape of [
+    genuine.shape,
+    { ...evidence.readings[0].shape, exemplars: evidence.readings[0].shape.exemplars.slice(0, 1) },
+    {
+      ...evidence.readings[0].shape,
+      exemplars: Array(2).fill(evidence.readings[0].shape.exemplars[0]),
+    },
+  ]) {
+    const result = applyFingeringReadings(gs, rows, [{ ...genuine, shape }]);
+    assert.deepEqual(result.adopted, []);
+    assert.deepEqual(result.unresolved, [{ measure: '1', note: 1, rawText: '8' }]);
+  }
+});

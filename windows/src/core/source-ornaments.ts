@@ -1,5 +1,5 @@
 import { DOMParser, XMLSerializer, type Element } from '@xmldom/xmldom';
-import { sourceNotes, type recoverSourceFingerings } from './source-marks';
+import { sourceNotes, confirmedFingeringShape, type recoverSourceFingerings } from './source-marks';
 import { readSourceLayout } from './layout-evidence';
 
 type Fingering = ReturnType<typeof recoverSourceFingerings>['fingerings'][number];
@@ -83,7 +83,11 @@ export function recoverFingeringOrnaments(
     anchors = new Map(sourceNotes(doc, layout).map((n) => [n.node, n.head])),
     otherAnchors = new Map(sourceNotes(comparison, layout).map((n) => [n.node, n.head]));
   for (const mask of maskedFingerings) {
-    if (!/^[0-5]$/.test(mask.digit) || mask.score < 0.85) continue;
+    if (
+      !/^[0-5]$/.test(mask.digit) ||
+      (mask.score < 0.85 && !confirmedFingeringShape(mask.evidence, mask.digit))
+    )
+      continue;
     const index = measures.findIndex((m) => m.getAttribute('number') === mask.measure);
     if (index < 0) continue;
     const node = children(measures[index]).filter((n) => n.nodeName === 'note')[mask.note - 1],

@@ -195,7 +195,12 @@ export async function recognizeLocalDocument(options: {
       const requests = path.join(folder, 'fingering-rows.json');
       await writeFile(
         requests,
-        JSON.stringify({ sourceSHA256: page.sha256, scale: observations.resizeScale, rows }),
+        JSON.stringify({
+          sourceSHA256: page.sha256,
+          scale: observations.resizeScale,
+          rows,
+          prototypes: interpreted.fingerings.fingerings,
+        }),
       );
       const result = await worker(
         'fingerings',
