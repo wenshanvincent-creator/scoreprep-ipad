@@ -90,3 +90,19 @@ unchanged. The receipt records source/comparison hashes and inference times.
 The recovery test must also retain all three printed fingerings and abstain if
 a pitch changes or a source-head association is missing. No private score is
 included.
+
+`fingering-roles-study.musicxml` and PNG are an original 36-note exercise derived
+from the owned dense-tuplet study, adding a complete four-finger row and a genuine
+eight-in-six octuplet with printed fingers. The first four pitches sit higher so
+their beams are clearly separated from staff lines; no recognition output supplied
+the reference. The original Verovio renderer supplies note positions. The PNG is
+2400x1069; layout and glyph files are actual Audiveris/RapidOCR results.
+
+The role regression deliberately changes one OCR observation from 3 to 8 and
+omits source fingerings in the input XML, while keeping the original image intact.
+`fingering-roles-readings.json` is the actual offline worker rereading on those
+pixels. It is not evidence that the model originally misread this owned 3.
+All 36 events, 12 printed fingerings and genuine 3/5/8 tuplets must survive.
+`fingering-roles-true-eight.json` contains a real pixel reading of the printed
+octuplet 8: conditioning on a hypothetical fingering role still gives negligible
+absolute likelihood for all allowed digits. Tests must abstain in that case.

@@ -1,0 +1,649 @@
+<sheet>
+  <picture width="2400" height="1069" />
+  <staff id="1" left="174" right="2348">
+    <lines>
+      <line thickness="2.5" glyph="23">
+        <point x="174" y="208.5" />
+        <point x="2348" y="208.6" />
+      </line>
+      <line thickness="2.9" glyph="24">
+        <point x="174" y="226.5" />
+        <point x="2348" y="226.5" />
+      </line>
+      <line thickness="3" glyph="25">
+        <point x="174" y="244.5" />
+        <point x="2348" y="244.5" />
+      </line>
+      <line thickness="3" glyph="26">
+        <point x="174" y="262.5" />
+        <point x="2348" y="262.5" />
+      </line>
+      <line thickness="2.2" glyph="27">
+        <point x="174" y="280.1" />
+        <point x="2348" y="280.4" />
+      </line>
+    </lines>
+    <header start="174" stop="280">
+      <clef>52</clef>
+      <time>59</time>
+    </header>
+    <barlines>43 8</barlines>
+    <notes>279 285 289 295 297 299 303 309 315 319 331 335 339 343 347 351</notes>
+  </staff>
+  <staff id="2" left="50" right="2348">
+    <lines>
+      <line thickness="2.1" glyph="28">
+        <point x="50" y="424.5" />
+        <point x="2348" y="424.6" />
+      </line>
+      <line thickness="3" glyph="29">
+        <point x="50" y="442.5" />
+        <point x="2348" y="442.5" />
+      </line>
+      <line thickness="3" glyph="30">
+        <point x="50" y="460.5" />
+        <point x="2348" y="460.5" />
+      </line>
+      <line thickness="3" glyph="31">
+        <point x="50" y="478.5" />
+        <point x="2348" y="478.5" />
+      </line>
+      <line thickness="2.1" glyph="32">
+        <point x="50" y="496.1" />
+        <point x="2348" y="496.4" />
+      </line>
+    </lines>
+    <header start="50" stop="107">
+      <clef>67</clef>
+    </header>
+    <barlines>60 14</barlines>
+    <notes>355 357 361 367 371</notes>
+  </staff>
+  <staff id="3" left="50" right="2349">
+    <lines>
+      <line thickness="2.4" glyph="33">
+        <point x="50" y="640.5" />
+        <point x="2349" y="640.5" />
+      </line>
+      <line thickness="3" glyph="34">
+        <point x="50" y="658.5" />
+        <point x="2349" y="658.5" />
+      </line>
+      <line thickness="3" glyph="35">
+        <point x="50" y="676.5" />
+        <point x="2349" y="676.5" />
+      </line>
+      <line thickness="3" glyph="36">
+        <point x="50" y="694.5" />
+        <point x="2349" y="694.5" />
+      </line>
+      <line thickness="2.1" glyph="37">
+        <point x="50" y="712.1" />
+        <point x="2349" y="712.5" />
+      </line>
+    </lines>
+    <header start="50" stop="107">
+      <clef>75</clef>
+    </header>
+    <barlines>68 20</barlines>
+    <notes>375 377 381 385 391 397 401</notes>
+  </staff>
+  <staff id="4" left="50" right="2348">
+    <lines>
+      <line thickness="2.2" glyph="38">
+        <point x="50" y="893.5" />
+        <point x="2348" y="893.6" />
+      </line>
+      <line thickness="3" glyph="39">
+        <point x="50" y="911.5" />
+        <point x="2348" y="911.5" />
+      </line>
+      <line thickness="3" glyph="40">
+        <point x="50" y="929.5" />
+        <point x="2348" y="929.5" />
+      </line>
+      <line thickness="3" glyph="41">
+        <point x="50" y="947.5" />
+        <point x="2348" y="947.5" />
+      </line>
+      <line thickness="2" glyph="42">
+        <point x="50" y="965.1" />
+        <point x="2348" y="965.4" />
+      </line>
+    </lines>
+    <header start="50" stop="156">
+      <clef>86</clef>
+      <time>94</time>
+    </header>
+    <barlines>76 22</barlines>
+    <notes>416 420 424 428 430 436 440 442</notes>
+  </staff>
+  <clef kind="BASS" pitch="-2" shape="F_CLEF" glyph="50" grade="0.781" ctx-grade="0.781" frozen="true" staff="1" id="52">
+    <bounds x="182" y="206" w="50" h="65" />
+  </clef>
+  <clef kind="BASS" pitch="-2" shape="F_CLEF" glyph="65" grade="0.781" ctx-grade="0.781" frozen="true" staff="2" id="67">
+    <bounds x="58" y="422" w="50" h="65" />
+  </clef>
+  <clef kind="BASS" pitch="-2" shape="F_CLEF" glyph="73" grade="0.781" ctx-grade="0.781" frozen="true" staff="3" id="75">
+    <bounds x="58" y="638" w="50" h="65" />
+  </clef>
+  <clef kind="BASS" pitch="-2" shape="F_CLEF" glyph="84" grade="0.781" ctx-grade="0.781" frozen="true" staff="4" id="86">
+    <bounds x="58" y="891" w="50" h="65" />
+  </clef>
+  <head pitch="-3" shape="NOTEHEAD_BLACK" glyph="278" grade="0.779" ctx-grade="0.958" staff="1" id="279">
+    <bounds x="358" y="208" w="23" h="20" />
+  </head>
+  <head pitch="-2" shape="NOTEHEAD_BLACK" glyph="284" grade="0.734" ctx-grade="0.936" staff="1" id="285">
+    <bounds x="482" y="217" w="23" h="19" />
+  </head>
+  <head pitch="-1" shape="NOTEHEAD_BLACK" glyph="288" grade="0.777" ctx-grade="0.95" staff="1" id="289">
+    <bounds x="606" y="226" w="23" h="20" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="294" grade="0.738" ctx-grade="0.951" staff="1" id="295">
+    <bounds x="731" y="235" w="23" h="19" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="296" grade="0.788" ctx-grade="0.959" staff="1" id="297">
+    <bounds x="1227" y="243" w="23" h="20" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="298" grade="0.793" ctx-grade="0.96" staff="1" id="299">
+    <bounds x="1723" y="244" w="23" h="20" />
+  </head>
+  <head pitch="2" shape="NOTEHEAD_BLACK" glyph="302" grade="0.739" ctx-grade="0.936" staff="1" id="303">
+    <bounds x="1103" y="253" w="23" h="19" />
+  </head>
+  <head pitch="2" shape="NOTEHEAD_BLACK" glyph="308" grade="0.738" ctx-grade="0.936" staff="1" id="309">
+    <bounds x="1599" y="253" w="23" h="19" />
+  </head>
+  <head pitch="3" shape="NOTEHEAD_BLACK" glyph="314" grade="0.788" ctx-grade="0.952" staff="1" id="315">
+    <bounds x="979" y="261" w="23" h="20" />
+  </head>
+  <head pitch="3" shape="NOTEHEAD_BLACK" glyph="318" grade="0.789" ctx-grade="0.952" staff="1" id="319">
+    <bounds x="1475" y="261" w="23" h="20" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="330" grade="0.742" ctx-grade="0.952" staff="1" id="331">
+    <bounds x="855" y="271" w="23" h="19" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="334" grade="0.742" ctx-grade="0.952" staff="1" id="335">
+    <bounds x="1351" y="271" w="23" h="19" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="338" grade="0.753" ctx-grade="0.948" staff="1" id="339">
+    <bounds x="1847" y="271" w="23" h="19" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="342" grade="0.753" ctx-grade="0.934" staff="1" id="343">
+    <bounds x="1971" y="271" w="23" h="19" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="346" grade="0.753" ctx-grade="0.934" staff="1" id="347">
+    <bounds x="2095" y="271" w="23" h="19" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="350" grade="0.754" ctx-grade="0.949" staff="1" id="351">
+    <bounds x="2219" y="271" w="23" h="19" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="354" grade="0.739" ctx-grade="0.932" staff="2" id="355">
+    <bounds x="1865" y="451" w="23" h="19" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="356" grade="0.788" ctx-grade="0.949" staff="2" id="357">
+    <bounds x="1381" y="459" w="23" h="20" />
+  </head>
+  <head pitch="2" shape="NOTEHEAD_BLACK" glyph="360" grade="0.738" ctx-grade="0.933" staff="2" id="361">
+    <bounds x="1002" y="469" w="23" h="19" />
+  </head>
+  <head pitch="3" shape="NOTEHEAD_BLACK" glyph="366" grade="0.792" ctx-grade="0.95" staff="2" id="367">
+    <bounds x="623" y="477" w="23" h="20" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="370" grade="0.754" ctx-grade="0.94" staff="2" id="371">
+    <bounds x="244" y="487" w="23" h="19" />
+  </head>
+  <head pitch="-2" shape="NOTEHEAD_BLACK" glyph="374" grade="0.725" ctx-grade="0.921" staff="3" id="375">
+    <bounds x="1879" y="649" w="23" h="19" />
+  </head>
+  <head pitch="-1" shape="NOTEHEAD_BLACK" glyph="376" grade="0.793" ctx-grade="0.946" staff="3" id="377">
+    <bounds x="1456" y="658" w="23" h="20" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="380" grade="0.737" ctx-grade="0.938" staff="3" id="381">
+    <bounds x="1210" y="667" w="23" h="19" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="384" grade="0.789" ctx-grade="0.949" staff="3" id="385">
+    <bounds x="965" y="675" w="23" h="20" />
+  </head>
+  <head pitch="2" shape="NOTEHEAD_BLACK" glyph="390" grade="0.737" ctx-grade="0.937" staff="3" id="391">
+    <bounds x="719" y="685" w="23" h="19" />
+  </head>
+  <head pitch="3" shape="NOTEHEAD_BLACK" glyph="396" grade="0.789" ctx-grade="0.954" staff="3" id="397">
+    <bounds x="474" y="693" w="23" h="20" />
+  </head>
+  <head pitch="4" shape="NOTEHEAD_BLACK" glyph="400" grade="0.742" ctx-grade="0.95" staff="3" id="401">
+    <bounds x="228" y="703" w="23" h="19" />
+  </head>
+  <head pitch="-3" shape="NOTEHEAD_BLACK" glyph="415" grade="0.782" ctx-grade="0.934" staff="4" id="416">
+    <bounds x="1317" y="893" w="23" h="20" />
+  </head>
+  <head pitch="-2" shape="NOTEHEAD_BLACK" glyph="419" grade="0.762" ctx-grade="0.938" staff="4" id="420">
+    <bounds x="1059" y="902" w="23" h="19" />
+  </head>
+  <head pitch="-2" shape="NOTEHEAD_BLACK" glyph="423" grade="0.766" ctx-grade="0.939" staff="4" id="424">
+    <bounds x="1575" y="902" w="23" h="19" />
+  </head>
+  <head pitch="-1" shape="NOTEHEAD_BLACK" glyph="427" grade="0.786" ctx-grade="0.95" staff="4" id="428">
+    <bounds x="802" y="910" w="23" h="20" />
+  </head>
+  <head pitch="-1" shape="NOTEHEAD_BLACK" glyph="429" grade="0.792" ctx-grade="0.952" staff="4" id="430">
+    <bounds x="1833" y="910" w="23" h="20" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="435" grade="0.756" ctx-grade="0.947" staff="4" id="436">
+    <bounds x="543" y="920" w="23" h="19" />
+  </head>
+  <head pitch="0" shape="NOTEHEAD_BLACK" glyph="439" grade="0.761" ctx-grade="0.954" staff="4" id="440">
+    <bounds x="2091" y="920" w="23" h="19" />
+  </head>
+  <head pitch="1" shape="NOTEHEAD_BLACK" glyph="441" grade="0.789" ctx-grade="0.964" staff="4" id="442">
+    <bounds x="286" y="928" w="23" h="20" />
+  </head>
+  <tuplet shape="TUPLET_THREE" glyph="858" grade="0.797" ctx-grade="0.918" staff="2" id="890">
+    <bounds x="625" y="384" w="19" h="25" />
+  </tuplet>
+  <relation source="244" target="536">
+    <beam-stem beam-portion="LEFT" dx="0.028" dy="0" grade="0.971">
+      <extension-point x="380" y="155.1" />
+    </beam-stem>
+  </relation>
+  <relation source="246" target="536">
+    <beam-stem beam-portion="LEFT" dx="0" dy="0" grade="0.971">
+      <extension-point x="380" y="167.8" />
+    </beam-stem>
+  </relation>
+  <relation source="279" target="536">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="379.5" y="227" />
+    </head-stem>
+  </relation>
+  <relation source="244" target="537">
+    <beam-stem beam-portion="RIGHT" dx="0.001" dy="0" grade="0.999">
+      <extension-point x="752.5" y="173.1" />
+    </beam-stem>
+  </relation>
+  <relation source="246" target="537">
+    <beam-stem beam-portion="RIGHT" dx="0" dy="0" grade="0.999">
+      <extension-point x="752.5" y="185.6" />
+    </beam-stem>
+  </relation>
+  <relation source="295" target="537">
+    <head-stem head-side="RIGHT" consistency="1.5" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="752" y="253" />
+    </head-stem>
+  </relation>
+  <relation source="248" target="538">
+    <beam-stem beam-portion="LEFT" dx="0.001" dy="0" grade="0.999">
+      <extension-point x="876.5" y="208.9" />
+    </beam-stem>
+  </relation>
+  <relation source="252" target="538">
+    <beam-stem beam-portion="LEFT" dx="0" dy="0" grade="0.999">
+      <extension-point x="876.5" y="221.6" />
+    </beam-stem>
+  </relation>
+  <relation source="331" target="538">
+    <head-stem head-side="RIGHT" consistency="1.5" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="876" y="289" />
+    </head-stem>
+  </relation>
+  <relation source="248" target="539">
+    <beam-stem beam-portion="RIGHT" dx="0.001" dy="0" grade="0.999">
+      <extension-point x="1248.5" y="191.1" />
+    </beam-stem>
+  </relation>
+  <relation source="252" target="539">
+    <beam-stem beam-portion="RIGHT" dx="0" dy="0" grade="0.999">
+      <extension-point x="1248.5" y="203.6" />
+    </beam-stem>
+  </relation>
+  <relation source="297" target="539">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="1248" y="262" />
+    </head-stem>
+  </relation>
+  <relation source="250" target="540">
+    <beam-stem beam-portion="LEFT" dx="0.001" dy="0" grade="0.999">
+      <extension-point x="1372.5" y="208.9" />
+    </beam-stem>
+  </relation>
+  <relation source="254" target="540">
+    <beam-stem beam-portion="LEFT" dx="0" dy="0" grade="0.999">
+      <extension-point x="1372.5" y="221.6" />
+    </beam-stem>
+  </relation>
+  <relation source="335" target="540">
+    <head-stem head-side="RIGHT" consistency="1.5" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="1372" y="289" />
+    </head-stem>
+  </relation>
+  <relation source="250" target="541">
+    <beam-stem beam-portion="RIGHT" dx="0.001" dy="0" grade="0.999">
+      <extension-point x="1744.5" y="191.1" />
+    </beam-stem>
+  </relation>
+  <relation source="254" target="541">
+    <beam-stem beam-portion="RIGHT" dx="0" dy="0" grade="0.999">
+      <extension-point x="1744.5" y="203.6" />
+    </beam-stem>
+  </relation>
+  <relation source="299" target="541">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="1744" y="263" />
+    </head-stem>
+  </relation>
+  <relation source="256" target="542">
+    <beam-stem beam-portion="LEFT" dx="0.001" dy="0" grade="0.999">
+      <extension-point x="1868.5" y="223" />
+    </beam-stem>
+  </relation>
+  <relation source="258" target="542">
+    <beam-stem beam-portion="LEFT" dx="0" dy="0" grade="0.999">
+      <extension-point x="1868.5" y="235" />
+    </beam-stem>
+  </relation>
+  <relation source="339" target="542">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="1868" y="289" />
+    </head-stem>
+  </relation>
+  <relation source="256" target="543">
+    <beam-stem beam-portion="RIGHT" dx="0.028" dy="0" grade="0.97">
+      <extension-point x="2241" y="223" />
+    </beam-stem>
+  </relation>
+  <relation source="258" target="543">
+    <beam-stem beam-portion="RIGHT" dx="0" dy="0" grade="0.97">
+      <extension-point x="2241" y="235" />
+    </beam-stem>
+  </relation>
+  <relation source="351" target="543">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="2240.5" y="289" />
+    </head-stem>
+  </relation>
+  <relation source="244" target="544">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="504" y="161.1" />
+    </beam-stem>
+  </relation>
+  <relation source="246" target="544">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="504" y="173.7" />
+    </beam-stem>
+  </relation>
+  <relation source="285" target="544">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.006" dy="0" grade="0.992">
+      <extension-point x="503.5" y="235" />
+    </head-stem>
+  </relation>
+  <relation source="244" target="545">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="628" y="167.1" />
+    </beam-stem>
+  </relation>
+  <relation source="246" target="545">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="628" y="179.7" />
+    </beam-stem>
+  </relation>
+  <relation source="289" target="545">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.006" dy="0" grade="0.992">
+      <extension-point x="627.5" y="245" />
+    </head-stem>
+  </relation>
+  <relation source="248" target="546">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1000.5" y="203" />
+    </beam-stem>
+  </relation>
+  <relation source="252" target="546">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1000.5" y="215.6" />
+    </beam-stem>
+  </relation>
+  <relation source="315" target="546">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="1000" y="280" />
+    </head-stem>
+  </relation>
+  <relation source="248" target="547">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1124.5" y="197.1" />
+    </beam-stem>
+  </relation>
+  <relation source="252" target="547">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1124.5" y="209.6" />
+    </beam-stem>
+  </relation>
+  <relation source="303" target="547">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="1124" y="271" />
+    </head-stem>
+  </relation>
+  <relation source="250" target="548">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1496.5" y="203" />
+    </beam-stem>
+  </relation>
+  <relation source="254" target="548">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1496.5" y="215.6" />
+    </beam-stem>
+  </relation>
+  <relation source="319" target="548">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="1496" y="280" />
+    </head-stem>
+  </relation>
+  <relation source="250" target="549">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1620.5" y="197.1" />
+    </beam-stem>
+  </relation>
+  <relation source="254" target="549">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1620.5" y="209.6" />
+    </beam-stem>
+  </relation>
+  <relation source="309" target="549">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="1620" y="271" />
+    </head-stem>
+  </relation>
+  <relation source="256" target="550">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1993" y="223" />
+    </beam-stem>
+  </relation>
+  <relation source="258" target="550">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1993" y="235" />
+    </beam-stem>
+  </relation>
+  <relation source="343" target="550">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="1992.5" y="289" />
+    </head-stem>
+  </relation>
+  <relation source="256" target="551">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="2117" y="223" />
+    </beam-stem>
+  </relation>
+  <relation source="258" target="551">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="2117" y="235" />
+    </beam-stem>
+  </relation>
+  <relation source="347" target="551">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="2116.5" y="289" />
+    </head-stem>
+  </relation>
+  <relation source="367" target="575">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="644" y="496" />
+    </head-stem>
+  </relation>
+  <relation source="357" target="576">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="1402" y="478" />
+    </head-stem>
+  </relation>
+  <relation source="371" target="577">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="265.5" y="505" />
+    </head-stem>
+  </relation>
+  <relation source="355" target="578">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="1886" y="469" />
+    </head-stem>
+  </relation>
+  <relation source="361" target="579">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="1023" y="487" />
+    </head-stem>
+  </relation>
+  <relation source="264" target="651">
+    <beam-stem beam-portion="LEFT" dx="0.028" dy="0" grade="0.971">
+      <extension-point x="250" y="636.7" />
+    </beam-stem>
+  </relation>
+  <relation source="401" target="651">
+    <head-stem head-side="RIGHT" consistency="1.6" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="249.5" y="721" />
+    </head-stem>
+  </relation>
+  <relation source="264" target="652">
+    <beam-stem beam-portion="RIGHT" dx="0.028" dy="0" grade="0.97">
+      <extension-point x="1232" y="618.4" />
+    </beam-stem>
+  </relation>
+  <relation source="381" target="652">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="1231.5" y="685" />
+    </head-stem>
+  </relation>
+  <relation source="264" target="653">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="495.5" y="632.1" />
+    </beam-stem>
+  </relation>
+  <relation source="397" target="653">
+    <head-stem head-side="RIGHT" consistency="1.5" dx="-0.036" dy="0" grade="0.953">
+      <extension-point x="495" y="712" />
+    </head-stem>
+  </relation>
+  <relation source="264" target="654">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="741" y="627.6" />
+    </beam-stem>
+  </relation>
+  <relation source="391" target="654">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="740.5" y="703" />
+    </head-stem>
+  </relation>
+  <relation source="264" target="655">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="986.5" y="623" />
+    </beam-stem>
+  </relation>
+  <relation source="385" target="655">
+    <head-stem head-side="RIGHT" consistency="1.3" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="986" y="694" />
+    </head-stem>
+  </relation>
+  <relation source="377" target="656">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="1477" y="677" />
+    </head-stem>
+  </relation>
+  <relation source="375" target="657">
+    <head-stem head-side="RIGHT" consistency="1.1" dx="-0.007" dy="0" grade="0.991">
+      <extension-point x="1900.5" y="667" />
+    </head-stem>
+  </relation>
+  <relation source="270" target="698">
+    <beam-stem beam-portion="LEFT" dx="0.001" dy="0" grade="0.999">
+      <extension-point x="307.5" y="854" />
+    </beam-stem>
+  </relation>
+  <relation source="442" target="698">
+    <head-stem head-side="RIGHT" consistency="1.8" dx="-0.036" dy="0" grade="0.953">
+      <extension-point x="307" y="947" />
+    </head-stem>
+  </relation>
+  <relation source="270" target="699">
+    <beam-stem beam-portion="RIGHT" dx="0.001" dy="0" grade="0.999">
+      <extension-point x="2112.5" y="854" />
+    </beam-stem>
+  </relation>
+  <relation source="440" target="699">
+    <head-stem head-side="RIGHT" consistency="1.6" dx="-0.036" dy="0" grade="0.954">
+      <extension-point x="2112" y="938" />
+    </head-stem>
+  </relation>
+  <relation source="270" target="700">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="565.5" y="854" />
+    </beam-stem>
+  </relation>
+  <relation source="436" target="700">
+    <head-stem head-side="RIGHT" consistency="1.6" dx="0.02" dy="0" grade="0.947">
+      <extension-point x="565" y="938" />
+    </head-stem>
+  </relation>
+  <relation source="270" target="701">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="823.5" y="854" />
+    </beam-stem>
+  </relation>
+  <relation source="428" target="701">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="823" y="929" />
+    </head-stem>
+  </relation>
+  <relation source="270" target="702">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1081.1" y="854" />
+    </beam-stem>
+  </relation>
+  <relation source="420" target="702">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="-0.003" dy="0" grade="0.997">
+      <extension-point x="1080.6" y="920" />
+    </head-stem>
+  </relation>
+  <relation source="270" target="703">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1339" y="854" />
+    </beam-stem>
+  </relation>
+  <relation source="416" target="703">
+    <head-stem head-side="RIGHT" consistency="1" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="1338.5" y="912" />
+    </head-stem>
+  </relation>
+  <relation source="270" target="704">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1597" y="854" />
+    </beam-stem>
+  </relation>
+  <relation source="424" target="704">
+    <head-stem head-side="RIGHT" consistency="1.2" dx="-0.008" dy="0" grade="0.99">
+      <extension-point x="1596.5" y="920" />
+    </head-stem>
+  </relation>
+  <relation source="270" target="705">
+    <beam-stem beam-portion="CENTER" dx="0" dy="0" grade="1">
+      <extension-point x="1854.5" y="854" />
+    </beam-stem>
+  </relation>
+  <relation source="430" target="705">
+    <head-stem head-side="RIGHT" consistency="1.4" dx="-0.037" dy="0" grade="0.953">
+      <extension-point x="1854" y="929" />
+    </head-stem>
+  </relation>
+</sheet>

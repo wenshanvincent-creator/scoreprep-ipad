@@ -33,6 +33,73 @@ class GlyphReader:
         config.Rec.rec_batch_num = 8
         self.recognizer = TextRecognizer(config.Rec)
 
+    def read_fingering_rows(self, image, rows, scale):
+        """CTC single-character likelihoods, conditioned on an established role.
+
+        The caller must establish complete physical fingering rows first. Keep
+        the unconstrained observations and absolute likelihoods in the receipt;
+        a conditional posterior alone cannot turn arbitrary marks into digits.
+        """
+        import cv2
+        import numpy as np
+        import unicodedata
+        cv2.setNumThreads(2)
+        if scale > 1:
+            image = cv2.resize(image, (round(image.shape[1] * scale), round(image.shape[0] * scale)),
+                               interpolation=cv2.INTER_LANCZOS4)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        _, labels = cv2.connectedComponents((gray < 160).astype("uint8"), 8)
+        crops, requests = [], []
+        for row_index, row in enumerate(rows):
+            for mark_index, mark in enumerate(row["marks"]):
+                g = mark["glyph"]
+                if len(g["text"]) == 1 and g["text"] in "012345" and g["score"] >= .85:
+                    continue
+                x, y, width, height = [round(g[k] * scale) for k in ("x", "y", "width", "height")]
+                component = labels[y:y + height, x:x + width]
+                counts = np.bincount(component.flatten())
+                if len(counts) <= 1:
+                    continue
+                index = counts[1:].argmax() + 1
+                crop = image[y:y + height, x:x + width].copy()
+                crop[component != index] = 255
+                padding = round(height * .35)
+                crops.append(cv2.copyMakeBorder(crop, padding, padding, padding, padding,
+                                                cv2.BORDER_CONSTANT, value=(255, 255, 255)))
+                requests.append((row_index, mark_index))
+        indices = {str(i): [] for i in range(6)}
+        for index, char in enumerate(self.recognizer.postprocess_op.character):
+            canonical = unicodedata.normalize("NFKC", char)
+            if canonical in indices:
+                indices[canonical].append(index)
+
+        def likelihood(probabilities, index):
+            # CTC states: initial blank, one character, trailing blank. Sum all
+            # alignments for exactly that character rather than one best frame.
+            state = np.array([0., -np.inf, -np.inf])
+            for p in np.log(np.maximum(probabilities, 1e-45)):
+                state = np.array([state[0] + p[0],
+                                  np.logaddexp(state[0], state[1]) + p[index],
+                                  np.logaddexp(state[1], state[2]) + p[0]])
+            return np.logaddexp(state[1], state[2])
+
+        result = []
+        for start in range(0, len(crops), 8):
+            batch = np.stack([self.recognizer.resize_norm_img(c, 320 / 48)
+                              for c in crops[start:start + 8]]).astype("float32")
+            for offset, probabilities in enumerate(self.recognizer.session(batch)):
+                scores = {digit: np.logaddexp.reduce([likelihood(probabilities, i) for i in ids])
+                          for digit, ids in indices.items()}
+                blank = np.log(np.maximum(probabilities[:, 0], 1e-45)).sum()
+                normalizer = np.logaddexp.reduce(list(scores.values()))
+                best = max(scores, key=scores.get)
+                row, mark = requests[start + offset]
+                result.append(dict(row=row, mark=mark, text=best,
+                                   conditionalScore=float(np.exp(scores[best] - normalizer)),
+                                   likelihood=float(np.exp(scores[best])),
+                                   blankLikelihood=float(np.exp(blank))))
+        return result
+
     def read(self, image, staff_spacings, top_staff_lines=()):
         import cv2
         if not staff_spacings or min(staff_spacings) <= 0:

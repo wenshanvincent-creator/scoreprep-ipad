@@ -184,3 +184,33 @@ times: image 64 events/32 attack groups/32 quarters; PDF 128/64/64. The small
 cello result matches all 16 original note events and fingerings. Source bytes
 remain unchanged and screenshots show the corrected voice alignment. This
 does not resolve the private dense page or replace the installed application.
+
+## Role-conditioned printed digits
+
+Further comparisons of raw/isolated glyphs, nearby-digit strips, contrast views,
+PP-OCRv5 Latin/server and PP-OCRv6 small did not consistently resolve the old-font
+3/8 confusion. They were not adopted as replacement models. The server variant
+took 241.34 seconds on the owned 28-component image, so its full-page trial was
+stopped after that measured latency result. Downloaded comparison weights remain
+private evaluation assets and are not bundled.
+
+The current worker instead rereads only numerals in independently established
+complete fingering rows, with explicit source heads/beams and tuplet protection.
+CTC single-character likelihoods retain both absolute evidence and the posterior
+conditioned on the fingering alphabet; a large conditional value alone cannot
+authorize a change. The new owned 36-note/12-fingering source includes genuine
+3/5/8 tuplets and actual layout/OCR outputs. Its deliberately corrupted digit
+observation recovers from the original pixels, while a real printed octuplet 8,
+incomplete row and missing beam evidence abstain. Four targeted decision tests,
+the ten existing association/ornament/rhythm checks, three actual glyph-model
+checks and the Windows build pass.
+
+On the private page, this resolves the last group's 3/2/0 readings and supports
+the remaining four-note false 5:4 repair from its complete two-beam source group.
+An independent transcription made directly from the original final measure now
+matches all 16 pitch/onset/duration events and seven printed fingerings. Its final
+written accidental carry is retained, rather than inferred from a printed 0.
+All three known malformed groups are now source-supported repairs; no target
+meter fullness is used. Four other eligible fingering marks remain unresolved
+and the full private-page reference is incomplete, so this is not whole-page
+acceptance or an installed upgrade.

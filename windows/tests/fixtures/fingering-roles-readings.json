@@ -1,0 +1,20 @@
+{
+  "state": "finished",
+  "mode": "fingerings",
+  "sourceSHA256": "178f4c59060d329a4ad48f3855a8a858f19c1738b2288e078e77db94ad353f43",
+  "network": "disabled",
+  "readings": [
+    {
+      "row": 0,
+      "mark": 0,
+      "text": "3",
+      "conditionalScore": 0.9999775488087526,
+      "likelihood": 0.9976271605254773,
+      "blankLikelihood": 1.324629829468904e-05
+    }
+  ],
+  "requestSHA256": "bc29de6cb9167a8c32b8a711040bd386a45393454bc410bc9a16988af76f30e0",
+  "seconds": 3.69,
+  "sourceUnchanged": true,
+  "networkAttempts": 0
+}

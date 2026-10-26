@@ -13,7 +13,7 @@ combining observations. Per-page editions are reconciled before MusicXML pages
 are joined; a structurally permitted partial final bar cannot hide an unresolved
 source-backed tuplet conflict.
 
-`worker.py` is a separate CLI with `pages`, `binarize`, `recognize` and `compare`
+`worker.py` is a separate CLI with `pages`, `binarize`, `recognize`, `fingerings` and `compare`
 operations. It writes atomic result JSON plus local logs, preserves input bytes,
 loads only verified CPU assets, disables Python network connections and records
 attempts. The desktop invokes the bundled interpreter in isolated UTF-8 mode
@@ -42,6 +42,28 @@ ambiguous ownership are reported. A numeral supporting an existing tuplet is
 protected. Actual owned homr output plus glyph observations restores all 16
 original printed fingerings on their correct notes without changing musical
 events or generating recommendations.
+
+`src/core/fingering-rows.ts` establishes a numeric fingering role before asking
+for a restricted-alphabet rereading. Every independently matched head in a
+complete source beam group must own one similarly sized numeral, with two
+recognizable finger digits including 0/1. Supported model/source tuplet numerals
+remain protected. Wind parts do not use this role restriction.
+
+For those eligible rows only, the glyph worker sums single-character CTC paths
+over digits 0–5. Receipts retain the original unrestricted reading, conditional
+posterior, absolute character-sequence likelihood and blank likelihood. Adoption
+requires a conditional posterior of at least .9 and absolute likelihood of at
+least .01; these filters are not whole-score accuracy probabilities. An original
+numeral is never changed merely because it resembles 8. Unresolved eligible
+rows produce a specific source-fingering error rather than dropping their marks.
+
+The owned 36-note study supplies actual source layout and OCR evidence, including
+true triplets, quintuplets and an octuplet. A deliberately corrupted observation
+of its printed 3 is recovered from the original pixels; all 12 fingerings and
+musical events match its independently authored source. A real printed octuplet
+8 fails the absolute-evidence gate. Missing rows/beam links and tuplet membership
+also prevent a role-restricted reading. This is a controlled observation-error
+regression, separate from the private page's actual old-font confusion.
 
 `src/core/source-ornaments.ts` checks a second actual inference in which only
 confirmed source fingering glyphs were removed. It accepts trill removal only at

@@ -159,16 +159,43 @@ def binarize_layout(source, output):
                 method="grayscale-threshold-160", sha256=digest(output / "binary.png"))
 
 
+def read_fingering_rows(source, request_file):
+    import cv2
+    import numpy as np
+    from glyphs import GlyphReader
+    requests = json.loads(request_file.read_text(encoding="utf-8"))
+    if requests["sourceSHA256"] != digest(source):
+        raise ValueError("Fingering row source does not match this page")
+    scale = requests["scale"]
+    if not 1 <= scale <= 3:
+        raise ValueError("Invalid source glyph scale")
+    image = cv2.imdecode(np.frombuffer(source.read_bytes(), dtype="uint8"), cv2.IMREAD_COLOR)
+    if image is None:
+        raise ValueError("Cannot decode the source page")
+    for row in requests["rows"]:
+        for mark in row["marks"]:
+            g = mark["glyph"]
+            if not (g["width"] > 0 and g["height"] > 0 and g["x"] >= 0 and g["y"] >= 0
+                    and g["x"] + g["width"] <= image.shape[1]
+                    and g["y"] + g["height"] <= image.shape[0]):
+                raise ValueError("Source fingering glyph is outside the page raster")
+    readings = GlyphReader().read_fingering_rows(image, requests["rows"], scale)
+    return dict(readings=readings, requestSHA256=digest(request_file))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("mode", choices=["pages", "binarize", "recognize", "compare"])
+    parser.add_argument("mode", choices=["pages", "binarize", "recognize", "compare", "fingerings"])
     parser.add_argument("source", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--layout", type=Path)
     parser.add_argument("--masks", type=Path)
+    parser.add_argument("--fingerings", type=Path)
     args = parser.parse_args()
     if (args.mode == "compare") != bool(args.masks):
         parser.error("Only comparison recognition requires --masks")
+    if (args.mode == "fingerings") != bool(args.fingerings):
+        parser.error("Only fingering row recognition requires --fingerings")
     source = args.source.resolve(strict=True)
     args.output.mkdir(parents=True, exist_ok=False)
     output = args.output.resolve()
@@ -183,6 +210,8 @@ def main():
                     result["pages"] = render_pages(source, output)
                 elif args.mode == "binarize":
                     result.update(binarize_layout(source, output))
+                elif args.mode == "fingerings":
+                    result.update(read_fingering_rows(source, args.fingerings))
                 else:
                     result.update(recognize_page(source, output, args.layout, args.masks))
             result["state"] = "finished"

@@ -1,0 +1,20 @@
+{
+  "glyph": {
+    "x": 1189.5,
+    "y": 822.75,
+    "width": 20.25,
+    "height": 24.0,
+    "text": "8",
+    "score": 0.99522
+  },
+  "readings": [
+    {
+      "row": 0,
+      "mark": 0,
+      "text": "0",
+      "conditionalScore": 0.6472608341373081,
+      "likelihood": 2.0506849594116945e-05,
+      "blankLikelihood": 0.00026006088592112064
+    }
+  ]
+}

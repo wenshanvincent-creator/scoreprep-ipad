@@ -162,3 +162,22 @@ This is candidate evidence. The reported dense page's old-font numeral ambiguity
 remaining malformed final tuplet and complete independent reference comparison
 remain unfinished. The installed 0.3.1 and published 0.3.0 preview remain unchanged;
 no upgrade or real cello rehearsal acceptance is claimed here.
+
+## Source-role digit rereading (development build)
+
+Complete, independently anchored fingering rows can now request a role-conditioned
+CTC reading. Original predictions, conditional scores and absolute pixel
+likelihoods are retained separately. Four decision checks and three real glyph
+model checks cover recovery from an intentionally corrupted observation, genuine
+3/5/8 tuplets, incomplete geometry, negligible absolute evidence and unchanged
+input pixels. The ten related association/ornament/rhythm checks and build pass.
+
+An actual isolated Electron import of the private reported image completed in
+362.99 seconds. It adopted six source-supported digit readings and repaired all
+three known malformed tuplet groups. The final measure matches an independent
+source transcription's 16 note events and seven printed fingerings. Four other
+eligible numerals remained unresolved, so the actual UI reported the first
+affected source-fingering measure and did not publish an incomplete edition as
+ready. The original bytes were unchanged. This is verified failure containment
+and partial recognition improvement, not successful whole-page acceptance.
+The installed application and previous unpacked candidate were not replaced.

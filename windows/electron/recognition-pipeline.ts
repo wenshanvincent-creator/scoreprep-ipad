@@ -10,6 +10,11 @@ import { recoverSourceFingerings, type GlyphObservation } from '../src/core/sour
 import { recoverMalformedTuplets } from '../src/core/source-rhythm';
 import { recoverFingeringOrnaments } from '../src/core/source-ornaments';
 import { instrumentFor } from '../src/core/instruments';
+import {
+  findFingeringRows,
+  applyFingeringReadings,
+  type FingeringReading,
+} from '../src/core/fingering-rows';
 
 export interface NeuralRuntime {
   python: string;
@@ -31,6 +36,7 @@ interface WorkerResult {
   glyphs?: string;
   comparisonXML?: string;
   file?: string;
+  readings?: FingeringReading[];
   maskedFingerings?: ReturnType<typeof recoverSourceFingerings>['fingerings'];
 }
 
@@ -162,9 +168,8 @@ export async function recognizeLocalDocument(options: {
         evidence.archive,
       ]),
       raw = await readFile(path.join(neuralFolder, recognized.musicXML!), 'utf8');
-    const observations: { sourceSHA256: string; glyphs: GlyphObservation[] } = JSON.parse(
-      await readFile(path.join(neuralFolder, recognized.glyphs!), 'utf8'),
-    );
+    const observations: { sourceSHA256: string; resizeScale: number; glyphs: GlyphObservation[] } =
+      JSON.parse(await readFile(path.join(neuralFolder, recognized.glyphs!), 'utf8'));
     if (observations.sourceSHA256 !== page.sha256) throw new Error('原谱标记的来源校验不一致。');
     const interpret = (xml: string) => {
       const clefs = recoverClefInterpretation(xml, layout, size);
@@ -179,6 +184,32 @@ export async function recognizeLocalDocument(options: {
       return { clefs, accidentals, fingerings };
     };
     let interpreted = interpret(raw);
+    const rows =
+      instrumentFor(options.instrument).family === 'wind'
+        ? []
+        : findFingeringRows(interpreted.accidentals.xml, layout, size, observations.glyphs);
+    let conditionalFingerings: ReturnType<typeof applyFingeringReadings>['adopted'] = [];
+    let unresolvedFingerings: ReturnType<typeof applyFingeringReadings>['unresolved'] = [];
+    if (rows.length) {
+      await options.phase(`正在核对${label}的指法数字`);
+      const requests = path.join(folder, 'fingering-rows.json');
+      await writeFile(
+        requests,
+        JSON.stringify({ sourceSHA256: page.sha256, scale: observations.resizeScale, rows }),
+      );
+      const result = await worker(
+        'fingerings',
+        input,
+        path.join(folder, 'fingering-rows'),
+        page.sha256,
+        ['--fingerings', requests],
+      );
+      const resolved = applyFingeringReadings(observations.glyphs, rows, result.readings!);
+      observations.glyphs = resolved.glyphs;
+      conditionalFingerings = resolved.adopted;
+      unresolvedFingerings = resolved.unresolved;
+      interpreted = interpret(raw);
+    }
     const doc = new DOMParser().parseFromString(raw, 'application/xml'),
       measures = Array.from(doc.getElementsByTagName('measure'));
     const masks = interpreted.fingerings.fingerings.filter(
@@ -222,11 +253,17 @@ export async function recognizeLocalDocument(options: {
       accidentals: interpreted.accidentals.corrections,
       fingerings: interpreted.fingerings.fingerings,
       fingeringConflicts: interpreted.fingerings.conflicts,
+      conditionalFingerings,
+      unresolvedFingerings,
       ornaments: ornaments?.corrections ?? [],
       rhythm: rhythm.corrections,
       unresolvedRhythm: rhythm.unresolved,
     };
     await writeFile(path.join(folder, 'interpretation.json'), JSON.stringify(report, null, 2));
+    if (unresolvedFingerings.length)
+      throw new Error(
+        `未能可靠读取${label}第 ${unresolvedFingerings[0].measure} 小节的原谱指法数字。`,
+      );
     if (rhythm.unresolved.length)
       throw new Error(`未能可靠确定${label}第 ${rhythm.unresolved[0].measure} 小节的连音时值。`);
     await writeFile(path.join(folder, 'edition.musicxml'), rhythm.xml);

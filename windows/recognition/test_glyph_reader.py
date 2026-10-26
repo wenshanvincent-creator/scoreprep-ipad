@@ -2,6 +2,7 @@
 from pathlib import Path
 import unittest
 import xml.etree.ElementTree as ET
+import json
 
 import cv2
 import numpy as np
@@ -41,6 +42,23 @@ class PrintedGlyphTest(unittest.TestCase):
         recovered = [g for g in row if g.get("view") == "top-staff-line-separated"]
         self.assertEqual(len(recovered), 1)
         self.assertEqual(recovered[0]["text"], "1")
+        self.assertTrue(np.array_equal(image, original))
+
+    def test_role_conditioning_keeps_absolute_evidence_and_does_not_force_a_true_eight(self):
+        fixtures = Path(__file__).resolve().parents[1] / "tests" / "fixtures"
+        image = cv2.imread(str(fixtures / "fingering-roles-study.png"))
+        original = image.copy()
+        observed = json.loads((fixtures / "fingering-roles-glyphs.json").read_text(encoding="utf-8"))
+        three = next(g.copy() for g in observed["glyphs"] if g["text"] == "3" and g["y"] < 160)
+        # A controlled observation error; the original owned pixels still show 3.
+        three.update(text="8", score=.95)
+        eight = json.loads((fixtures / "fingering-roles-true-eight.json").read_text(encoding="utf-8"))["glyph"]
+        rows = [{"marks": [{"glyph": three}]}, {"marks": [{"glyph": eight}]}]
+        result = self.reader.read_fingering_rows(image, rows, observed["resizeScale"])
+        self.assertEqual(result[0]["text"], "3")
+        self.assertGreater(result[0]["conditionalScore"], .9)
+        self.assertGreater(result[0]["likelihood"], .01)
+        self.assertLess(result[1]["likelihood"], .01)
         self.assertTrue(np.array_equal(image, original))
 
 
