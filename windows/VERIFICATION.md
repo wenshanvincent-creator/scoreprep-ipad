@@ -83,3 +83,8 @@ checked. An initial screenshot attempt timed out while the window was unfocused;
 focusing the window before capture resolved it. Existing user library data and
 the recognition runtime were retained during the local application-code update.
 The published 0.3.0 installer has not been replaced.
+
+The subsequent [local engine comparison](experiments/LOCAL_OMR.md) records the
+dense-page Audiveris threshold and homr CPU trials, raw-versus-postprocessed
+tuplet behavior, owned-score event/fingering comparison and actual SVG inspection.
+The alternate engine remains experimental and is not installed in the client.
