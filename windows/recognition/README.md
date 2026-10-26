@@ -129,6 +129,11 @@ The glyph model is distributed in the pinned RapidOCR wheel as
 `models/ch_PP-OCRv4_rec_infer.onnx`, SHA-256
 `48fc40f24f6d2a207a2b1091d3437eb3cc3eb6b676dc3ef9c37384005483683b`.
 RapidOCR uses [Apache-2.0](https://github.com/RapidAI/RapidOCR/blob/main/LICENSE).
+Glyph OCR also examines a copy with the top staff line separated. It preserves
+vertical ink crossing that line, so a printed digit is not split into fragments.
+Only high-confidence digits at that staff edge are merged without duplicates;
+the original image and the music model's input remain unchanged. The real CPU
+regression covers both touching and crossing on an independently authored score.
 Homr and its three model assets retain the provenance recorded in
 [`backend/notices/PROVENANCE.md`](../../backend/notices/PROVENANCE.md).
 The private desktop candidate now bundles the runtime and complete source/license

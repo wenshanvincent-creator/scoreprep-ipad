@@ -113,12 +113,31 @@ class GlyphReader:
         if top_staff_lines:
             import numpy as np
             separated = image.copy()
+            crossings = image.copy()
+            original_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             for line in top_staff_lines:
                 points = np.rint(np.asarray(line["points"]) * scale).astype("int32")
                 cv2.polylines(separated, [points], False, (255, 255, 255),
                               max(1, round(line["thickness"] * scale + 2)))
+                radius = round(line["thickness"] * scale / 2 + 2)
+                for a, b in zip(points, points[1:]):
+                    for x in range(max(0, a[0]), min(image.shape[1], b[0] + 1)):
+                        y = round(a[1] + (b[1] - a[1]) * (x - a[0]) / max(1, b[0] - a[0]))
+                        low, high = y - radius, y + radius + 1
+                        if low < 2 or high + 2 > image.shape[0]:
+                            continue
+                        # A printed digit may cross the line. Erasing the entire
+                        # strip cuts its stem into two unrecognizable fragments.
+                        # Keep original ink only where it continues on both sides.
+                        if not (original_gray[low - 2:low, x].min() < 160 and
+                                original_gray[high:high + 2, x].min() < 160):
+                            crossings[low:high, x] = 255
             spacing = statistics.median(staff_spacings)
-            for candidate in self._read_view(separated, staff_spacings, scale):
+            candidates = [(g, "top-staff-line-separated")
+                          for g in self._read_view(separated, staff_spacings, scale)]
+            candidates.extend((g, "top-staff-line-crossing-preserved")
+                              for g in self._read_view(crossings, staff_spacings, scale))
+            for candidate, view in candidates:
                 if (len(candidate["text"]) != 1 or candidate["text"] not in "012345" or
                         candidate["score"] < 0.95):
                     continue
@@ -134,7 +153,8 @@ class GlyphReader:
                     for a, b in zip(points, points[1:]):
                         if a[0] <= x <= b[0]:
                             y = a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0])
-                            touching = candidate["y"] < y and abs(bottom - y) <= spacing * 0.5
+                            depth = 0.75 if view.endswith("crossing-preserved") else 0.5
+                            touching = candidate["y"] < y and abs(bottom - y) <= spacing * depth
                             break
                     if touching:
                         break
@@ -151,7 +171,7 @@ class GlyphReader:
                                   candidate["width"] * candidate["height"])
                     return intersection / smaller >= 0.5
                 if not any(same_component(original) for original in observations):
-                    candidate["view"] = "top-staff-line-separated"
+                    candidate["view"] = view
                     observations.append(candidate)
         return dict(model=REC_MODEL, modelSHA256=REC_SHA256, resizeScale=scale, glyphs=observations)
 

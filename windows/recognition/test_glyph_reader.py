@@ -61,6 +61,22 @@ class PrintedGlyphTest(unittest.TestCase):
         self.assertLess(result[1]["likelihood"], .01)
         self.assertTrue(np.array_equal(image, original))
 
+    def test_digit_crossing_staff_line_keeps_its_stem_and_remains_one_glyph(self):
+        fixtures = Path(__file__).resolve().parents[1] / "tests" / "fixtures"
+        image = cv2.imread(str(fixtures / "cello-study.png"))
+        # The same owned printed 1 now crosses the line through its middle.
+        # A strip erasure splits it; preserving the vertical crossing must keep it.
+        cv2.line(image, (650, 235), (725, 235), (0, 0, 0), 1)
+        original = image.copy()
+        result = self.reader.read(image, [27], [dict(points=[(650, 235), (725, 235)], thickness=1)])
+        row = sorted((g for g in result["glyphs"] if 200 <= g["y"] <= 260), key=lambda g: g["x"])
+        expected = [n.text for n in ET.parse(fixtures / "cello-study.musicxml").findall(".//technical/fingering")]
+        self.assertEqual([g["text"] for g in row], expected)
+        restored = [g for g in row if g.get("view") == "top-staff-line-crossing-preserved"]
+        self.assertEqual(len(restored), 1)
+        self.assertEqual(restored[0]["text"], "1")
+        self.assertTrue(np.array_equal(image, original))
+
 
 if __name__ == "__main__":
     unittest.main()
