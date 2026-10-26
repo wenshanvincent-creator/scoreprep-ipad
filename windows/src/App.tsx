@@ -36,7 +36,7 @@ export default function App() {
   const create = (exercise = false) => {
     setBusy(true);
     setError('');
-    void (exercise ? window.desktop.exercise(instrument) : window.desktop.importScore(instrument))
+    void (exercise ? window.desktop.exercise() : window.desktop.importScore(instrument))
       .then((p) => {
         if (p) {
           saved(p);
@@ -132,7 +132,7 @@ export default function App() {
               选择文件
             </button>
             <button disabled={busy} onClick={() => create(true)}>
-              打开示例
+              打开大提琴示例
             </button>
           </div>
         ) : project.localEdition ? (

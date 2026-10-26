@@ -8,7 +8,7 @@ const output = path.resolve('dist'),
 if (output !== expected) throw new Error('Build must run from windows/');
 await rm(output, { recursive: true, force: true });
 await mkdir('public', { recursive: true });
-await copyFile('../Fixtures/Practice/pickup-and-pulse.png', 'public/exercise.png');
+await copyFile('tests/fixtures/cello-study.png', 'public/exercise.png');
 await copyFile('../ScoreApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png', 'public/app-icon.png');
 await bundle({
   entryPoints: ['electron/main.ts'],

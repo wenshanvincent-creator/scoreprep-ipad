@@ -44,7 +44,7 @@ score/tuner, minimizing and system suspension release capture. Windows microphon
 privacy settings must permit desktop apps.
 
 Old preview projects retain their source and metadata. Opening an old project
-without a local edition offers recognition from its saved source. Their former
+without a local edition automatically recognizes its saved source. Their former
 manual preparation and remote credentials are no longer used by this Windows UI.
 The native Apple app and remote backend remain separate and unchanged.
 

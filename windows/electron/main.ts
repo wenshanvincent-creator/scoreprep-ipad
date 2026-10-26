@@ -72,7 +72,7 @@ async function create(bytes: Buffer, filename: string, exercise = false, instrum
   const id = randomUUID();
   const p: Project = {
     id,
-    title: exercise ? '弱起与复合拍练习' : path.basename(filename, ext),
+    title: exercise ? '大提琴练习' : path.basename(filename, ext),
     sourceFilename: path.basename(filename),
     mediaType,
     pageCount,
@@ -192,12 +192,12 @@ app.whenReady().then(async () => {
     const file = choice.filePaths[0];
     return create(await readFile(file), path.basename(file), false, instrument);
   });
-  handle('library:exercise', async (instrument: string) =>
+  handle('library:exercise', async () =>
     create(
       await readFile(path.join(__dirname, 'renderer', 'exercise.png')),
-      'practice-exercise.png',
+      'cello-study.png',
       true,
-      instrument,
+      'cello',
     ),
   );
   handle('library:save', async (incoming: Project) => {
