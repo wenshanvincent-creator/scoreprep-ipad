@@ -12,6 +12,8 @@ import { recoverFingeringOrnaments } from '../src/core/source-ornaments';
 import { instrumentFor } from '../src/core/instruments';
 import {
   findFingeringRows,
+  findWeakFingeringDigits,
+  findSparseFingeringContexts,
   applyFingeringReadings,
   type FingeringReading,
 } from '../src/core/fingering-rows';
@@ -184,12 +186,36 @@ export async function recognizeLocalDocument(options: {
       return { clefs, accidentals, fingerings };
     };
     let interpreted = interpret(raw);
+    // Already source-supported rhythm corrections can disambiguate mark roles.
+    // The final edition is still rebuilt and checked after all mark evidence.
+    const markContextRhythm = recoverMalformedTuplets(
+      interpreted.accidentals.xml,
+      layout,
+      size,
+      observations.glyphs,
+      interpreted.fingerings.fingerings,
+    );
     const rows =
       instrumentFor(options.instrument).family === 'wind'
         ? []
-        : findFingeringRows(interpreted.accidentals.xml, layout, size, observations.glyphs);
+        : findFingeringRows(markContextRhythm.xml, layout, size, observations.glyphs);
+    if (instrumentFor(options.instrument).family !== 'wind') {
+      rows.push(
+        ...findSparseFingeringContexts(
+          markContextRhythm.xml,
+          layout,
+          size,
+          observations.glyphs,
+          rows,
+        ),
+      );
+      rows.push(
+        ...findWeakFingeringDigits(markContextRhythm.xml, layout, size, observations.glyphs, rows),
+      );
+    }
     let conditionalFingerings: ReturnType<typeof applyFingeringReadings>['adopted'] = [];
     let unresolvedFingerings: ReturnType<typeof applyFingeringReadings>['unresolved'] = [];
+    let unverifiedFingeringDigits: ReturnType<typeof applyFingeringReadings>['unverified'] = [];
     if (rows.length) {
       await options.phase(`正在核对${label}的指法数字`);
       const requests = path.join(folder, 'fingering-rows.json');
@@ -207,12 +233,13 @@ export async function recognizeLocalDocument(options: {
         input,
         path.join(folder, 'fingering-rows'),
         page.sha256,
-        ['--fingerings', requests],
+        ['--fingerings', requests, '--text-runtime', options.audiveris],
       );
       const resolved = applyFingeringReadings(observations.glyphs, rows, result.readings!);
       observations.glyphs = resolved.glyphs;
       conditionalFingerings = resolved.adopted;
       unresolvedFingerings = resolved.unresolved;
+      unverifiedFingeringDigits = resolved.unverified;
       interpreted = interpret(raw);
     }
     const doc = new DOMParser().parseFromString(raw, 'application/xml'),
@@ -260,6 +287,8 @@ export async function recognizeLocalDocument(options: {
       fingeringConflicts: interpreted.fingerings.conflicts,
       conditionalFingerings,
       unresolvedFingerings,
+      unverifiedFingeringDigits,
+      markContextRhythm: markContextRhythm.corrections,
       ornaments: ornaments?.corrections ?? [],
       rhythm: rhythm.corrections,
       unresolvedRhythm: rhythm.unresolved,

@@ -115,3 +115,21 @@ not authorize a correction.
 `fingering-roles-true-eight.json` contains a real pixel reading of the printed
 octuplet 8: conditioning on a hypothetical fingering role still gives negligible
 absolute likelihood for all allowed digits. Tests must abstain in that case.
+
+`fingering-faint-zero.json` records actual primary and two contrast readings on
+an owned PNG copy with the lower half of one 0 faded to gray 185. The primary
+absolute likelihood fails; both contrast views retain the digit with sufficient
+evidence. The recipe is reproduced by the real CPU test without altering the
+fixture. Single, repeated or disagreeing views must not authorize a change.
+
+`fingering-unrestricted-text.json` records actual bundled Tesseract readings of
+the owned 3, genuine octuplet 8 and a separately printed literal A, with no
+whitelist. The decision test controls the primary probability failure to exercise
+the independent text path; it does not claim that failure occurred on the owned 3.
+Two agreeing segmentation modes must satisfy the confidence bound; 8/A remain
+non-fingerings. Native asset tampering must fail before library loading.
+
+Other regressions use explicitly controlled detector alternatives, sparse glyph
+metadata, faint strokes and a fractured owned 4. They check source masks retain
+both pieces, introduce no ink, leave the input unchanged and need verification
+before attachment. No private score or derived pixels are included.

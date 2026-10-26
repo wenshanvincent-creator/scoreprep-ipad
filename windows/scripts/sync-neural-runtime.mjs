@@ -15,7 +15,7 @@ try {
     'Prepare the isolated neural runtime with recognition/package_runtime.py before packaging.',
   );
 }
-const workers = ['worker.py', 'engine.py', 'glyphs.py', 'requirements.txt'];
+const workers = ['worker.py', 'engine.py', 'glyphs.py', 'printed_text.py', 'requirements.txt'];
 for (const entry of receipt.files)
   if (
     !workers.includes(entry.file) &&
@@ -26,9 +26,9 @@ for (const name of workers) {
   const source = fileURLToPath(new URL(`../recognition/${name}`, import.meta.url)),
     bytes = await readFile(source),
     entry = receipt.files.find((f) => f.file === name);
-  if (!entry) throw new Error(`Neural runtime inventory is incomplete: ${name}`);
   await copyFile(source, path.join(root, name));
-  entry.sha256 = hash(bytes);
+  if (entry) entry.sha256 = hash(bytes);
+  else receipt.files.push({ file: name, sha256: hash(bytes) });
 }
 const archive = fileURLToPath(new URL('../.runtime/homr-ab369ac-source.zip', import.meta.url));
 try {

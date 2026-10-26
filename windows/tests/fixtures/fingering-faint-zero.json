@@ -1,0 +1,45 @@
+{
+  "sourceSHA256": "178f4c59060d329a4ad48f3855a8a858f19c1738b2288e078e77db94ad353f43",
+  "glyph": {
+    "x": 735.0,
+    "y": 139.5,
+    "width": 13.5,
+    "height": 21.0,
+    "text": "0",
+    "score": 0.99413
+  },
+  "resizeScale": 1.3333333333333333,
+  "fadeBottomFraction": 0.5,
+  "inkGray": 185,
+  "readings": [
+    {
+      "row": 0,
+      "mark": 0,
+      "text": "0",
+      "conditionalScore": 0.939089207483471,
+      "likelihood": 0.005793512874358261,
+      "blankLikelihood": 0.0008084329310804605,
+      "contrastReadings": [
+        {
+          "threshold": 190,
+          "row": 0,
+          "mark": 0,
+          "text": "0",
+          "conditionalScore": 0.997620142634936,
+          "likelihood": 0.9668410137448915,
+          "blankLikelihood": 0.0005595965194515884
+        },
+        {
+          "threshold": 220,
+          "row": 0,
+          "mark": 0,
+          "text": "0",
+          "conditionalScore": 0.998432610076697,
+          "likelihood": 0.9714648208269289,
+          "blankLikelihood": 0.000543967995326966
+        }
+      ]
+    }
+  ],
+  "method": "Owned PNG copy: bottom half of this printed 0 ink faded to gray 185; role query metadata controlled as n. Music pixels untouched. Actual primary and two contrast CTC views."
+}

@@ -6,6 +6,8 @@ export interface FingeringShapeEvidence {
   text: string;
   error: number;
   nextError: number;
+  visibleFraction?: number;
+  ignoredStaffBand?: boolean;
   exemplars: {
     digit: string;
     score: number;
@@ -13,7 +15,12 @@ export interface FingeringShapeEvidence {
     glyph: { x: number; y: number; width: number; height: number };
   }[];
 }
-export interface GlyphObservation {
+export interface GlyphInkEvidence {
+  inkRuns?: [number, number, number][];
+  inkScale?: number;
+  occludedRuns?: [number, number, number][];
+}
+export interface GlyphObservation extends GlyphInkEvidence {
   text: string;
   score: number;
   x: number;
@@ -21,12 +28,15 @@ export interface GlyphObservation {
   width: number;
   height: number;
   fingeringEvidence?: FingeringShapeEvidence;
+  proposalOnly?: boolean;
+  view?: string;
 }
 export function confirmedFingeringShape(e: FingeringShapeEvidence | undefined, digit: string) {
   return (
     !!e &&
     e.method === 'same-page-shape' &&
     e.text === digit &&
+    (e.visibleFraction === undefined || e.visibleFraction >= 0.6) &&
     e.error <= 0.03 &&
     e.nextError - e.error >= 0.01 &&
     e.exemplars.length === 2 &&
@@ -37,8 +47,17 @@ export function confirmedFingeringShape(e: FingeringShapeEvidence | undefined, d
 export function confirmedFingeringGlyph(g: GlyphObservation) {
   return (
     /^[0-5]$/.test(g.text) &&
+    !g.proposalOnly &&
     (g.score >= 0.85 || confirmedFingeringShape(g.fingeringEvidence, g.text))
   );
+}
+export function withoutStaffFragments(glyphs: GlyphObservation[]) {
+  const originals = glyphs.filter(
+    (g) => !g.proposalOnly && /^[0-9]$/.test(g.text) && g.score >= 0.85,
+  );
+  return originals.length === 1
+    ? glyphs.filter((g) => !(g.proposalOnly && g.view?.startsWith('top-staff-line')))
+    : glyphs;
 }
 type Layout = ReturnType<typeof readSourceLayout>;
 const children = (e: Element, tag?: string): Element[] =>
@@ -178,25 +197,15 @@ export function sourceNotes(doc: ReturnType<DOMParser['parseFromString']>, layou
   return result;
 }
 
-export function recoverSourceFingerings(
-  xml: string,
-  layoutXML: string,
-  sourceSize: { width: number; height: number },
+/** Geometry and tuplet protection shared by recognition and verification.
+ * Passing a glyph here proposes an owner; it does not confirm its text. */
+export function sourceGlyphOwners(
+  doc: ReturnType<DOMParser['parseFromString']>,
+  layout: Layout,
   glyphs: GlyphObservation[],
 ) {
-  const doc = new DOMParser().parseFromString(xml, 'application/xml');
-  const layout = readSourceLayout(layoutXML, sourceSize),
-    notes = sourceNotes(doc, layout);
+  const notes = sourceNotes(doc, layout);
   const result = {
-    xml,
-    fingerings: [] as {
-      measure: string;
-      note: number;
-      digit: string;
-      score: number;
-      glyph: { x: number; y: number; width: number; height: number };
-      evidence?: FingeringShapeEvidence;
-    }[],
     conflicts: [] as string[],
     protectedTupletNumerals: 0,
   };
@@ -205,7 +214,6 @@ export function recoverSourceFingerings(
   for (const head of layout.heads.filter((h) => h.grade >= 0.85))
     lowerEdges.set(head.staff, Math.max(lowerEdges.get(head.staff) ?? -Infinity, head.y));
   for (const glyph of glyphs) {
-    if (!confirmedFingeringGlyph(glyph)) continue;
     const x = glyph.x + glyph.width / 2,
       y = glyph.y + glyph.height / 2;
     const candidates = notes
@@ -247,6 +255,36 @@ export function recoverSourceFingerings(
     proposed.push(glyph);
     proposals.set(best.note, proposed);
   }
+  for (const [note, glyphs] of proposals) proposals.set(note, withoutStaffFragments(glyphs));
+  return { ...result, proposals };
+}
+
+export function recoverSourceFingerings(
+  xml: string,
+  layoutXML: string,
+  sourceSize: { width: number; height: number },
+  glyphs: GlyphObservation[],
+) {
+  const doc = new DOMParser().parseFromString(xml, 'application/xml');
+  const layout = readSourceLayout(layoutXML, sourceSize);
+  const { proposals, conflicts, protectedTupletNumerals } = sourceGlyphOwners(
+    doc,
+    layout,
+    glyphs.filter(confirmedFingeringGlyph),
+  );
+  const result = {
+    xml,
+    fingerings: [] as {
+      measure: string;
+      note: number;
+      digit: string;
+      score: number;
+      glyph: { x: number; y: number; width: number; height: number } & GlyphInkEvidence;
+      evidence?: FingeringShapeEvidence;
+    }[],
+    conflicts,
+    protectedTupletNumerals,
+  };
   let added = 0;
   for (const [note, proposed] of proposals) {
     const label = `第 ${note.measure.getAttribute('number')} 小节第 ${note.noteIndex + 1} 音`;
@@ -281,7 +319,14 @@ export function recoverSourceFingerings(
       note: note.noteIndex + 1,
       digit: glyph.text,
       score: glyph.score,
-      glyph: { x: glyph.x, y: glyph.y, width: glyph.width, height: glyph.height },
+      glyph: {
+        x: glyph.x,
+        y: glyph.y,
+        width: glyph.width,
+        height: glyph.height,
+        ...(glyph.inkRuns ? { inkRuns: glyph.inkRuns, inkScale: glyph.inkScale } : {}),
+        ...(glyph.occludedRuns ? { occludedRuns: glyph.occludedRuns } : {}),
+      },
       ...(glyph.fingeringEvidence ? { evidence: glyph.fingeringEvidence } : {}),
     });
   }

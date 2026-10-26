@@ -129,12 +129,20 @@ The glyph model is distributed in the pinned RapidOCR wheel as
 `models/ch_PP-OCRv4_rec_infer.onnx`, SHA-256
 `48fc40f24f6d2a207a2b1091d3437eb3cc3eb6b676dc3ef9c37384005483683b`.
 RapidOCR uses [Apache-2.0](https://github.com/RapidAI/RapidOCR/blob/main/LICENSE).
-Glyph OCR also examines a copy with the top staff line separated. It preserves
-vertical ink crossing that line, so a printed digit is not split into fragments.
-Only high-confidence digits at that staff edge are merged without duplicates;
-the original image and the music model's input remain unchanged. The real CPU
-regression covers both touching and crossing on an independently authored score.
-Within a source-confirmed complete fingering row, unresolved digits can also be
+Glyph OCR also examines copies with the top staff line separated. Only continuous
+vertical ink survives the line strip. Interlocking disconnected strokes can form
+one candidate; strong original glyphs and ambiguous pairings are preserved.
+Recorded ink masks retain the measured source components without painting new
+ink. These view candidates require verification even when their
+initial OCR confidence is high; staff fragments cannot hide an original numeral.
+The original image and music-model input remain unchanged.
+
+Source stem rows or a sparse numeric line with at least three already assigned,
+same-size digits on the same staff establish a fingering context. Context must
+include 0/1 and two distinct digits. Extra strong heads, unmatched stems, chords,
+supported tuplets and strong literal letters prevent a constrained interpretation.
+Existing source-supported rhythm corrections can resolve mark roles first; the
+final edition is rebuilt and checked after the mark readings. Unresolved digits can be
 compared with already assigned digits on the same page. This uses two distinct
 exemplar glyphs, preserved aspect ratios, bounded pixel error and separation
 from competing digits. Exemplars are chosen before adopting any new readings;
@@ -142,6 +150,17 @@ no model is trained and no page templates are retained. Shape evidence keeps its
 own distances and source rectangles; it never substitutes a fabricated OCR
 probability. True tuplet numerals remain protected before this stage. The owned
 negative control also queries a genuine 8 directly and rejects its pixel match.
+For a digit intersected by the measured staff band, a separate shape comparison
+can exclude that band. At least 60% of the normalized comparison must remain;
+the winning digit must agree with the full comparison and meet the same two
+exemplar, error and separation gates. Missing strokes are never reconstructed.
+Standalone weak digits can only be verified as the same digit. Faint strokes
+require agreement at both contrast thresholds, with absolute CTC evidence.
+Remaining contextual ambiguities use two unrestricted Tesseract readings from
+the existing hashed Audiveris assets. Their native confidence values are retained;
+there is no character whitelist, server, download or model training. Controls
+retain genuine 8 and literal A. Masks, alternative heads and numeric context are
+recorded alongside adopted readings for inspection.
 Homr and its three model assets retain the provenance recorded in
 [`backend/notices/PROVENANCE.md`](../../backend/notices/PROVENANCE.md).
 The private desktop candidate now bundles the runtime and complete source/license
@@ -177,6 +196,7 @@ node --import tsx --test tests/layout-evidence.test.ts tests/source-marks.test.t
 node --import tsx scripts/inspect-recognition.ts INPUT NEW_OUTPUT --layout PAGE.omr --source-size WIDTHxHEIGHT --glyphs OBSERVATIONS.json
 # In the pinned evaluation environment; runs the real glyph model on owned data:
 python recognition/test_glyph_reader.py
+python recognition/test_printed_text.py
 ```
 
 The supplied dimensions are those of the source raster used by homr. This

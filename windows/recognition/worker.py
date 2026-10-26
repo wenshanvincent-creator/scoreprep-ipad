@@ -161,7 +161,7 @@ def binarize_layout(source, output):
                 method="grayscale-threshold-160", sha256=digest(output / "binary.png"))
 
 
-def read_fingering_rows(source, request_file):
+def read_fingering_rows(source, request_file, text_runtime=None, output=None):
     import cv2
     import numpy as np
     from glyphs import GlyphReader
@@ -182,7 +182,7 @@ def read_fingering_rows(source, request_file):
                     and g["x"] + g["width"] <= image.shape[1]
                     and g["y"] + g["height"] <= image.shape[0]):
                 raise ValueError("Source fingering glyph is outside the page raster")
-    readings = GlyphReader().read_fingering_rows(image, requests["rows"], scale, prototypes)
+    readings = GlyphReader().read_fingering_rows(image, requests["rows"], scale, prototypes, text_runtime, output)
     return dict(readings=readings, requestSHA256=digest(request_file))
 
 
@@ -194,11 +194,14 @@ def main():
     parser.add_argument("--layout", type=Path)
     parser.add_argument("--masks", type=Path)
     parser.add_argument("--fingerings", type=Path)
+    parser.add_argument("--text-runtime", type=Path)
     args = parser.parse_args()
     if (args.mode == "compare") != bool(args.masks):
         parser.error("Only comparison recognition requires --masks")
     if (args.mode == "fingerings") != bool(args.fingerings):
         parser.error("Only fingering row recognition requires --fingerings")
+    if args.text_runtime and args.mode != "fingerings":
+        parser.error("Only fingering verification uses --text-runtime")
     source = args.source.resolve(strict=True)
     args.output.mkdir(parents=True, exist_ok=False)
     output = args.output.resolve()
@@ -214,7 +217,7 @@ def main():
                 elif args.mode == "binarize":
                     result.update(binarize_layout(source, output))
                 elif args.mode == "fingerings":
-                    result.update(read_fingering_rows(source, args.fingerings))
+                    result.update(read_fingering_rows(source, args.fingerings, args.text_runtime, output))
                 else:
                     result.update(recognize_page(source, output, args.layout, args.masks))
             result["state"] = "finished"

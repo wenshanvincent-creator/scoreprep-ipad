@@ -51,7 +51,7 @@ def main():
     for name in ("DLLs", "Lib"):
         shutil.copytree(home / name, python / name, ignore=ignore)
     shutil.copytree(packages, python / "Lib" / "site-packages", ignore=ignore)
-    for name in ("worker.py", "engine.py", "glyphs.py", "requirements.txt"):
+    for name in ("worker.py", "engine.py", "glyphs.py", "printed_text.py", "requirements.txt"):
         shutil.copyfile(Path(__file__).parent / name, output / name)
     inventory = [{"file": p.relative_to(output).as_posix(), "sha256": digest(p)}
                  for p in sorted(output.rglob("*")) if p.is_file()]
